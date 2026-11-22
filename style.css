@@ -204,7 +204,6 @@ button:active, .product-card:active, .category-item:active { transform: scale(.9
   .stat-card h3 { font-size: 12px; }
 }
 
-
 /* ===== DIGIVEX MODERN ADMIN WORKSPACE ===== */
 #page-admin.admin-modern {
   --adm-card: #171a2b; --adm-line: rgba(169,158,220,.15); --adm-muted: #9298b3;
@@ -239,4 +238,4 @@ button:active, .product-card:active, .category-item:active { transform: scale(.9
 .admin-stats-modern .stat-card h3 { margin:0;color:#fff;font-size:20px;font-weight:900;letter-spacing:-.5px; }
 .admin-stats-modern .stat-card small { display:block;margin-top:6px;color:#777f9d;font-size:9px; }
 .admin-manage-heading { margin-top:2px; }
-.admin-tabs-modern { display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:5px;margin-bottom:15px;bord
+.admin-tabs-modern { display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:5px;margin-bottom:15px;borde
