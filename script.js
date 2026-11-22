@@ -22,9 +22,23 @@ let selectedItem = null;
 let userLogin = localStorage.getItem('topup_user') || null;
 let userEmail = localStorage.getItem('topup_email') || null;
 let isAdminLoggedIn = false;
-let currentKategori = 'Game'; 
+let currentKategori = 'Game';
 
-let adminPIN = localStorage.getItem('digivex_admin_pin') || 'admin123';
+// Hak admin diverifikasi dari sesi Supabase Auth dan tabel user_roles, bukan PIN/localStorage.
+async function pastikanAdmin() {
+    try {
+        const { data: authData, error: authError } = await sb.auth.getUser();
+        if (authError || !authData?.user) { isAdminLoggedIn = false; return false; }
+        const { data: roleData, error: roleError } = await sb.from('user_roles')
+            .select('role').eq('user_id', authData.user.id).maybeSingle();
+        isAdminLoggedIn = !roleError && roleData?.role === 'admin';
+        return isAdminLoggedIn;
+    } catch (error) {
+        console.error('Pemeriksaan admin gagal:', error);
+        isAdminLoggedIn = false;
+        return false;
+    }
+}
 
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toastContainer');
@@ -37,14 +51,27 @@ function showToast(message, type = 'success') {
 }
 
 window.onload = async function() {
-    // Memastikan user sudah login
     if (!userLogin) {
-        window.location.href = "login.html";
+        window.location.href = 'login.html';
         return;
     }
     document.getElementById('profileNameDisplay').innerText = userLogin;
+
+    // Jangan percaya flag localStorage sendirian. Verifikasi sesi dan role ke Supabase.
+    if (localStorage.getItem('topup_admin') === 'true') {
+        const adminValid = await pastikanAdmin();
+        if (!adminValid) {
+            localStorage.removeItem('topup_admin');
+            showToast('Sesi admin tidak valid. Silakan login admin kembali.', 'error');
+        }
+    }
     await loadProductsFromDB();
-    if(userLogin) await loadRiwayatFromDB();
+    if (userLogin) await loadRiwayatFromDB();
+    if (isAdminLoggedIn) {
+        const adminNav = document.querySelectorAll('.bottom-nav a')[4];
+        gantiHalaman('admin', adminNav);
+        await loadAllOrdersAdmin();
+    }
 }
 
 async function loadProductsFromDB() {
@@ -85,21 +112,27 @@ async function loadRiwayatFromDB() {
 }
 
 async function loadAllOrdersAdmin() {
+    if (!(await pastikanAdmin())) return showToast('Akses ditolak: akun bukan Admin.', 'error');
     const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false });
-    if (error) return console.error(error);
+    if (error) return showToast('Gagal memuat pesanan: ' + error.message, 'error');
     renderAdminOrders(data);
 }
 
-function prosesLogout() {
+async function prosesLogout() {
+    try { await sb.auth.signOut(); } catch (error) { console.warn(error); }
     localStorage.removeItem('topup_user');
     localStorage.removeItem('topup_email');
-    showToast("Berhasil keluar", "info");
-    setTimeout(() => {
-        window.location.href = "login.html";
-    }, 1000);
+    localStorage.removeItem('topup_admin');
+    isAdminLoggedIn = false;
+    showToast('Berhasil keluar', 'info');
+    setTimeout(() => { window.location.href = 'login.html'; }, 700);
 }
 
 function gantiHalaman(namaHalaman, element) {
+    if (namaHalaman === 'admin' && !isAdminLoggedIn) {
+        window.location.href = 'admin.html';
+        return;
+    }
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.getElementById('page-' + namaHalaman).classList.add('active');
     document.querySelectorAll('.bottom-nav a').forEach(a => a.classList.remove('active'));
@@ -292,28 +325,21 @@ function renderRiwayatUser(orders) {
     });
 }
 
-function bukaAdminLogin() {
-    if (isAdminLoggedIn) {
+async function bukaAdminLogin() {
+    if (await pastikanAdmin()) {
         gantiHalaman('admin', document.querySelectorAll('.bottom-nav a')[4]);
-        loadAllOrdersAdmin();
+        await loadAllOrdersAdmin();
     } else {
-        document.getElementById('adminLoginModal').classList.add('active');
-        document.getElementById('adminPassInput').value = "";
+        window.location.href = 'admin.html';
     }
 }
 
-function tutupLoginAdmin() { document.getElementById('adminLoginModal').classList.remove('active'); }
-
-function cekPasswordAdmin() {
-    if (document.getElementById('adminPassInput').value === adminPIN) {
-        isAdminLoggedIn = true;
-        tutupLoginAdmin();
-        gantiHalaman('admin', document.querySelectorAll('.bottom-nav a')[4]);
-        loadAllOrdersAdmin();
-        showToast("Login Admin Berhasil", "success");
-    } else { 
-        showToast("PIN Salah!", "error"); 
-    }
+async function logoutAdmin() {
+    try { await sb.auth.signOut(); } catch (error) { console.warn(error); }
+    localStorage.removeItem('topup_admin');
+    isAdminLoggedIn = false;
+    showToast('Sesi admin telah diakhiri.', 'success');
+    setTimeout(() => { window.location.href = 'login.html'; }, 700);
 }
 
 function switchTabAdmin(tab, btn) {
@@ -348,6 +374,7 @@ function tampilkanEditorAdmin() {
 }
 
 async function simpanPerubahanAdmin() {
+    if (!(await pastikanAdmin())) return showToast('Akses ditolak: hanya Admin yang dapat mengubah produk.', 'error');
     const gameId = document.getElementById('adminSelectGame').value;
     if (!gameId) return;
     const game = dataGame.find(g => g.id === gameId);
@@ -363,6 +390,7 @@ async function simpanPerubahanAdmin() {
 }
 
 async function tambahGameBaru() {
+    if (!(await pastikanAdmin())) return showToast('Akses ditolak: hanya Admin yang dapat menambah produk.', 'error');
     const nama = document.getElementById('newGameName').value.trim();
     const cat = document.getElementById('newGameCat').value;
     
@@ -390,16 +418,12 @@ async function tambahGameBaru() {
 }
 
 function gantiPinAdmin() {
-    const newPin = document.getElementById('newPinInput').value.trim();
-    if (newPin.length < 4) return showToast("PIN minimal 4 digit", "error");
-    adminPIN = newPin;
-    localStorage.setItem('digivex_admin_pin', newPin);
-    document.getElementById('pinStatus').style.display = 'block';
-    document.getElementById('newPinInput').value = "";
-    showToast("PIN berhasil diubah", "success");
+    // PIN lokal lama tidak lagi dipakai. Admin memakai Supabase Auth.
+    return logoutAdmin();
 }
 
 async function ubahStatusSukses(orderId) {
+    if (!(await pastikanAdmin())) return showToast('Akses ditolak: hanya Admin yang dapat mengubah pesanan.', 'error');
     const { error } = await sb.from('orders').update({ status: 'Sukses' }).eq('id', orderId);
     if(error) return showToast("Gagal update status!", "error");
     showToast("Pesanan Selesai!", "success");
@@ -407,6 +431,16 @@ async function ubahStatusSukses(orderId) {
 }
 
 function renderAdminOrders(orders) {
+    const pendings = orders.filter(o => (o.status || 'Pending') !== 'Sukses');
+    const successes = orders.filter(o => o.status === 'Sukses');
+    const revenue = successes.reduce((sum, o) => sum + (Number(o.price) || 0), 0);
+    const rupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 });
+    const revenueEl = document.getElementById('statPendapatan');
+    const pendingEl = document.getElementById('statPending');
+    const successEl = document.getElementById('statSukses');
+    if (revenueEl) revenueEl.textContent = rupiah.format(revenue);
+    if (pendingEl) pendingEl.textContent = pendings.length;
+    if (successEl) successEl.textContent = successes.length;
     const container = document.getElementById('adminOrderList');
     container.innerHTML = "";
     if (!orders || orders.length === 0) { container.innerHTML = '<p style="color: #94a3b8; text-align: center;">Belum ada pesanan.</p>'; return; }
