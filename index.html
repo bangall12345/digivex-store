@@ -17,8 +17,6 @@
 
     <div id="toastContainer"><i class="fa-solid fa-circle-check" id="toastIcon"></i><span id="toastMessage">Pesan</span></div>
 
-    <!-- POP-UP PIN ADMIN LAMA SUDAH DIHAPUS -->
-
     <!-- HEADER -->
     <header class="app-header">
         <div class="logo" style="display: flex; align-items: center; gap: 8px; color: var(--text-main);">
@@ -82,7 +80,7 @@
             </div>
         </div>
 
-        <!-- ADMIN PANEL -->
+        <!-- ADMIN PANEL (Desain Modern Anda) -->
         <div id="page-admin" class="page admin-modern">
             <section class="admin-hero">
                 <div class="admin-hero-top">
@@ -180,7 +178,6 @@
         <a onclick="gantiHalaman('tracking', this)"><i class="fa-solid fa-truck-fast"></i><span>Lacak</span></a>
         <a onclick="gantiHalaman('history', this)"><i class="fa-solid fa-clock-rotate-left"></i><span>Riwayat</span></a>
         <a onclick="gantiHalaman('account', this)"><i class="fa-solid fa-user"></i><span>Akun</span></a>
-        <!-- TOMBOL ADMIN DIARAHKAN KE HALAMAN ADMIN.HTML -->
         <a href="admin.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
     </nav>
 
@@ -275,11 +272,15 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
     
-    <!-- SCRIPT PENGAMAN: Jika belum login, lempar ke login.html -->
+    <!-- SCRIPT PENGAMAN BARU (Anti Inspect Element) -->
     <script>
-        if (!localStorage.getItem('topup_user')) {
-            window.location.href = "login.html";
+        async function cekSesiAsli() {
+            const { data, error } = await sb.auth.getSession();
+            if (error || !data.session) {
+                window.location.href = "login.html";
+            }
         }
+        cekSesiAsli();
     </script>
 </body>
 </html>
