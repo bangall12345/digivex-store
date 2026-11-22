@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4f46e5">
+    <title>Login - DIGIVEX STORE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="padding-bottom: 0;">
+
+    <div id="toastContainer"><i class="fa-solid fa-circle-check" id="toastIcon"></i><span id="toastMessage">Pesan</span></div>
+
+    <div style="display: flex; flex-direction: column; justify-content: center; min-height: 100vh; padding: 30px;">
+        <div class="login-logo"><i class="fa-solid fa-bolt"></i></div>
+        <h1 class="login-title">Masuk ke DIGIVEX STORE</h1>
+        
+        <input type="text" id="loginName" class="login-input" placeholder="Masukkan Nama Anda">
+        <input type="email" id="loginEmail" class="login-input" placeholder="Masukkan Email Anda">
+        
+        <button class="login-btn" onclick="prosesLogin()">Masuk Aplikasi</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Koneksi ke database Supabase
+        const sb = supabase.createClient("https://bopjwidqospiraxzpqz.supabase.co", "sb_publishable_DXnkosMz9WhV5D4KDLvPbA_Nkpeg_ZX");
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toastContainer');
+            const icon = document.getElementById('toastIcon');
+            document.getElementById('toastMessage').innerText = message;
+            toast.className = 'show ' + type;
+            icon.className = type === 'success' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark';
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        async function prosesLogin() {
+            const nama = document.getElementById('loginName').value.trim();
+            const email = document.getElementById('loginEmail').value.trim();
+            
+            if (!nama || !email) return showToast("Nama dan Email wajib diisi!", "error");
+            
+            showToast("Memproses...", "info");
+
+            // Menyimpan data ke tabel 'users' di Supabase
+            const { error } = await sb.from('users').insert([{ nama: nama, email: email }]);
+            
+            if (error) {
+                console.error(error);
+                return showToast("Gagal menyimpan data ke server.", "error");
+            }
+
+            // Simpan di HP (Local Storage) agar tidak login ulang
+            localStorage.setItem('topup_user', nama);
+            localStorage.setItem('topup_email', email);
+            
+            showToast("Login berhasil! Mengalihkan...", "success");
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
