@@ -1,73 +1,92 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#4f46e5">
-  <title>Login - DIGIVEX STORE</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#4f46e5">
+<title>Login - DIGIVEX STORE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
 </head>
-<body style="padding-bottom:0">
-  <div id="toastContainer"><i class="fa-solid fa-circle-check" id="toastIcon"></i><span id="toastMessage">Pesan</span></div>
-  <div style="display:flex;flex-direction:column;justify-content:center;min-height:100vh;padding:30px">
-    <div class="login-logo"><i class="fa-solid fa-bolt"></i></div>
-    <h1 class="login-title">Masuk ke DIGIVEX STORE</h1>
-    <input type="text" id="loginName" class="login-input" placeholder="Masukkan Nama Anda" autocomplete="name">
-    <input type="email" id="loginEmail" class="login-input" placeholder="Masukkan Email Anda" autocomplete="email">
-    <button class="login-btn" id="loginButton" onclick="prosesLogin()">Masuk Aplikasi</button>
-    <a href="admin.html" style="text-align:center;margin-top:18px;color:#4f46e5;text-decoration:none;font-weight:600">Login Admin</a>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const sb = supabase.createClient(
-      "https://bopjwidqospiraxzpqz.supabase.co",
-      "sb_publishable_DXnkosMz9WhV5D4KDLvPbA_Nkpeg_ZX"
-    );
+<body style="padding-bottom:0;">
+<div id="toastContainer"><i class="fa-solid fa-circle-check" id="toastIcon"></i><span id="toastMessage">Pesan</span></div>
+<main style="display:flex;flex-direction:column;justify-content:center;min-height:100vh;padding:30px;max-width:520px;margin:auto;">
+<div class="login-logo"><i class="fa-solid fa-bolt"></i></div>
+<h1 class="login-title">Masuk ke DIGIVEX STORE</h1>
+<p style="text-align:center;color:var(--text-muted);margin:0 0 22px;">Gunakan email dan password akun Anda.</p>
+<label for="loginName" style="margin-bottom:6px;">Nama (untuk pendaftaran)</label>
+<input type="text" id="loginName" class="login-input" placeholder="Nama Anda" autocomplete="name">
+<label for="loginEmail" style="margin:10px 0 6px;">Email</label>
+<input type="email" id="loginEmail" class="login-input" placeholder="nama@email.com" autocomplete="username" required>
+<label for="loginPassword" style="margin:10px 0 6px;">Password</label>
+<input type="password" id="loginPassword" class="login-input" placeholder="Minimal 6 karakter" autocomplete="current-password" required>
+<button class="login-btn" id="loginButton" onclick="prosesLogin()">Masuk</button>
+<button class="login-btn" id="registerButton" style="margin-top:12px;background:transparent;border:1px solid var(--primary);color:var(--primary);" onclick="prosesDaftar()">Buat Akun Baru</button>
+<p style="font-size:12px;text-align:center;color:var(--text-muted);margin-top:18px;">Jangan pernah membagikan password Anda kepada siapa pun.</p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://bopjwidqospiraxzpqz.supabase.co";
+const SUPABASE_KEY = "sb_publishable_DXnkosMz9WhV5D4KDLvPbA_Nkpeg_ZX";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    function showToast(message, type = 'success') {
-      const toast = document.getElementById('toastContainer');
-      document.getElementById('toastMessage').innerText = message;
-      toast.className = 'show ' + type;
-      document.getElementById('toastIcon').className = type === 'success'
-        ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark';
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 4500);
-    }
-
-    async function prosesLogin() {
-      const nama = document.getElementById('loginName').value.trim();
-      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-      const button = document.getElementById('loginButton');
-      if (!nama || !email) return showToast('Nama dan Email wajib diisi!', 'error');
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast('Format email tidak valid.', 'error');
-
-      button.disabled = true;
-      button.textContent = 'Memproses...';
-      try {
-        // Simpan profil pelanggan. Jika email sudah ada (unique violation),
-        // pelanggan tetap boleh masuk memakai profil yang sudah terdaftar.
-        const { error } = await sb.from('users').insert([{ nama, email }]);
-        if (error && error.code !== '23505') {
-          console.error('DIGIVEX login error:', error);
-          showToast('Gagal menyimpan: ' + (error.message || 'Kesalahan database'), 'error');
-          return;
-        }
-
-        localStorage.setItem('topup_user', nama);
-        localStorage.setItem('topup_email', email);
-        localStorage.removeItem('topup_admin');
-        showToast('Login berhasil! Mengalihkan...', 'success');
-        setTimeout(() => { window.location.href = 'index.html'; }, 900);
-      } catch (err) {
-        console.error(err);
-        showToast('Koneksi gagal: ' + (err.message || 'Periksa internet Anda'), 'error');
-      } finally {
-        button.disabled = false;
-        button.textContent = 'Masuk Aplikasi';
-      }
-    }
-  </script>
+function showToast(message, type = 'success') {
+ const toast = document.getElementById('toastContainer');
+ const icon = document.getElementById('toastIcon');
+ document.getElementById('toastMessage').innerText = message;
+ toast.className = 'show ' + type;
+ icon.className = type === 'success' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark';
+ toast.classList.add('show');
+ setTimeout(() => toast.classList.remove('show'), 3500);
+}
+function setLoading(loading) {
+ document.getElementById('loginButton').disabled = loading;
+ document.getElementById('registerButton').disabled = loading;
+ document.getElementById('loginButton').innerText = loading ? 'Memproses...' : 'Masuk';
+}
+async function prosesLogin() {
+ const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+ const password = document.getElementById('loginPassword').value;
+ if (!email || !password) return showToast('Email dan password wajib diisi!', 'error');
+ setLoading(true);
+ const { data, error } = await sb.auth.signInWithPassword({ email, password });
+ setLoading(false);
+ if (error) {
+  console.error('Login Supabase:', error);
+  return showToast(error.message || 'Login gagal. Periksa email dan password.', 'error');
+ }
+ const nama = data.user.user_metadata?.full_name || document.getElementById('loginName').value.trim() || email.split('@')[0];
+ localStorage.setItem('topup_user', nama);
+ localStorage.setItem('topup_email', email);
+ showToast('Login berhasil. Mengalihkan...', 'success');
+ setTimeout(() => window.location.replace('index.html'), 700);
+}
+async function prosesDaftar() {
+ const nama = document.getElementById('loginName').value.trim();
+ const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+ const password = document.getElementById('loginPassword').value;
+ if (!nama || !email || !password) return showToast('Nama, email, dan password wajib diisi untuk mendaftar.', 'error');
+ if (password.length < 6) return showToast('Password minimal 6 karakter.', 'error');
+ setLoading(true);
+ const { data, error } = await sb.auth.signUp({ email, password, options: { data: { full_name: nama } } });
+ setLoading(false);
+ if (error) {
+  console.error('Daftar Supabase:', error);
+  return showToast(error.message || 'Pendaftaran gagal.', 'error');
+ }
+ if (data.session) {
+  localStorage.setItem('topup_user', nama);
+  localStorage.setItem('topup_email', email);
+  showToast('Akun berhasil dibuat. Mengalihkan...', 'success');
+  setTimeout(() => window.location.replace('index.html'), 700);
+ } else {
+  showToast('Pendaftaran diterima. Periksa email untuk konfirmasi, lalu masuk.', 'success');
+ }
+}
+sb.auth.getSession().then(({ data, error }) => {
+ if (!error && data.session) window.location.replace('index.html');
+});
+</script>
 </body>
 </html>
