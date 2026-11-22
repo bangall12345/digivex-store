@@ -133,9 +133,10 @@
 
             <div id="admin-tab-setting" class="admin-content-box">
                 <div class="admin-box">
-                    <h4 style="margin-bottom: 10px; color: white;">Keamanan Admin</h4>
-                    <p style="font-size:13px; color:#94a3b8; margin-bottom:15px;">Akun admin menggunakan autentikasi Supabase. Jangan bagikan email atau password admin.</p>
-                    <button class="btn-admin-save" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Keluar dari Panel Admin</button>
+                    <h4 style="margin-bottom: 15px; color: white;">Ganti PIN Admin</h4>
+                    <input type="password" id="newPinInput" class="admin-input" placeholder="Masukkan PIN Baru">
+                    <button class="btn-admin-save" onclick="gantiPinAdmin()">Simpan PIN</button>
+                    <p id="pinStatus" style="font-size:12px; color:#10b981; margin-top:10px; display:none;">PIN berhasil diubah!</p>
                 </div>
             </div>
         </div>
@@ -147,7 +148,7 @@
         <a onclick="gantiHalaman('history', this)"><i class="fa-solid fa-clock-rotate-left"></i><span>Riwayat</span></a>
         <a onclick="gantiHalaman('account', this)"><i class="fa-solid fa-user"></i><span>Akun</span></a>
         <!-- TOMBOL ADMIN DIARAHKAN KE HALAMAN ADMIN.HTML -->
-        <a href="admin.html" onclick="event.preventDefault(); bukaAdminLogin();"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+        <a href="admin.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
     </nav>
 
     <div onclick="bukaFormWa()" class="cs-floating" style="cursor: pointer;">
