@@ -1,0 +1,83 @@
+<!-- MODAL NOMINAL -->
+<div id="nominalModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="nominalTitle">Pilih Nominal</h3>
+            <button onclick="tutupNominal()" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="list-nominal" id="nominalList"></div>
+    </div>
+</div>
+
+<!-- MODAL CHECKOUT -->
+<div id="checkoutModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Konfirmasi Pesanan</h3>
+            <button onclick="tutupCheckout()" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="formOrder" onsubmit="prosesPesanan(event)">
+            <div class="order-detail">
+                <p>Produk: <span id="modalProduct">-</span></p>
+                <p>Item: <span id="modalItem">-</span></p>
+                <p>Total: <strong id="modalPrice">-</strong></p>
+            </div>
+            <div class="form-group">
+                <label id="labelUserId">Masukkan User ID</label>
+                <input type="number" id="userId" placeholder="Contoh: 12345678" required>
+            </div>
+            <div class="form-group" id="zoneIdGroup" style="display: none;">
+                <label>Masukkan Zone ID (Server)</label>
+                <input type="number" id="zoneId" placeholder="Contoh: 1234">
+            </div>
+            <div class="form-group">
+                <label>Metode Pembayaran</label>
+                <select id="paymentMethod" required>
+                    <option value="">-- Pilih --</option>
+                    <option value="QRIS">QRIS</option>
+                    <option value="DANA">DANA</option>
+                    <option value="OVO">OVO</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-submit">Buat Pesanan</button>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL INVOICE (NOTA) -->
+<div id="invoiceModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Nota Pesanan</h3>
+            <button onclick="tutupInvoice()" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="invoiceContent" style="font-size: 14px; line-height: 1.6;"></div>
+    </div>
+</div>
+
+<!-- MODAL FORM WHATSAPP -->
+<div id="waModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> Hubungi Admin</h3>
+            <button onclick="tutupFormWa()" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="formWa" onsubmit="kirimFormWa(event)">
+            <div class="form-group">
+                <label>Nama Anda</label>
+                <input type="text" id="waName" placeholder="Contoh: Budi" required>
+            </div>
+            <div class="form-group">
+                <label>Nomor HP</label>
+                <input type="tel" id="waPhone" placeholder="Contoh: 08123456789" required>
+            </div>
+            <div class="form-group">
+                <label>Pesan / Kendala</label>
+                <textarea id="waMessage" rows="3" placeholder="Tulis pesan Anda di sini..." required style="width:100%;padding:15px;border:2px solid #e2e8f0;border-radius:12px;outline:none;font-size:15px;font-family:inherit;resize:vertical;"></textarea>
+            </div>
+            <button type="submit" class="btn-submit" style="background:#25d366; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Kirim via WhatsApp
+            </button>
+        </form>
+    </div>
+</div>

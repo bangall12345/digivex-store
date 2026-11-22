@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4f46e5">
+    <title>DIGIVEX STORE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Favicon & PWA -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co.com/6PyY6Z0/logo.png">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+    <div id="toastContainer"><i class="fa-solid fa-circle-check" id="toastIcon"></i><span id="toastMessage">Pesan</span></div>
+
+    <div id="loginScreen">
+        <div class="login-logo"><i class="fa-solid fa-bolt"></i></div>
+        <h1 class="login-title">Masuk ke DIGIVEX STORE</h1>
+        <input type="text" id="loginName" class="login-input" placeholder="Masukkan Nama Anda">
+        <button class="login-btn" onclick="prosesLogin()">Masuk Aplikasi</button>
+    </div>
+
+    <div id="adminLoginModal">
+        <div class="admin-login-box">
+            <i class="fa-solid fa-user-shield"></i>
+            <h2 style="color:white; margin-bottom:15px;">Panel Admin</h2>
+            <input type="password" id="adminPassInput" placeholder="PIN Admin">
+            <button onclick="cekPasswordAdmin()">Masuk</button>
+            <button style="background:#334155;" onclick="tutupLoginAdmin()">Batal</button>
+        </div>
+    </div>
+
+    <!-- HEADER DENGAN LOGO BARU (SUDAH RAPI) -->
+    <header class="app-header">
+        <div class="logo" style="display: flex; align-items: center; gap: 8px; color: var(--text-main);">
+            <img src="https://i.ibb.co.com/6PyY6Z0/logo.png" alt="Logo DIGIVEX" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+            DIGIVEX STORE
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- BERANDA -->
+        <div id="page-home" class="page active">
+            <!-- BANNER MOBILE LEGENDS -->
+            <div class="banner" style="background: url('https://i.ibb.co.com/3Jd9Z9b/mobile-legends.jpg') center/cover no-repeat; height: 180px; display: flex; align-items: flex-end; padding: 20px; position: relative; overflow: hidden; border-radius: 20px; margin-bottom: 25px; box-shadow: var(--shadow-md);">
+                <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);"></div>
+                <div style="position: relative; z-index: 2; color: white;">
+                    <span class="badge" style="background: #facc15; color: #854d0e; font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: 800; display: inline-block; margin-bottom: 5px;">TOP UP INSTAN</span>
+                    <h2 style="font-size: 22px; font-weight: 800; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">Mobile Legends</h2>
+                    <p style="font-size: 12px; margin-top: 4px; color: #e2e8f0;">Proses otomatis 24 jam</p>
+                </div>
+            </div>
+            
+            <div class="category-grid">
+                <div class="category-item active-cat" id="cat-Pulsa" onclick="filterKategori('Pulsa', this)"><i class="fa-solid fa-mobile-screen cat-icon text-blue"></i><span>Pulsa</span></div>
+                <div class="category-item" id="cat-Data" onclick="filterKategori('Data', this)"><i class="fa-solid fa-wifi cat-icon text-green"></i><span>Data</span></div>
+                <div class="category-item" id="cat-Game" onclick="filterKategori('Game', this)"><i class="fa-solid fa-gamepad cat-icon text-purple"></i><span>Game</span></div>
+                <div class="category-item" onclick="showToast('Fitur Listrik segera hadir!', 'info')"><i class="fa-solid fa-bolt cat-icon text-orange"></i><span>Listrik</span></div>
+            </div>
+
+            <!-- FITUR PENCARIAN -->
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Cari produk impianmu..." onkeyup="cariProduk()">
+            </div>
+            
+            <h3 class="section-title" id="sectionTitle">Katalog Game</h3>
+            <div class="product-grid" id="productList"></div>
+        </div>
+
+        <!-- LACAK PESANAN -->
+        <div id="page-tracking" class="page">
+            <h3 class="section-title">Lacak Pesanan</h3>
+            <div class="tracking-box">
+                <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">Masukkan Nomor Invoice atau ID Tujuan Anda.</p>
+                <input type="text" id="trackingInput" class="form-input" placeholder="Contoh: INV-12345 atau 12345678">
+                <button class="btn-submit" onclick="lacakPesanan()">Cari Pesanan</button>
+            </div>
+            <div id="trackingResult" style="margin-top:20px;"></div>
+        </div>
+
+        <!-- RIWAYAT -->
+        <div id="page-history" class="page">
+            <h3 class="section-title">Riwayat Transaksi</h3>
+            <div id="historyList"></div>
+        </div>
+
+        <!-- AKUN -->
+        <div id="page-account" class="page">
+            <h3 class="section-title">Profil Saya</h3>
+            <div class="profile-box">
+                <i class="fa-solid fa-circle-user"></i>
+                <h3 id="profileNameDisplay">Pengguna</h3>
+                <button class="btn-logout" onclick="prosesLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar Akun</button>
+            </div>
+        </div>
+
+        <!-- ADMIN PANEL -->
+        <div id="page-admin" class="page">
+            <div class="admin-header-box">
+                <h2><i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i> Dashboard Admin</h2>
+                <span class="badge-active">Admin</span>
+            </div>
+            
+            <!-- STATISTIK ADMIN -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span>Pendapatan</span>
+                    <h3 id="statPendapatan">Rp 0</h3>
+                </div>
+                <div class="stat-card">
+                    <span>Pending</span>
+                    <h3 id="statPending" style="color: #f59e0b;">0</h3>
+                </div>
+                <div class="stat-card">
+                    <span>Sukses</span>
+                    <h3 id="statSukses" style="color: #10b981;">0</h3>
+                </div>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" onclick="switchTabAdmin('produk', this)">Produk</button>
+                <button class="admin-tab-btn" onclick="switchTabAdmin('pesanan', this)">Pesanan</button>
+                <button class="admin-tab-btn" onclick="switchTabAdmin('setting', this)">Setting</button>
+            </div>
+
+            <!-- TAB PRODUK -->
+            <div id="admin-tab-produk" class="admin-content-box active">
+                <div class="admin-box">
+                    <h4 style="margin-bottom: 10px; font-size: 14px; color: white;">Tambah Game Baru</h4>
+                    <input type="text" id="newGameName" class="admin-input" placeholder="Nama Game (cth: Genshin Impact)">
+                    <select id="newGameCat" class="admin-input">
+                        <option value="Game">Kategori Game</option>
+                        <option value="Pulsa">Kategori Pulsa</option>
+                        <option value="Data">Kategori Data</option>
+                    </select>
+                    <button class="btn-admin-save" onclick="tambahGameBaru()"><i class="fa-solid fa-plus"></i> Tambah Game</button>
+                </div>
+                <div class="admin-box">
+                    <p style="font-size: 13px; color: #94a3b8; margin-bottom: 15px;">Pilih game untuk mengedit nominal/harga.</p>
+                    <select id="adminSelectGame" class="admin-input" onchange="tampilkanEditorAdmin()">
+                        <option value="">-- Pilih Game --</option>
+                    </select>
+                </div>
+                <div id="adminEditorBox" class="admin-box" style="display: none;">
+                    <h4 id="adminGameTitle" style="margin-bottom: 15px; color: white;">Edit Nominal</h4>
+                    <div id="adminItemsContainer"></div>
+                    <button class="btn-admin-save" onclick="simpanPerubahanAdmin()">Simpan Perubahan</button>
+                </div>
+            </div>
+
+            <!-- TAB PESANAN -->
+            <div id="admin-tab-pesanan" class="admin-content-box">
+                <div class="admin-box">
+                    <div id="adminOrderList"></div>
+                </div>
+            </div>
+
+            <!-- TAB SETTING -->
+            <div id="admin-tab-setting" class="admin-content-box">
+                <div class="admin-box">
+                    <h4 style="margin-bottom: 15px; color: white;">Ganti PIN Admin</h4>
+                    <input type="password" id="newPinInput" class="admin-input" placeholder="Masukkan PIN Baru">
+                    <button class="btn-admin-save" onclick="gantiPinAdmin()">Simpan PIN</button>
+                    <p id="pinStatus" style="font-size:12px; color:#10b981; margin-top:10px; display:none;">PIN berhasil diubah!</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <a onclick="gantiHalaman('home', this)" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+        <a onclick="gantiHalaman('tracking', this)"><i class="fa-solid fa-truck-fast"></i><span>Lacak</span></a>
+        <a onclick="gantiHalaman('history', this)"><i class="fa-solid fa-clock-rotate-left"></i><span>Riwayat</span></a>
+        <a onclick="gantiHalaman('account', this)"><i class="fa-solid fa-user"></i><span>Akun</span></a>
+        <a onclick="bukaAdminLogin()"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+    </nav>
+
+    <!-- TOMBOL WHATSAPP MELAYANG -->
+    <div onclick="bukaFormWa()" class="cs-floating" style="cursor: pointer;">
+        <i class="fa-brands fa-whatsapp"></i>
+    </div>
+
+    <!-- MODAL NOMINAL -->
+    <div id="nominalModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="nominalTitle">Pilih Nominal</h3>
+                <button onclick="tutupNominal()" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="list-nominal" id="nominalList"></div>
+        </div>
+    </div>
+
+    <!-- MODAL CHECKOUT -->
+    <div id="checkoutModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Konfirmasi Pesanan</h3>
+                <button onclick="tutupCheckout()" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="formOrder" onsubmit="prosesPesanan(event)">
+                <div class="order-detail">
+                    <p>Produk: <span id="modalProduct">-</span></p>
+                    <p>Item: <span id="modalItem">-</span></p>
+                    <p>Total: <strong id="modalPrice">-</strong></p>
+                </div>
+                <div class="form-group">
+                    <label id="labelUserId">Masukkan User ID</label>
+                    <input type="number" id="userId" placeholder="Contoh: 12345678" required>
+                </div>
+                <div class="form-group" id="zoneIdGroup" style="display: none;">
+                    <label>Masukkan Zone ID (Server)</label>
+                    <input type="number" id="zoneId" placeholder="Contoh: 1234">
+                </div>
+                <div class="form-group">
+                    <label>Metode Pembayaran</label>
+                    <select id="paymentMethod" required>
+                        <option value="">-- Pilih --</option>
+                        <option value="QRIS">QRIS</option>
+                        <option value="DANA">DANA</option>
+                        <option value="OVO">OVO</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit">Buat Pesanan</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL INVOICE (NOTA) -->
+    <div id="invoiceModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nota Pesanan</h3>
+                <button onclick="tutupInvoice()" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="invoiceContent" style="font-size: 14px; line-height: 1.6;"></div>
+        </div>
+    </div>
+
+    <!-- MODAL FORM WHATSAPP (BARU) -->
+    <div id="waModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> Hubungi Admin</h3>
+                <button onclick="tutupFormWa()" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="formWa" onsubmit="kirimFormWa(event)">
+                <div class="form-group">
+                    <label>Nama Anda</label>
+                    <input type="text" id="waName" placeholder="Contoh: Budi" required>
+                </div>
+                <div class="form-group">
+                    <label>Nomor HP</label>
+                    <input type="tel" id="waPhone" placeholder="Contoh: 08123456789" required>
+                </div>
+                <div class="form-group">
+                    <label>Pesan / Kendala</label>
+                    <textarea id="waMessage" rows="3" placeholder="Tulis pesan Anda di sini..." required style="width:100%;padding:15px;border:2px solid #e2e8f0;border-radius:12px;outline:none;font-size:15px;font-family:inherit;resize:vertical;"></textarea>
+                </div>
+                <button type="submit" class="btn-submit" style="background:#25d366; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Kirim via WhatsApp
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
