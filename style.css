@@ -239,3 +239,18 @@ button:active, .product-card:active, .category-item:active { transform: scale(.9
 .admin-stats-modern .stat-card small { display:block;margin-top:6px;color:#777f9d;font-size:9px; }
 .admin-manage-heading { margin-top:2px; }
 .admin-tabs-modern { display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:5px;margin-bottom:15px;borde
+  border-radius:12px; background:#151827; }
+.admin-tabs-modern .admin-tab-btn { padding:10px 5px; border:0; border-radius:9px; background:transparent; font-size:11px; }
+.admin-tabs-modern .admin-tab-btn.active { background:var(--primary); color:white; }
+.admin-panel-card { background:#171a2b; border:1px solid var(--adm-line); }
+.admin-card-heading { display:flex; align-items:flex-start; gap:10px; margin-bottom:15px; }
+.admin-card-icon { display:grid; place-items:center; width:32px; height:32px; border-radius:10px; background:rgba(155,123,255,.15); color:var(--primary); font-size:14px; flex-shrink:0; }
+.admin-card-icon-blue { background:rgba(59,130,246,.15); color:#3b82f6; }
+.admin-card-icon-green { background:rgba(16,185,129,.15); color:#10b981; }
+.admin-card-icon-orange { background:rgba(245,158,11,.15); color:#f59e0b; }
+.admin-card-heading h4 { font-size:14px; margin:0 0 4px; color:white; }
+.admin-card-heading p { font-size:11px; margin:0; color:#94a3b8; }
+.admin-field-label { display:block; margin-bottom:6px; font-size:11px; color:#94a3b8; font-weight:600; }
+.admin-security-note { display:flex; align-items:center; gap:10px; padding:12px; border-radius:10px; background:rgba(245,158,11,.1); color:#f59e0b; font-size:12px; margin-bottom:15px; }
+.admin-secondary-action { background:#334155; }
+.admin-footer-note { text-align:center; font-size:10px; color:#64748b; margin-top:20px; padding-bottom:20px; }
