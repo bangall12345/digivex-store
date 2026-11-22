@@ -203,3 +203,40 @@ button:active, .product-card:active, .category-item:active { transform: scale(.9
   .stats-grid { gap: 6px; }
   .stat-card h3 { font-size: 12px; }
 }
+
+
+/* ===== DIGIVEX MODERN ADMIN WORKSPACE ===== */
+#page-admin.admin-modern {
+  --adm-card: #171a2b; --adm-line: rgba(169,158,220,.15); --adm-muted: #9298b3;
+  min-height:100vh; margin:-22px -18px; padding:18px 15px 110px;
+  color:#f7f7ff; background:radial-gradient(ellipse at 90% 0%,rgba(113,78,224,.22),transparent 38%),linear-gradient(180deg,#101223 0%,#0b0d18 100%);
+}
+.admin-hero { position:relative; overflow:hidden; padding:21px; margin-bottom:25px; border:1px solid rgba(177,153,255,.24); border-radius:23px; background:linear-gradient(135deg,#30245f 0%,#211d43 52%,#171a31 100%); box-shadow:0 16px 40px rgba(0,0,0,.2); }
+.admin-hero:after { content:""; position:absolute; width:190px;height:190px;right:-65px;top:35px;border-radius:50%;background:rgba(167,139,250,.12);filter:blur(2px); }
+.admin-hero-top,.admin-hero-footer { position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between; }
+.admin-brand-mark { display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#b49aff,#7956e8);color:white;font-size:19px;box-shadow:0 7px 20px rgba(132,93,235,.35); }
+.admin-live { display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid rgba(74,222,170,.2);border-radius:30px;background:rgba(20,184,132,.1);color:#75e6bd;font-size:9px;font-weight:900;letter-spacing:.8px; }
+.admin-live span { width:7px;height:7px;border-radius:50%;background:#48d9a5;box-shadow:0 0 0 4px rgba(72,217,165,.12); }
+.admin-eyebrow { position:relative;z-index:1;margin:22px 0 7px;color:#b9a9fa;font-size:9px;font-weight:900;letter-spacing:1.7px; }
+.admin-hero h2 { position:relative;z-index:1;margin:0;color:#fff;font-size:27px;font-weight:900;letter-spacing:-1px; }
+.admin-welcome { position:relative;z-index:1;max-width:290px;margin:8px 0 22px;color:#c1bddb;font-size:12px;line-height:1.6; }
+.admin-hero-footer { padding-top:14px;border-top:1px solid rgba(255,255,255,.12); }
+.admin-hero-footer small { display:block;margin-bottom:5px;color:#a9a1ce;font-size:8px;font-weight:800;letter-spacing:1px; }
+.admin-hero-footer strong { color:#fff;font-size:11px; }
+.admin-hero-footer strong i { margin-right:5px;color:#b9a0ff; }
+.admin-avatar { display:grid;place-items:center;width:36px;height:36px;border:1px solid rgba(255,255,255,.18);border-radius:12px;background:rgba(255,255,255,.1);color:#d8ccff; }
+.admin-section-heading { display:flex;align-items:end;justify-content:space-between;margin:0 2px 12px; }
+.admin-section-heading span { color:#8f84c5;font-size:8px;font-weight:900;letter-spacing:1.5px; }
+.admin-section-heading h3 { margin:4px 0 0;color:#f7f7ff;font-size:17px;font-weight:850;letter-spacing:-.4px; }
+.admin-period { display:flex;align-items:center;gap:5px;padding:7px 9px;border:1px solid var(--adm-line);border-radius:9px;color:#b7b4cc!important;font-size:9px!important;letter-spacing:0!important; }
+.admin-stats-modern { grid-template-columns:1fr 1fr;gap:10px;margin-bottom:25px; }
+.admin-stats-modern .stat-card { position:relative;min-height:120px;padding:13px;border:1px solid var(--adm-line);border-radius:17px;background:linear-gradient(145deg,#1b1e32,#151827);text-align:left;box-shadow:0 8px 20px rgba(0,0,0,.12); }
+.admin-stats-modern .stat-card:first-child { grid-column:1/-1;min-height:132px;background:linear-gradient(120deg,#29204f,#1a1c32); }
+.admin-stat-icon { display:grid;place-items:center;width:30px;height:30px;margin-bottom:10px;border-radius:10px;background:rgba(167,139,250,.15);color:#bba5ff;font-size:13px; }
+.admin-stat-pending .admin-stat-icon { background:rgba(245,158,11,.12);color:#f6bb59; }
+.admin-stat-success .admin-stat-icon { background:rgba(34,197,139,.12);color:#54ddb0; }
+.admin-stats-modern .stat-card span { margin-bottom:5px;color:#a4a7bf;font-size:10px; }
+.admin-stats-modern .stat-card h3 { margin:0;color:#fff;font-size:20px;font-weight:900;letter-spacing:-.5px; }
+.admin-stats-modern .stat-card small { display:block;margin-top:6px;color:#777f9d;font-size:9px; }
+.admin-manage-heading { margin-top:2px; }
+.admin-tabs-modern { display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:5px;margin-bottom:15px;bord
