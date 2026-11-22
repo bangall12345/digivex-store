@@ -1,0 +1,54 @@
+
+name: Build DIGIVEX STORE APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ambil source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install Capacitor
+        run: |
+          npm init -y
+          npm install @capacitor/core @capacitor/android
+          npm install -D @capacitor/cli
+
+      - name: Siapkan aplikasi
+        run: |
+          mkdir www
+          cp index.html login.html admin.html components.html style.css script.js manifest.json service-worker.js www/
+          npx cap init "DIGIVEX STORE" com.digivex.store --web-dir www
+          npx cap add android
+          npx cap sync android
+
+      - name: Build APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Simpan APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: DIGIVEX-STORE-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          
