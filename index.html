@@ -83,62 +83,95 @@
         </div>
 
         <!-- ADMIN PANEL -->
-        <div id="page-admin" class="page">
-            <div class="admin-header-box">
-                <h2><i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i> Dashboard Admin</h2>
-                <span class="badge-active">Admin</span>
+        <div id="page-admin" class="page admin-modern">
+            <section class="admin-hero">
+                <div class="admin-hero-top">
+                    <div class="admin-brand-mark"><i class="fa-solid fa-bolt"></i></div>
+                    <span class="admin-live"><span></span> SISTEM AKTIF</span>
+                </div>
+                <p class="admin-eyebrow">DIGIVEX STORE / CONTROL CENTER</p>
+                <h2>Dashboard Admin</h2>
+                <p class="admin-welcome">Kelola toko, pantau transaksi, dan atur katalog dari satu tempat.</p>
+                <div class="admin-hero-footer">
+                    <div><small>STATUS AKUN</small><strong><i class="fa-solid fa-shield-halved"></i> Administrator</strong></div>
+                    <div class="admin-avatar"><i class="fa-solid fa-user-astronaut"></i></div>
+                </div>
+            </section>
+
+            <div class="admin-section-heading">
+                <div><span>RINGKASAN</span><h3>Performa toko</h3></div>
+                <span class="admin-period"><i class="fa-regular fa-calendar"></i> Saat ini</span>
             </div>
-            
-            <div class="stats-grid">
-                <div class="stat-card"><span>Pendapatan</span><h3 id="statPendapatan">Rp 0</h3></div>
-                <div class="stat-card"><span>Pending</span><h3 id="statPending" style="color: #f59e0b;">0</h3></div>
-                <div class="stat-card"><span>Sukses</span><h3 id="statSukses" style="color: #10b981;">0</h3></div>
+            <div class="stats-grid admin-stats-modern">
+                <div class="stat-card admin-stat-revenue">
+                    <div class="admin-stat-icon"><i class="fa-solid fa-wallet"></i></div>
+                    <span>Total Pendapatan</span><h3 id="statPendapatan">Rp 0</h3>
+                    <small>Akumulasi transaksi sukses</small>
+                </div>
+                <div class="stat-card admin-stat-pending">
+                    <div class="admin-stat-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+                    <span>Pesanan Pending</span><h3 id="statPending">0</h3>
+                    <small>Perlu ditindaklanjuti</small>
+                </div>
+                <div class="stat-card admin-stat-success">
+                    <div class="admin-stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+                    <span>Pesanan Sukses</span><h3 id="statSukses">0</h3>
+                    <small>Transaksi selesai</small>
+                </div>
             </div>
 
-            <div class="admin-tabs">
-                <button class="admin-tab-btn active" onclick="switchTabAdmin('produk', this)">Produk</button>
-                <button class="admin-tab-btn" onclick="switchTabAdmin('pesanan', this)">Pesanan</button>
-                <button class="admin-tab-btn" onclick="switchTabAdmin('setting', this)">Setting</button>
+            <div class="admin-section-heading admin-manage-heading">
+                <div><span>WORKSPACE</span><h3>Kelola toko</h3></div>
+            </div>
+            <div class="admin-tabs admin-tabs-modern">
+                <button class="admin-tab-btn active" onclick="switchTabAdmin('produk', this)"><i class="fa-solid fa-cubes-stacked"></i><span>Produk</span></button>
+                <button class="admin-tab-btn" onclick="switchTabAdmin('pesanan', this)"><i class="fa-solid fa-receipt"></i><span>Pesanan</span></button>
+                <button class="admin-tab-btn" onclick="switchTabAdmin('setting', this)"><i class="fa-solid fa-sliders"></i><span>Pengaturan</span></button>
             </div>
 
             <div id="admin-tab-produk" class="admin-content-box active">
-                <div class="admin-box">
-                    <h4 style="margin-bottom: 10px; font-size: 14px; color: white;">Tambah Game Baru</h4>
-                    <input type="text" id="newGameName" class="admin-input" placeholder="Nama Game (cth: Genshin Impact)">
+                <div class="admin-box admin-panel-card">
+                    <div class="admin-card-heading"><div class="admin-card-icon"><i class="fa-solid fa-plus"></i></div><div><h4>Tambah produk baru</h4><p>Tambahkan game atau layanan ke katalog toko.</p></div></div>
+                    <label class="admin-field-label" for="newGameName">Nama produk / game</label>
+                    <input type="text" id="newGameName" class="admin-input" placeholder="Contoh: Mobile Legends">
+                    <label class="admin-field-label" for="newGameCat">Kategori</label>
                     <select id="newGameCat" class="admin-input">
-                        <option value="Game">Kategori Game</option>
-                        <option value="Pulsa">Kategori Pulsa</option>
-                        <option value="Data">Kategori Data</option>
+                        <option value="Game">Game</option>
+                        <option value="Pulsa">Pulsa</option>
+                        <option value="Data">Paket Data</option>
                     </select>
-                    <button class="btn-admin-save" onclick="tambahGameBaru()"><i class="fa-solid fa-plus"></i> Tambah Game</button>
+                    <button class="btn-admin-save" onclick="tambahGameBaru()"><i class="fa-solid fa-plus"></i> Tambahkan ke katalog</button>
                 </div>
-                <div class="admin-box">
-                    <p style="font-size: 13px; color: #94a3b8; margin-bottom: 15px;">Pilih game untuk mengedit nominal/harga.</p>
+                <div class="admin-box admin-panel-card">
+                    <div class="admin-card-heading"><div class="admin-card-icon admin-card-icon-blue"><i class="fa-solid fa-tags"></i></div><div><h4>Kelola harga & nominal</h4><p>Pilih produk untuk mengubah nama item dan harga.</p></div></div>
+                    <label class="admin-field-label" for="adminSelectGame">Pilih produk</label>
                     <select id="adminSelectGame" class="admin-input" onchange="tampilkanEditorAdmin()">
-                        <option value="">-- Pilih Game --</option>
+                        <option value="">-- Pilih produk --</option>
                     </select>
                 </div>
-                <div id="adminEditorBox" class="admin-box" style="display: none;">
-                    <h4 id="adminGameTitle" style="margin-bottom: 15px; color: white;">Edit Nominal</h4>
+                <div id="adminEditorBox" class="admin-box admin-panel-card" style="display:none;">
+                    <div class="admin-card-heading"><div class="admin-card-icon admin-card-icon-green"><i class="fa-solid fa-pen-to-square"></i></div><div><h4 id="adminGameTitle">Edit nominal</h4><p>Pastikan harga sudah benar sebelum disimpan.</p></div></div>
                     <div id="adminItemsContainer"></div>
-                    <button class="btn-admin-save" onclick="simpanPerubahanAdmin()">Simpan Perubahan</button>
+                    <button class="btn-admin-save" onclick="simpanPerubahanAdmin()"><i class="fa-solid fa-floppy-disk"></i> Simpan perubahan</button>
                 </div>
             </div>
 
             <div id="admin-tab-pesanan" class="admin-content-box">
-                <div class="admin-box">
+                <div class="admin-box admin-panel-card">
+                    <div class="admin-card-heading"><div class="admin-card-icon admin-card-icon-orange"><i class="fa-solid fa-clipboard-list"></i></div><div><h4>Daftar pesanan</h4><p>Pantau dan proses pesanan pelanggan.</p></div></div>
                     <div id="adminOrderList"></div>
                 </div>
             </div>
 
             <div id="admin-tab-setting" class="admin-content-box">
-                <div class="admin-box">
-                    <h4 style="margin-bottom: 15px; color: white;">Ganti PIN Admin</h4>
-                    <input type="password" id="newPinInput" class="admin-input" placeholder="Masukkan PIN Baru">
-                    <button class="btn-admin-save" onclick="gantiPinAdmin()">Simpan PIN</button>
-                    <p id="pinStatus" style="font-size:12px; color:#10b981; margin-top:10px; display:none;">PIN berhasil diubah!</p>
+                <div class="admin-box admin-panel-card">
+                    <div class="admin-card-heading"><div class="admin-card-icon"><i class="fa-solid fa-shield-halved"></i></div><div><h4>Keamanan admin</h4><p>Akun admin menggunakan Supabase Authentication.</p></div></div>
+                    <div class="admin-security-note"><i class="fa-solid fa-circle-info"></i><span>PIN lokal sudah dinonaktifkan. Keamanan login dikelola melalui akun Supabase Anda.</span></div>
+                    <button class="btn-admin-save admin-secondary-action" onclick="prosesLogout()"><i class="fa-solid fa-right-from-bracket"></i> Keluar dari akun</button>
+                    <p id="pinStatus" style="display:none;"></p>
                 </div>
             </div>
+            <div class="admin-footer-note"><i class="fa-solid fa-lock"></i> DIGIVEX STORE · Admin workspace</div>
         </div>
     </main>
 
