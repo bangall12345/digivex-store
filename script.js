@@ -6,7 +6,8 @@ const SUPABASE_KEY = "sb_publishable_DXnkosMz9WhV5D4KDLvPbA_Nkpeg_ZX";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const ADMIN_WA_NUMBER = "6282162726608"; 
+const ADMIN_WA_NUMBER = "6282162726608";
+const ADMIN_EMAIL = "abasyi2020@gmail.com"; 
 
 const defaultDataGame = [
     { id: 'ml', nama: 'Mobile Legends', icon: 'fa-shield-halved', color: '#3b82f6', kategori: 'Game', items: [ { nama: '5 Diamond', harga: 1500 }, { nama: '86 Diamond', harga: 20000 } ] },
@@ -19,26 +20,12 @@ const defaultDataGame = [
 let dataGame = [];
 let selectedGame = null;
 let selectedItem = null;
-let userLogin = localStorage.getItem('topup_user') || null;
-let userEmail = localStorage.getItem('topup_email') || null;
+let userLogin = null;
+let userEmail = null;
+let userOrderKey = null;
 let isAdminLoggedIn = false;
-let currentKategori = 'Game';
+let currentKategori = 'Game'; 
 
-// Hak admin diverifikasi dari sesi Supabase Auth dan tabel user_roles, bukan PIN/localStorage.
-async function pastikanAdmin() {
-    try {
-        const { data: authData, error: authError } = await sb.auth.getUser();
-        if (authError || !authData?.user) { isAdminLoggedIn = false; return false; }
-        const { data: roleData, error: roleError } = await sb.from('user_roles')
-            .select('role').eq('user_id', authData.user.id).maybeSingle();
-        isAdminLoggedIn = !roleError && roleData?.role === 'admin';
-        return isAdminLoggedIn;
-    } catch (error) {
-        console.error('Pemeriksaan admin gagal:', error);
-        isAdminLoggedIn = false;
-        return false;
-    }
-}
 
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toastContainer');
@@ -51,27 +38,24 @@ function showToast(message, type = 'success') {
 }
 
 window.onload = async function() {
-    if (!userLogin) {
-        window.location.href = 'login.html';
+    const { data, error } = await sb.auth.getSession();
+    if (error || !data.session) {
+        localStorage.removeItem('topup_user');
+        localStorage.removeItem('topup_email');
+        window.location.replace('login.html');
         return;
     }
-    document.getElementById('profileNameDisplay').innerText = userLogin;
-
-    // Jangan percaya flag localStorage sendirian. Verifikasi sesi dan role ke Supabase.
-    if (localStorage.getItem('topup_admin') === 'true') {
-        const adminValid = await pastikanAdmin();
-        if (!adminValid) {
-            localStorage.removeItem('topup_admin');
-            showToast('Sesi admin tidak valid. Silakan login admin kembali.', 'error');
-        }
-    }
+    const authUser = data.session.user;
+    userEmail = (authUser.email || '').toLowerCase();
+    userLogin = authUser.user_metadata?.full_name || localStorage.getItem('topup_user') || userEmail.split('@')[0];
+    userOrderKey = userLogin + " (" + userEmail + ")";
+    isAdminLoggedIn = userEmail === ADMIN_EMAIL;
+    localStorage.setItem('topup_user', userLogin);
+    localStorage.setItem('topup_email', userEmail);
+    const profile = document.getElementById('profileNameDisplay');
+    if (profile) profile.innerText = userLogin;
     await loadProductsFromDB();
-    if (userLogin) await loadRiwayatFromDB();
-    if (isAdminLoggedIn) {
-        const adminNav = document.querySelectorAll('.bottom-nav a')[4];
-        gantiHalaman('admin', adminNav);
-        await loadAllOrdersAdmin();
-    }
+    await loadRiwayatFromDB();
 }
 
 async function loadProductsFromDB() {
@@ -106,33 +90,30 @@ async function loadProductsFromDB() {
 
 async function loadRiwayatFromDB() {
     // Cek riwayat berdasarkan nama user
-    const { data, error } = await sb.from('orders').select('*').eq('user_name', userLogin).order('created_at', { ascending: false });
+    const { data, error } = await sb.from('orders').select('*').eq('user_name', userOrderKey || userLogin).order('created_at', { ascending: false });
     if (error) return console.error(error);
     renderRiwayatUser(data);
 }
 
 async function loadAllOrdersAdmin() {
-    if (!(await pastikanAdmin())) return showToast('Akses ditolak: akun bukan Admin.', 'error');
     const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false });
-    if (error) return showToast('Gagal memuat pesanan: ' + error.message, 'error');
+    if (error) return console.error(error);
     renderAdminOrders(data);
 }
 
 async function prosesLogout() {
-    try { await sb.auth.signOut(); } catch (error) { console.warn(error); }
+    const { error } = await sb.auth.signOut();
+    if (error) {
+        console.error(error);
+        return showToast("Gagal keluar. Coba lagi.", "error");
+    }
     localStorage.removeItem('topup_user');
     localStorage.removeItem('topup_email');
-    localStorage.removeItem('topup_admin');
-    isAdminLoggedIn = false;
-    showToast('Berhasil keluar', 'info');
-    setTimeout(() => { window.location.href = 'login.html'; }, 700);
+    showToast("Berhasil keluar", "info");
+    setTimeout(() => window.location.replace("login.html"), 700);
 }
 
 function gantiHalaman(namaHalaman, element) {
-    if (namaHalaman === 'admin' && !isAdminLoggedIn) {
-        window.location.href = 'admin.html';
-        return;
-    }
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.getElementById('page-' + namaHalaman).classList.add('active');
     document.querySelectorAll('.bottom-nav a').forEach(a => a.classList.remove('active'));
@@ -238,7 +219,7 @@ async function prosesPesanan(event) {
 
     // INI BAGIAN YANG DIUBAH: Nama dan Email disatukan
     const { error } = await sb.from('orders').insert([{
-        user_name: userLogin + " (" + userEmail + ")", 
+        user_name: userOrderKey || (userLogin + " (" + userEmail + ")"), 
         product_name: selectedGame.nama, 
         item_name: selectedItem.nama,
         price: selectedItem.harga, 
@@ -325,21 +306,25 @@ function renderRiwayatUser(orders) {
     });
 }
 
-async function bukaAdminLogin() {
-    if (await pastikanAdmin()) {
-        gantiHalaman('admin', document.querySelectorAll('.bottom-nav a')[4]);
-        await loadAllOrdersAdmin();
-    } else {
-        window.location.href = 'admin.html';
+function bukaAdminLogin() {
+    if (!isAdminLoggedIn || userEmail !== ADMIN_EMAIL) {
+        return showToast("Akses admin hanya untuk akun admin utama.", "error");
     }
+    gantiHalaman('admin', document.querySelectorAll('.bottom-nav a')[4]);
+    loadAllOrdersAdmin();
 }
 
-async function logoutAdmin() {
-    try { await sb.auth.signOut(); } catch (error) { console.warn(error); }
-    localStorage.removeItem('topup_admin');
-    isAdminLoggedIn = false;
-    showToast('Sesi admin telah diakhiri.', 'success');
-    setTimeout(() => { window.location.href = 'login.html'; }, 700);
+function tutupLoginAdmin() { document.getElementById('adminLoginModal').classList.remove('active'); }
+
+function cekPasswordAdmin() {
+    if (userEmail !== ADMIN_EMAIL) {
+        return showToast("Gunakan akun admin utama untuk mengakses panel admin.", "error");
+    }
+    isAdminLoggedIn = true;
+    tutupLoginAdmin();
+    gantiHalaman('admin', document.querySelectorAll('.bottom-nav a')[4]);
+    loadAllOrdersAdmin();
+    showToast("Identitas admin terverifikasi.", "success");
 }
 
 function switchTabAdmin(tab, btn) {
@@ -374,7 +359,6 @@ function tampilkanEditorAdmin() {
 }
 
 async function simpanPerubahanAdmin() {
-    if (!(await pastikanAdmin())) return showToast('Akses ditolak: hanya Admin yang dapat mengubah produk.', 'error');
     const gameId = document.getElementById('adminSelectGame').value;
     if (!gameId) return;
     const game = dataGame.find(g => g.id === gameId);
@@ -390,7 +374,6 @@ async function simpanPerubahanAdmin() {
 }
 
 async function tambahGameBaru() {
-    if (!(await pastikanAdmin())) return showToast('Akses ditolak: hanya Admin yang dapat menambah produk.', 'error');
     const nama = document.getElementById('newGameName').value.trim();
     const cat = document.getElementById('newGameCat').value;
     
@@ -418,12 +401,10 @@ async function tambahGameBaru() {
 }
 
 function gantiPinAdmin() {
-    // PIN lokal lama tidak lagi dipakai. Admin memakai Supabase Auth.
-    return logoutAdmin();
+    showToast("PIN lokal dinonaktifkan. Admin menggunakan Supabase Auth.", "info");
 }
 
 async function ubahStatusSukses(orderId) {
-    if (!(await pastikanAdmin())) return showToast('Akses ditolak: hanya Admin yang dapat mengubah pesanan.', 'error');
     const { error } = await sb.from('orders').update({ status: 'Sukses' }).eq('id', orderId);
     if(error) return showToast("Gagal update status!", "error");
     showToast("Pesanan Selesai!", "success");
@@ -431,16 +412,6 @@ async function ubahStatusSukses(orderId) {
 }
 
 function renderAdminOrders(orders) {
-    const pendings = orders.filter(o => (o.status || 'Pending') !== 'Sukses');
-    const successes = orders.filter(o => o.status === 'Sukses');
-    const revenue = successes.reduce((sum, o) => sum + (Number(o.price) || 0), 0);
-    const rupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 });
-    const revenueEl = document.getElementById('statPendapatan');
-    const pendingEl = document.getElementById('statPending');
-    const successEl = document.getElementById('statSukses');
-    if (revenueEl) revenueEl.textContent = rupiah.format(revenue);
-    if (pendingEl) pendingEl.textContent = pendings.length;
-    if (successEl) successEl.textContent = successes.length;
     const container = document.getElementById('adminOrderList');
     container.innerHTML = "";
     if (!orders || orders.length === 0) { container.innerHTML = '<p style="color: #94a3b8; text-align: center;">Belum ada pesanan.</p>'; return; }
@@ -466,22 +437,4 @@ function renderAdminOrders(orders) {
     });
 }
 
-function bukaFormWa() { document.getElementById("waModal").classList.add("active"); }
-function tutupFormWa() { document.getElementById("waModal").classList.remove("active"); }
-
-function kirimFormWa(e) {
-    e.preventDefault();
-    const nama = document.getElementById("waName").value.trim();
-    const hp = document.getElementById("waPhone").value.trim();
-    const pesan = document.getElementById("waMessage").value.trim();
-
-    if (!nama || !hp || !pesan) return showToast("Lengkapi semua data", "error");
-
-    const text = `Halo Admin DIGIVEX STORE!%0A%0A*Nama:* ${nama}%0A*No HP:* ${hp}%0A*Pesan:* ${pesan}`;
-    const url = `https://wa.me/${ADMIN_WA_NUMBER}?text=${text}`;
-
-    window.open(url, "_blank");
-    tutupFormWa();
-    document.getElementById("formWa").reset();
-    showToast("Mengarahkan ke WhatsApp...", "success");
-}
+functi
