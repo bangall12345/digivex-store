@@ -9,9 +9,9 @@ let selectedGame = null;
 let selectedItem = null;
 let userLogin = null;
 let userEmail = null;
-let userOrderKey = null;
-let userRole = 'user'; // Default role
+let userRole = 'user'; 
 let currentKategori = 'Game'; 
+let currentUserId = null;
 
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toastContainer');
@@ -30,12 +30,12 @@ window.onload = async function() {
         return;
     }
     const authUser = data.session.user;
+    currentUserId = authUser.id;
     userEmail = (authUser.email || '').toLowerCase();
     userLogin = authUser.user_metadata?.full_name || userEmail.split('@')[0];
-    userOrderKey = userLogin + " (" + userEmail + ")";
     
-    // Cek role admin dari tabel user_roles
-    const { data: roleData } = await sb.from('user_roles').select('role').eq('user_id', authUser.id).maybeSingle();
+    // Cek role admin
+    const { data: roleData } = await sb.from('user_roles').select('role').eq('user_id', currentUserId).maybeSingle();
     if (roleData && roleData.role === 'admin') userRole = 'admin';
 
     document.getElementById('profileNameDisplay').innerText = userLogin;
@@ -71,8 +71,8 @@ async function loadProductsFromDB() {
 }
 
 async function loadRiwayatFromDB() {
-    // Hanya ambil riwayat milik user yang login (berdasarkan email/nama yang disatukan)
-    const { data, error } = await sb.from('orders').select('*').eq('user_name', userOrderKey).order('created_at', { ascending: false });
+    // Gunakan user_id agar riwayat akurat
+    const { data, error } = await sb.from('orders').select('*').eq('user_id', currentUserId).order('created_at', { ascending: false });
     if (error) return console.error(error);
     renderRiwayatUser(data);
 }
@@ -98,13 +98,22 @@ function filterKategori(kategori, element) {
     if(element) element.classList.add('active-cat');
 
     document.getElementById('sectionTitle').innerText = "Katalog " + kategori;
+    renderProductGrid();
+}
+
+// Fungsi Render Produk dan Pencarian
+function renderProductGrid() {
     const container = document.getElementById('productList');
+    const keyword = document.getElementById('searchInput').value.toLowerCase();
     container.innerHTML = "";
     
-    const filteredData = dataGame.filter(g => g.kategori === kategori || (!g.kategori && kategori === 'Game'));
+    const filteredData = dataGame.filter(g => 
+        (g.kategori === currentKategori || (!g.kategori && currentKategori === 'Game')) &&
+        g.nama.toLowerCase().includes(keyword)
+    );
 
     if(filteredData.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted); text-align:center; width:100%;">Belum ada produk di kategori ini.</p>';
+        container.innerHTML = '<p style="color:var(--text-muted); text-align:center; width:100%;">Produk tidak ditemukan.</p>';
         return;
     }
 
@@ -116,6 +125,10 @@ function filterKategori(kategori, element) {
             </div>
         `;
     });
+}
+
+function cariProduk() {
+    renderProductGrid();
 }
 
 function bukaNominal(gameId) {
@@ -179,13 +192,10 @@ async function prosesPesanan(event) {
     const zoneId = document.getElementById('zoneId').value;
     const payment = document.getElementById('paymentMethod').value;
     let targetId = userIdInput + (selectedGame.id === 'ml' && zoneId ? " (" + zoneId + ")" : "");
-
-    // AMBIL USER ID DARI SESI (Agar RLS tabel orders aman)
-    const { data: sessionData } = await sb.auth.getSession();
-    const currentUserId = sessionData.session.user.id;
+    let userOrderKey = userLogin + " (" + userEmail + ")";
 
     const { error } = await sb.from('orders').insert([{
-        user_id: currentUserId, // Simpan UUID user
+        user_id: currentUserId, 
         user_name: userOrderKey, 
         product_name: selectedGame.nama, 
         item_name: selectedItem.nama,
