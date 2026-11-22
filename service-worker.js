@@ -1,9 +1,10 @@
-const CACHE_NAME = 'digivex-v1';
+const CACHE_NAME = 'digivex-v2';
 const urlsToCache = [
   'index.html',
   'components.html',
   'style.css',
   'script.js',
+  'supabase-config.js',
   'manifest.json',
   'logo.png',
   'banner-ml.jpg'

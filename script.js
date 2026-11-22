@@ -1,6 +1,4 @@
-const SUPABASE_URL = "https://bopjwildqosplraxzpqz.supabase.co";
-const SUPABASE_KEY = "sb_publishable_DXnkosMz9WhV5D4KDLvPbA_Nkpeg_ZX"; 
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = window.createDigivexClient();
 
 const ADMIN_WA_NUMBER = "6282162726608";
 
@@ -115,7 +113,7 @@ function renderProductGrid() {
     
     const filteredData = dataGame.filter(g => 
         (g.kategori === currentKategori || (!g.kategori && currentKategori === 'Game')) &&
-        g.nama.toLowerCase().includes(keyword)
+        String(g.nama || '').toLowerCase().includes(keyword)
     );
 
     if(filteredData.length === 0) {
@@ -125,8 +123,8 @@ function renderProductGrid() {
 
     filteredData.forEach(g => {
         container.innerHTML += `
-            <div class="product-card" onclick="bukaNominal('${g.id}')" style="background: linear-gradient(135deg, ${g.color}33, #1e293b);">
-                <i class="fa-solid ${g.icon} product-icon" style="color: ${g.color};"></i>
+            <div class="product-card" onclick="bukaNominal('${g.id}')" style="background: linear-gradient(135deg, ${(g.color || '#7657d5')}33, #1e293b);">
+                <i class="fa-solid ${g.icon || 'fa-gamepad'} product-icon" style="color: ${g.color || '#a78bfa'};"></i>
                 <div class="product-info"><h4>${g.nama}</h4></div>
             </div>
         `;
@@ -143,7 +141,7 @@ function bukaNominal(gameId) {
     document.getElementById('nominalTitle').innerText = "Pilih Nominal - " + selectedGame.nama;
     const listContainer = document.getElementById('nominalList');
     listContainer.innerHTML = "";
-    selectedGame.items.forEach(item => {
+    (Array.isArray(selectedGame.items) ? selectedGame.items : []).forEach(item => {
         const hargaFormat = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.harga);
         listContainer.innerHTML += `
             <div class="nominal-item" onclick="pilihNominal('${item.nama}', ${item.harga})">
