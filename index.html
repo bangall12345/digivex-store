@@ -17,17 +17,7 @@
 
     <div id="toastContainer"><i class="fa-solid fa-circle-check" id="toastIcon"></i><span id="toastMessage">Pesan</span></div>
 
-    <!-- LAYAR LOGIN LAMA SUDAH DIHAPUS -->
-
-    <div id="adminLoginModal">
-        <div class="admin-login-box">
-            <i class="fa-solid fa-user-shield"></i>
-            <h2 style="color:white; margin-bottom:15px;">Panel Admin</h2>
-            <input type="password" id="adminPassInput" placeholder="PIN Admin">
-            <button onclick="cekPasswordAdmin()">Masuk</button>
-            <button style="background:#334155;" onclick="tutupLoginAdmin()">Batal</button>
-        </div>
-    </div>
+    <!-- POP-UP PIN ADMIN LAMA SUDAH DIHAPUS -->
 
     <!-- HEADER -->
     <header class="app-header">
@@ -157,7 +147,8 @@
         <a onclick="gantiHalaman('tracking', this)"><i class="fa-solid fa-truck-fast"></i><span>Lacak</span></a>
         <a onclick="gantiHalaman('history', this)"><i class="fa-solid fa-clock-rotate-left"></i><span>Riwayat</span></a>
         <a onclick="gantiHalaman('account', this)"><i class="fa-solid fa-user"></i><span>Akun</span></a>
-        <a onclick="bukaAdminLogin()"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+        <!-- TOMBOL ADMIN DIARAHKAN KE HALAMAN ADMIN.HTML -->
+        <a href="admin.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
     </nav>
 
     <div onclick="bukaFormWa()" class="cs-floating" style="cursor: pointer;">
