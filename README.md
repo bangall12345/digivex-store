@@ -74,3 +74,12 @@ Aplikasi toko top-up berbasis HTML/CSS/JavaScript dengan Supabase.
 
 ## Pembaruan V4 — penyempurnaan tampilan
 Fokus rilis ini adalah visual storefront: header, banner, kategori, katalog, footer, navigasi bawah, profil, form, dan modal checkout. CSS responsif disempurnakan untuk ponsel dan layar besar. Logika bisnis, autentikasi, data produk, serta pembayaran tidak diubah. Cache PWA dinaikkan ke `digivex-v8`.
+
+
+## DIGIVEX STORE V7 — Foto produk dari dashboard
+- Admin dapat memilih foto dari galeri HP, melihat pratinjau, menghapus pilihan foto, atau memasukkan URL gambar.
+- Foto produk disimpan di Supabase Storage bucket `product-images`; URL-nya dicatat di kolom `products.image_url`.
+- Katalog pelanggan menampilkan foto yang dipasang admin, dan kembali ke ikon bawaan jika foto tidak tersedia.
+- Batas unggah gambar 5 MB; format JPEG, PNG, WebP, dan GIF.
+- Jalankan `supabase-v7-product-images.sql` di Supabase SQL Editor sebelum menggunakan fitur upload.
+- Upload hanya dapat dilakukan akun dengan role `admin` pada tabel `user_roles`. Pastikan RLS dan role admin sudah benar.
