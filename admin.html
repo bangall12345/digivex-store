@@ -42,6 +42,8 @@ body{background:radial-gradient(ellipse at 50% -18%,rgba(109,40,217,.24),transpa
 @media(max-width:370px){.adm-brand small{letter-spacing:.5px}.adm-top .adm-actions{flex-direction:column}.adm-btn{padding:7px 9px}.adm-stat strong{font-size:17px}}
 
 .adm-grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.adm-kpi{padding:15px;border:1px solid var(--adm-line);border-radius:14px;background:#100f1d}.adm-kpi small{display:block;color:#aaa2c5;font-size:11px;margin-bottom:7px}.adm-kpi strong{font-size:19px}.adm-chart{width:100%;height:230px;display:block;background:#0c0b16;border:1px solid var(--adm-line);border-radius:13px}.adm-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}.adm-select{padding:10px;border:1px solid var(--adm-line);border-radius:10px;background:#0b0a15;color:white}.adm-note{padding:12px;border:1px solid rgba(245,158,11,.25);background:rgba(245,158,11,.08);border-radius:12px;color:#f6d28b;font-size:12px;line-height:1.6}@media(max-width:700px){.adm-grid2{grid-template-columns:1fr}.adm-chart{height:210px}}
+.adm-image-help{font-size:11px;color:#aaa4c3;margin:-5px 0 10px}
+#prodImageFile{padding:9px}
 </style></head><body style="padding-bottom:20px"><div id="toastContainer"><i class="fa-solid fa-circle-info" id="toastIcon"></i><span id="toastMessage"></span></div>
 <section id="loginPanel" class="adm-login"><div class="adm-logo" style="margin:auto"><i class="fa-solid fa-shield-halved"></i></div><h1>Admin DIGIVEX</h1><p class="adm-muted" style="text-align:center">Masuk menggunakan akun admin terdaftar.</p><form id="loginForm"><input id="email" type="email" placeholder="Email admin" required><input id="password" type="password" placeholder="Password" required><button class="adm-primary" style="width:100%">Masuk Dashboard</button></form><p class="adm-muted" style="text-align:center"><a href="index.html">Kembali ke toko</a></p></section>
 <main id="dashboard" class="adm-shell" hidden><header class="adm-top"><div class="adm-brand"><div class="adm-logo"><i class="fa-solid fa-bolt"></i></div><div><b>DIGIVEX STORE</b><small>ADMIN CONTROL CENTER</small></div></div><div class="adm-actions"><button class="adm-btn" id="refreshBtn"><i class="fa-solid fa-rotate"></i> Refresh</button><button class="adm-btn" id="logoutBtn">Keluar</button></div></header>
@@ -49,7 +51,12 @@ body{background:radial-gradient(ellipse at 50% -18%,rgba(109,40,217,.24),transpa
 <section class="adm-stats"><article class="adm-stat"><i class="fa-solid fa-receipt"></i><span>Total Pesanan</span><strong id="statOrders">—</strong></article><article class="adm-stat"><i class="fa-solid fa-wallet"></i><span>Pendapatan sukses</span><strong id="statRevenue">—</strong></article><article class="adm-stat"><i class="fa-solid fa-hourglass-half"></i><span>Menunggu</span><strong id="statPending">—</strong></article><article class="adm-stat"><i class="fa-solid fa-box"></i><span>Produk</span><strong id="statProducts">—</strong></article></section>
 <nav class="adm-tabs"><button class="adm-tab active" data-tab="orders"><i class="fa-solid fa-receipt"></i> Pesanan</button><button class="adm-tab" data-tab="products"><i class="fa-solid fa-cubes"></i> Produk</button><button class="adm-tab" data-tab="customers"><i class="fa-solid fa-users"></i> Pelanggan</button><button class="adm-tab" data-tab="analytics"><i class="fa-solid fa-chart-line"></i> Analitik</button><button class="adm-tab" data-tab="history"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</button><button class="adm-tab" data-tab="users"><i class="fa-solid fa-user-gear"></i> Akun</button><button class="adm-tab" data-tab="settings"><i class="fa-solid fa-gear"></i> Pengaturan</button></nav>
 <section id="view-orders" class="adm-view active adm-panel"><h2>Manajemen Pesanan</h2><p class="adm-muted">Perbarui status pesanan setelah pembayaran dan proses top up diverifikasi.</p><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>WAKTU</th><th>PEMBELI</th><th>PRODUK</th><th>TARGET</th><th>TOTAL</th><th>STATUS</th><th>AKSI</th></tr></thead><tbody id="ordersBody"><tr><td colspan="7">Memuat data…</td></tr></tbody></table></div></section>
-<section id="view-products" class="adm-view"><div class="adm-panel"><h2>Tambah Produk</h2><p class="adm-muted">Kolom kategori dan daftar item mengikuti struktur tabel products saat ini.</p><form id="productForm"><input class="adm-input" id="prodId" placeholder="ID unik, contoh: ml-new" required><input class="adm-input" id="prodName" placeholder="Nama produk" required><input class="adm-input" id="prodIcon" placeholder="Ikon Font Awesome, contoh: fa-gamepad" value="fa-gamepad"><input class="adm-input" id="prodCategory" placeholder="Kategori: Game / Pulsa / Data" required><textarea class="adm-input" id="prodItems" rows="4" placeholder='[{"nama":"5 Diamond","harga":1000,"modal":800}] (modal opsional untuk hitung keuntungan)' required></textarea><button class="adm-primary" id="saveProductBtn">Simpan Produk</button> <button type="button" class="adm-btn" id="cancelEditBtn" hidden>Batal Edit</button></form></div><div class="adm-panel" style="margin-top:14px"><h2>Katalog Produk</h2><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>ID</th><th>NAMA</th><th>KATEGORI</th><th>ITEM</th><th>AKSI</th></tr></thead><tbody id="productsBody"></tbody></table></div></div></section><section id="view-customers" class="adm-view adm-panel"><h2>Data Pelanggan</h2><p class="adm-muted">Daftar profil yang tersedia di tabel profiles. Halaman ini hanya menampilkan data, tidak mengubah akun Auth.</p><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>NAMA</th><th>EMAIL</th><th>USER ID</th></tr></thead><tbody id="customersBody"><tr><td colspan="3">Memuat data…</td></tr></tbody></table></div></section>
+<section id="view-products" class="adm-view"><div class="adm-panel"><h2>Tambah Produk</h2><p class="adm-muted">Kolom kategori dan daftar item mengikuti struktur tabel products saat ini.</p><form id="productForm"><input class="adm-input" id="prodId" placeholder="ID unik, contoh: ml-new" required><input class="adm-input" id="prodName" placeholder="Nama produk" required><input class="adm-input" id="prodIcon" placeholder="Ikon Font Awesome, contoh: fa-gamepad" value="fa-gamepad"><input class="adm-input" id="prodCategory" placeholder="Kategori: Game / Pulsa / Data" required>
+<label class="adm-muted" for="prodImageFile">Foto produk (bisa upload dari galeri HP)</label>
+<input class="adm-input" id="prodImageFile" type="file" accept="image/*">
+<div id="prodImagePreviewWrap" style="display:none;margin:4px 0 12px"><img id="prodImagePreview" alt="Pratinjau foto produk" style="width:112px;height:112px;object-fit:cover;border-radius:14px;border:1px solid var(--border)"><button type="button" class="adm-btn" id="removeProdImageBtn">Hapus foto</button></div>
+<input class="adm-input" id="prodImageUrl" placeholder="Atau URL gambar produk (opsional)">
+<textarea class="adm-input" id="prodItems" rows="4" placeholder='[{"nama":"5 Diamond","harga":1000,"modal":800}] (modal opsional untuk hitung keuntungan)' required></textarea><button class="adm-primary" id="saveProductBtn">Simpan Produk</button> <button type="button" class="adm-btn" id="cancelEditBtn" hidden>Batal Edit</button></form></div><div class="adm-panel" style="margin-top:14px"><h2>Katalog Produk</h2><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>FOTO</th><th>ID</th><th>NAMA</th><th>KATEGORI</th><th>ITEM</th><th>AKSI</th></tr></thead><tbody id="productsBody"></tbody></table></div></div></section><section id="view-customers" class="adm-view adm-panel"><h2>Data Pelanggan</h2><p class="adm-muted">Daftar profil yang tersedia di tabel profiles. Halaman ini hanya menampilkan data, tidak mengubah akun Auth.</p><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>NAMA</th><th>EMAIL</th><th>USER ID</th></tr></thead><tbody id="customersBody"><tr><td colspan="3">Memuat data…</td></tr></tbody></table></div></section>
 <section id="view-analytics" class="adm-view"><div class="adm-panel"><h2>Analitik Penjualan</h2><p class="adm-muted">Penjualan sukses berdasarkan tanggal transaksi.</p><div class="adm-toolbar"><select id="chartPeriod" class="adm-select"><option value="7">7 hari terakhir</option><option value="30">30 hari terakhir</option><option value="month">12 bulan terakhir</option></select><button class="adm-btn" id="chartRefresh">Perbarui</button></div><canvas id="salesChart" class="adm-chart" width="900" height="280"></canvas><div class="adm-grid2" style="margin-top:12px"><div class="adm-kpi"><small>Transaksi sukses</small><strong id="analyticsCount">0</strong></div><div class="adm-kpi"><small>Omzet sukses</small><strong id="analyticsRevenue">Rp0</strong></div></div></div><div class="adm-panel" style="margin-top:14px"><h2>Keuntungan Toko</h2><p class="adm-muted">Harga jual dikurangi harga modal item.</p><div class="adm-grid2"><div class="adm-kpi"><small>Keuntungan tercatat</small><strong id="profitTotal">—</strong></div><div class="adm-kpi"><small>Tanpa data modal</small><strong id="profitMissing">—</strong></div></div><p class="adm-note" style="margin-top:12px">Isi nilai <b>modal</b> pada JSON setiap item produk dan jalankan supabase-v6-migration.sql. Pesanan lama tanpa data modal tidak bisa dihitung.</p></div></section>
 <section id="view-history" class="adm-view adm-panel"><h2>Riwayat Transaksi</h2><div class="adm-toolbar"><input id="historySearch" class="adm-input" style="max-width:360px;margin:0" placeholder="Cari nama, produk, ID tujuan…"><select id="historyStatus" class="adm-select"><option value="">Semua status</option><option>Pending</option><option>Diproses</option><option>Sukses</option><option>Gagal</option></select></div><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>WAKTU</th><th>PEMBELI</th><th>PRODUK</th><th>TARGET</th><th>TOTAL</th><th>STATUS</th></tr></thead><tbody id="historyBody"></tbody></table></div></section>
 <section id="view-users" class="adm-view adm-panel"><h2>Manajemen Akun Pengguna</h2><p class="adm-muted">Daftar profil dan role. Perubahan role admin tetap dilakukan melalui Supabase SQL/Authentication agar tidak bisa dinaikkan dari browser.</p><input id="userSearch" class="adm-input" style="max-width:360px" placeholder="Cari nama atau email…"><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>NAMA</th><th>EMAIL</th><th>PERAN</th><th>USER ID</th></tr></thead><tbody id="usersBody"></tbody></table></div></section>
@@ -68,7 +75,7 @@ document.querySelectorAll('.adm-tab').forEach(b=>b.onclick=()=>{document.querySe
 async function refreshAll(){await Promise.all([loadOrders(),loadProducts(),loadCustomers()]);await Promise.all([loadAnalytics(),loadUsers()]);renderHistory();}
 async function loadOrders(){const body=document.getElementById('ordersBody');const {data,error}=await sb.from('orders').select('*').order('created_at',{ascending:false}).limit(200);if(error){body.innerHTML='<tr><td colspan="7">Gagal memuat: '+escapeHtml(error.message)+'</td></tr>';return;}const rows=data||[];window.orderRows=rows;document.getElementById('statOrders').textContent=rows.length;document.getElementById('statPending').textContent=rows.filter(x=>(x.status||'Pending')==='Pending').length;document.getElementById('statRevenue').textContent=money(rows.filter(x=>x.status==='Sukses').reduce((a,x)=>a+Number(x.price||0),0));body.innerHTML=rows.length?rows.map(o=>`<tr><td>${new Date(o.created_at).toLocaleString('id-ID')}</td><td>${escapeHtml(o.user_name||'—')}</td><td>${escapeHtml((o.product_name||'')+' '+(o.item_name||''))}</td><td>${escapeHtml(o.target_id||'—')}</td><td>${money(o.price)}</td><td><span class="adm-status">${escapeHtml(o.status||'Pending')}</span></td><td><div class="adm-actions"><button data-id="${escapeHtml(o.id)}" data-s="Diproses">Proses</button>${window.DIGIVEX_PAYMENT_ENABLED?'':`<button data-id="${escapeHtml(o.id)}" data-s="Sukses">Sukses</button>`}<button data-id="${escapeHtml(o.id)}" data-s="Gagal">Gagal</button></div></td></tr>`).join(''):'<tr><td colspan="7">Belum ada pesanan.</td></tr>';if(document.getElementById('historyBody'))renderHistory();if(document.getElementById('salesChart'))loadAnalytics();}
 async function setStatus(id,status){const {error}=await sb.from('orders').update({status}).eq('id',id);if(error){toast(error.message,'error');return;}toast('Status pesanan diperbarui.');await loadOrders();}
-async function loadProducts(){const body=document.getElementById('productsBody');const {data,error}=await sb.from('products').select('*').order('nama');if(error){body.innerHTML='<tr><td colspan="5">'+escapeHtml(error.message)+'</td></tr>';return;}document.getElementById('statProducts').textContent=(data||[]).length;window.productRows=data||[];body.innerHTML=window.productRows.map(p=>`<tr><td>${escapeHtml(p.id)}</td><td>${escapeHtml(p.nama)}</td><td>${escapeHtml(p.kategori||'—')}</td><td>${Array.isArray(p.items)?p.items.length:0} item</td><td><div class="adm-actions"><button data-edit="${escapeHtml(p.id)}">Edit</button><button data-del="${escapeHtml(p.id)}">Hapus</button></div></td></tr>`).join('')||'<tr><td colspan="5">Belum ada produk.</td></tr>';}
+async function loadProducts(){const body=document.getElementById('productsBody');const {data,error}=await sb.from('products').select('*').order('nama');if(error){body.innerHTML='<tr><td colspan="6">'+escapeHtml(error.message)+'</td></tr>';return;}document.getElementById('statProducts').textContent=(data||[]).length;window.productRows=data||[];body.innerHTML=window.productRows.map(p=>`<tr><td>${p.image_url?`<img src="${escapeHtml(p.image_url)}" alt="" style="width:42px;height:42px;object-fit:cover;border-radius:9px">`:'—'}</td><td>${escapeHtml(p.id)}</td><td>${escapeHtml(p.nama)}</td><td>${escapeHtml(p.kategori||'—')}</td><td>${Array.isArray(p.items)?p.items.length:0} item</td><td><div class="adm-actions"><button data-edit="${escapeHtml(p.id)}">Edit</button><button data-del="${escapeHtml(p.id)}">Hapus</button></div></td></tr>`).join('')||'<tr><td colspan="6">Belum ada produk.</td></tr>';}
 let editingProductId = null;
 const productForm = document.getElementById('productForm');
 const productIdInput = document.getElementById('prodId');
@@ -85,6 +92,8 @@ function startEditProduct(id){
   document.getElementById('prodIcon').value=p.icon||'fa-gamepad';
   document.getElementById('prodCategory').value=p.kategori||'Game';
   document.getElementById('prodItems').value=JSON.stringify(p.items||[],null,2);
+  selectedProductImageFile=null;productImageFile.value='';
+  productImageUrl.value=p.image_url||'';showProductImage(p.image_url||'');
   saveProductBtn.textContent='Simpan Perubahan';
   cancelEditBtn.hidden=false;
   productForm.scrollIntoView({behavior:'smooth',block:'start'});
@@ -92,9 +101,39 @@ function startEditProduct(id){
 function resetProductEditor(){
   editingProductId=null;productForm.reset();productIdInput.readOnly=false;
   document.getElementById('prodIcon').value='fa-gamepad';
+  selectedProductImageFile=null;productImageFile.value='';productImageUrl.value='';showProductImage('');
   saveProductBtn.textContent='Simpan Produk';cancelEditBtn.hidden=true;
 }
 cancelEditBtn.onclick=resetProductEditor;
+
+let selectedProductImageFile=null;
+let currentProductImageUrl='';
+const productImageFile=document.getElementById('prodImageFile');
+const productImageUrl=document.getElementById('prodImageUrl');
+const productImagePreviewWrap=document.getElementById('prodImagePreviewWrap');
+const productImagePreview=document.getElementById('prodImagePreview');
+function showProductImage(url){
+  currentProductImageUrl=url||'';
+  productImagePreviewWrap.style.display=url?'flex':'none';
+  productImagePreviewWrap.style.alignItems='center';
+  productImagePreviewWrap.style.gap='10px';
+  if(url)productImagePreview.src=url;
+}
+productImageFile.onchange=()=>{
+  const file=productImageFile.files?.[0]||null;
+  if(!file){selectedProductImageFile=null;return;}
+  if(!file.type.startsWith('image/')){toast('Pilih file gambar.','error');productImageFile.value='';return;}
+  if(file.size>5*1024*1024){toast('Ukuran gambar maksimal 5 MB.','error');productImageFile.value='';return;}
+  selectedProductImageFile=file;
+  productImageUrl.value='';
+  showProductImage(URL.createObjectURL(file));
+};
+productImageUrl.oninput=()=>{
+  if(productImageUrl.value.trim()){selectedProductImageFile=null;productImageFile.value='';showProductImage(productImageUrl.value.trim());}
+};
+document.getElementById('removeProdImageBtn').onclick=()=>{
+  selectedProductImageFile=null;currentProductImageUrl='';productImageFile.value='';productImageUrl.value='';showProductImage('');
+};
 
 productForm.onsubmit=async e=>{
   e.preventDefault();
@@ -106,11 +145,19 @@ productForm.onsubmit=async e=>{
   }catch(err){toast('Format item tidak valid: '+err.message,'error');return;}
   const icon=document.getElementById('prodIcon').value.trim();
   if(!/^fa-[a-z0-9-]+$/.test(icon)){toast('Ikon harus berformat fa-nama','error');return;}
-  const row={id:productIdInput.value.trim(),nama:document.getElementById('prodName').value.trim(),icon,kategori:document.getElementById('prodCategory').value.trim(),items};
-  if(!row.id||!row.nama||!row.kategori){toast('Lengkapi ID, nama, dan kategori produk.','error');return;}
+  let imageUrl=productImageUrl.value.trim()||currentProductImageUrl||'';
   saveProductBtn.disabled=true;
+  if(selectedProductImageFile){
+    const ext=(selectedProductImageFile.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
+    const objectPath=`products/${(productIdInput.value.trim()||'product').replace(/[^a-zA-Z0-9_-]/g,'-')}-${Date.now()}.${ext}`;
+    const upload=await sb.storage.from('product-images').upload(objectPath,selectedProductImageFile,{upsert:true,contentType:selectedProductImageFile.type});
+    if(upload.error){saveProductBtn.disabled=false;toast('Upload gambar gagal: '+upload.error.message,'error');return;}
+    imageUrl=sb.storage.from('product-images').getPublicUrl(objectPath).data.publicUrl;
+  }
+  const row={id:productIdInput.value.trim(),nama:document.getElementById('prodName').value.trim(),icon,kategori:document.getElementById('prodCategory').value.trim(),items,image_url:imageUrl||null};
+  if(!row.id||!row.nama||!row.kategori){saveProductBtn.disabled=false;toast('Lengkapi ID, nama, dan kategori produk.','error');return;}
   const result=editingProductId
-    ? await sb.from('products').update({nama:row.nama,icon:row.icon,kategori:row.kategori,items:row.items}).eq('id',editingProductId)
+    ? await sb.from('products').update({nama:row.nama,icon:row.icon,kategori:row.kategori,items:row.items,image_url:row.image_url}).eq('id',editingProductId)
     : await sb.from('products').insert(row);
   saveProductBtn.disabled=false;
   if(result.error){toast(result.error.message,'error');return;}

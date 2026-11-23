@@ -204,8 +204,8 @@ function renderProductGrid() {
         const name = escapeHtml(g.nama || 'Produk');
         const artwork = artworkFor(g.nama, g.kategori || currentKategori);
         container.innerHTML += `
-            <div class="product-card ${artwork ? 'has-artwork' : ''}" data-id="${id}" style="--product-color:${safeColor(g.color, '#9b7bff')};">
-                ${artwork ? `<img class="product-artwork" src="${artwork}" alt="Artwork ${name}" loading="lazy" onerror="this.remove();this.parentElement.classList.remove('has-artwork');">` : `<i class="fa-solid ${safeIcon(g.icon, 'fa-gamepad')} product-icon"></i>`}
+            <div class="product-card ${(g.image_url || artwork) ? 'has-artwork' : ''}" data-id="${id}" style="--product-color:${safeColor(g.color, '#9b7bff')};">
+                ${g.image_url ? `<img class="product-artwork admin-product-image" src="${escapeHtml(g.image_url)}" alt="Foto ${name}" loading="lazy" onerror="this.remove();this.parentElement.classList.remove('has-artwork');">` : artwork ? `<img class="product-artwork" src="${artwork}" alt="Artwork ${name}" loading="lazy" onerror="this.remove();this.parentElement.classList.remove('has-artwork');">` : `<i class="fa-solid ${safeIcon(g.icon, 'fa-gamepad')} product-icon"></i>`}
                 <div class="product-info"><h4>${name}</h4></div>
             </div>`;
     });
