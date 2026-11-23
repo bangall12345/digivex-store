@@ -29,3 +29,23 @@ Aplikasi toko top-up berbasis HTML/CSS/JavaScript dengan Supabase.
 - Pelacakan pada versi ini mengharuskan pengguna login dan hanya menampilkan pesanan miliknya; ini mencegah kebocoran data pelanggan.
 - Dashboard versi ini mengelola status pesanan serta tambah/hapus produk. Edit detail produk yang sudah ada dan manajemen akun pelanggan belum ditambahkan.
 - APK belum dibangun di lingkungan ini. Workflow GitHub Actions akan menghasilkan APK debug setelah source di-push ke GitHub.
+
+## Perubahan keamanan (hasil audit 23 Nov 2026)
+- Pesanan dibuat lewat fungsi `create_order()` (harga diambil dari tabel `products`); insert langsung ke `orders` ditutup. **Jalankan ulang `supabase-migration.sql` sebelum men-deploy kode baru**, kalau tidak checkout akan gagal.
+- Migrasi kini menghapus policy non-DIGIVEX di `orders/products/user_roles/profiles` dan memasang RLS `profiles`. Periksa `pg_policies` lebih dulu bila ada policy lama yang sengaja dipakai.
+- Semua data dari database di-escape sebelum dirender; handler `onclick` inline dari data dihapus.
+- Ada tabel `digivex_audit` untuk jejak perubahan status pesanan dan produk.
+- `admin.html` tidak lagi dibundel ke APK; service worker memakai network-first (CACHE `digivex-v6`).
+
+## Belum dikerjakan (perlu keputusan/akses Anda)
+- **Verifikasi pembayaran (C-2)**: butuh pilihan gateway (Midtrans/Xendit/Tripay) dan Edge Function webhook dengan secret server. Selama belum ada, status `Sukses` tetap manual oleh admin; jangan terima uang sungguhan.
+- MFA admin: tulis alur TOTP di admin.html, lalu aktifkan blok MFA (bagian 6) di file SQL.
+- Dashboard Supabase: aktifkan konfirmasi email dan CAPTCHA, naikkan minimum password.
+- SRI + versi tetap untuk supabase-js: ambil versi persis dan hash `sha384` dengan perintah di audit (butuh akses jaringan), atau salin pustaka ke `assets/`.
+- APK rilis bertanda tangan (keystore di GitHub Secrets) dan penguncian action ke SHA commit.
+
+## Pembayaran Xendit (kerangka, belum teruji)
+1. Jalankan `supabase-payments.sql`. 2. `supabase secrets set XENDIT_SECRET_KEY=... XENDIT_CALLBACK_TOKEN=... SITE_URL=...`
+3. `supabase functions deploy create-payment` dan `supabase functions deploy xendit-webhook` (gabungkan `supabase/config.toml.example`).
+4. Di dashboard Xendit (sandbox), isi URL webhook invoice: `https://<project>.supabase.co/functions/v1/xendit-webhook`.
+5. Uji alur penuh di sandbox, cocokkan nama field dengan dokumentasi Xendit terbaru, lalu set `DIGIVEX_PAYMENT_ENABLED = true` dan aktifkan blok GO-LIVE di SQL.

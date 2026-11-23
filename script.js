@@ -1,5 +1,12 @@
 const sb = window.createDigivexClient();
 
+// Escape semua data dari database/pengguna sebelum masuk innerHTML (H-1).
+const escapeHtml = v => String(v ?? '').replace(/[&<>"']/g,
+    c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rupiah = n => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(Number(n) || 0);
+const safeIcon = (i, d) => /^fa-[a-z0-9-]+$/.test(i || '') ? i : d;
+const safeColor = (c, d) => /^#[0-9a-fA-F]{3,8}$/.test(c || '') ? c : d;
+
 const ADMIN_WA_NUMBER = "6282162726608";
 
 let dataGame = [];
@@ -43,6 +50,7 @@ window.onload = async function() {
     }
 
     document.getElementById('profileNameDisplay').innerText = userLogin;
+    const tb = document.getElementById('testBanner'); if (tb && window.DIGIVEX_PAYMENT_ENABLED) tb.remove();
     
     // Sembunyikan menu admin jika bukan admin
     if (userRole !== 'admin') {
@@ -70,7 +78,7 @@ async function loadProductsFromDB() {
         }
         filterKategori('Pulsa', document.getElementById('cat-Pulsa'));
     } catch (err) {
-        container.innerHTML = `<div style="color:red;">Sistem Error: ${err.message}</div>`;
+        container.innerHTML = `<div style="color:red;">Sistem Error: ${escapeHtml(err.message)}</div>`;
     }
 }
 
@@ -131,6 +139,11 @@ function renderProductGrid() {
     const keyword = (document.getElementById('searchInput')?.value || '').toLowerCase();
     if (!container) return;
     container.innerHTML = '';
+    container.onclick = e => {
+        const card = e.target.closest('.product-card'); if (!card) return;
+        if (card.dataset.id) bukaNominal(card.dataset.id);
+        else if (card.dataset.soon) infoProdukBelumAktif(card.dataset.soon);
+    };
 
     const filteredData = dataGame.filter(g =>
         (g.kategori === currentKategori || (!g.kategori && currentKategori === 'Game')) &&
@@ -147,7 +160,6 @@ function renderProductGrid() {
         return;
     }
 
-    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const artworkFor = (name, category) => {
         if (category !== 'Game') return '';
         const normalized = String(name || '').toLowerCase();
@@ -161,8 +173,8 @@ function renderProductGrid() {
         const name = escapeHtml(g.nama || 'Produk');
         const artwork = artworkFor(g.nama, g.kategori || currentKategori);
         container.innerHTML += `
-            <div class="product-card ${artwork ? 'has-artwork' : ''}" onclick="bukaNominal('${id}')" style="--product-color:${g.color || '#9b7bff'};">
-                ${artwork ? `<img class="product-artwork" src="${artwork}" alt="Artwork ${name}" loading="lazy" onerror="this.remove();this.parentElement.classList.remove('has-artwork');">` : `<i class="fa-solid ${g.icon || 'fa-gamepad'} product-icon"></i>`}
+            <div class="product-card ${artwork ? 'has-artwork' : ''}" data-id="${id}" style="--product-color:${safeColor(g.color, '#9b7bff')};">
+                ${artwork ? `<img class="product-artwork" src="${artwork}" alt="Artwork ${name}" loading="lazy" onerror="this.remove();this.parentElement.classList.remove('has-artwork');">` : `<i class="fa-solid ${safeIcon(g.icon, 'fa-gamepad')} product-icon"></i>`}
                 <div class="product-info"><h4>${name}</h4></div>
             </div>`;
     });
@@ -171,7 +183,7 @@ function renderProductGrid() {
         const artwork = item.image || artworkFor(item.nama, currentKategori);
         const name = escapeHtml(item.nama);
         container.innerHTML += `
-            <div class="product-card catalog-suggestion ${artwork ? 'has-artwork' : ''}" onclick="infoProdukBelumAktif('${name}')" style="--product-color:${item.color};">
+            <div class="product-card catalog-suggestion ${artwork ? 'has-artwork' : ''}" data-soon="${name}" style="--product-color:${item.color};">
                 ${artwork ? `<img class="product-artwork" src="${artwork}" alt="Artwork ${name}" loading="lazy" onerror="this.remove();this.parentElement.classList.remove('has-artwork');">` : `<i class="fa-solid ${item.icon} product-icon"></i>`}
                 <div class="product-info"><h4>${name}</h4><small>Segera tersedia</small></div>
             </div>`;
@@ -192,15 +204,19 @@ function bukaNominal(gameId) {
     document.getElementById('nominalTitle').innerText = "Pilih Nominal - " + selectedGame.nama;
     const listContainer = document.getElementById('nominalList');
     listContainer.innerHTML = "";
-    (Array.isArray(selectedGame.items) ? selectedGame.items : []).forEach(item => {
-        const hargaFormat = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.harga);
+    const items = Array.isArray(selectedGame.items) ? selectedGame.items : [];
+    items.forEach((item, i) => {
         listContainer.innerHTML += `
-            <div class="nominal-item" onclick="pilihNominal('${item.nama}', ${item.harga})">
-                <div class="nominal-info"><h4>${item.nama}</h4></div>
-                <div class="nominal-price">${hargaFormat}</div>
-            </div>
-        `;
+            <div class="nominal-item" data-i="${i}">
+                <div class="nominal-info"><h4>${escapeHtml(item.nama)}</h4></div>
+                <div class="nominal-price">${escapeHtml(rupiah(item.harga))}</div>
+            </div>`;
     });
+    listContainer.onclick = e => {
+        const el = e.target.closest('.nominal-item'); if (!el) return;
+        const it = items[Number(el.dataset.i)];
+        if (it) pilihNominal(String(it.nama), Number(it.harga));
+    };
     document.getElementById('nominalModal').classList.add('active');
 }
 
@@ -229,6 +245,8 @@ function pilihNominal(namaItem, harga) {
         labelUserId.innerText = "Masukkan Nomor HP / ID";
     }
 
+    const note = document.getElementById('paymentNote');
+    if (note) note.innerText = window.DIGIVEX_PAYMENT_ENABLED ? 'Anda akan diarahkan ke halaman pembayaran.' : 'Mode uji coba: pembayaran dikonfirmasi manual oleh admin.';
     tutupNominal();
     document.getElementById('checkoutModal').classList.add('active');
 }
@@ -247,24 +265,25 @@ async function prosesPesanan(event) {
     const zoneId = document.getElementById('zoneId').value;
     const payment = document.getElementById('paymentMethod').value;
     let targetId = userIdInput + (selectedGame.id === 'ml' && zoneId ? " (" + zoneId + ")" : "");
-    let userOrderKey = userLogin + " (" + userEmail + ")";
 
-    const { error } = await sb.from('orders').insert([{
-        user_id: currentUserId, 
-        user_name: userOrderKey, 
-        product_name: selectedGame.nama, 
-        item_name: selectedItem.nama,
-        price: selectedItem.harga, 
-        target_id: targetId, 
-        payment_method: payment,
-        status: 'Pending' 
-    }]);
+    // Harga, nama pembeli, dan status ditentukan server (fungsi create_order).
+    const { data: order, error } = await sb.rpc('create_order', {
+        p_product_id: selectedGame.id,
+        p_item_name: selectedItem.nama,
+        p_target_id: targetId,
+        p_payment_method: payment
+    });
 
     btn.innerHTML = 'Buat Pesanan'; btn.disabled = false;
 
     if (error) {
         showToast("Gagal: " + error.message, "error");
     } else {
+        if (window.DIGIVEX_PAYMENT_ENABLED && order?.id) {
+            const { data: pay, error: payErr } = await sb.functions.invoke('create-payment', { body: { order_id: order.id } });
+            if (!payErr && pay?.invoice_url) { window.location.href = pay.invoice_url; return; }
+            showToast("Pesanan dibuat, tetapi pembayaran gagal dibuka. Coba lagi dari Riwayat.", "error");
+        }
         tutupCheckout();
         showToast("Pesanan Dibuat!", "success");
         setTimeout(() => { gantiHalaman('history', document.querySelectorAll('.bottom-nav a')[2]); }, 1500);
@@ -284,10 +303,10 @@ function renderRiwayatUser(orders) {
         container.innerHTML += `
             <div class="history-card" style="border-left-color: ${o.status === 'Sukses' ? 'var(--success)' : '#f59e0b'}">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                    <h4>${o.product_name} - ${o.item_name}</h4>
-                    <span class="${statusClass}">${o.status || 'Pending'}</span>
+                    <h4>${escapeHtml(o.product_name)} - ${escapeHtml(o.item_name)}</h4>
+                    <span class="${statusClass}">${escapeHtml(o.status || 'Pending')}</span>
                 </div>
-                <p>ID Tujuan: ${o.target_id}</p>
+                <p>ID Tujuan: ${escapeHtml(o.target_id)}</p>
                 <p>Total: <strong>${hargaFormat}</strong></p>
             </div>
         `;
@@ -299,9 +318,13 @@ async function lacakPesanan() {
     const resContainer = document.getElementById('trackingResult');
     if (!input) return showToast("Masukkan ID atau Nama", "error");
     
+    // Buang karakter khusus filter PostgREST (koma, kurung, %, *) dan batasi ke pesanan milik sendiri.
+    const clean = input.replace(/[^A-Za-z0-9@._ -]/g, '').slice(0, 60).trim();
+    if (!clean) return showToast("Karakter tidak valid", "error");
     const { data, error } = await sb.from('orders')
         .select('*')
-        .or(`target_id.ilike.%${input}%,user_name.ilike.%${input}%`)
+        .eq('user_id', currentUserId)
+        .or(`target_id.ilike.%${clean}%,user_name.ilike.%${clean}%`)
         .order('created_at', { ascending: false });
         
     if (error || !data || data.length === 0) {
@@ -316,11 +339,11 @@ async function lacakPesanan() {
         resContainer.innerHTML += `
             <div class="history-card" style="border-left-color: ${o.status === 'Sukses' ? 'var(--success)' : '#f59e0b'}">
                 <div style="display:flex; justify-content:space-between;">
-                    <h4>${o.product_name} - ${o.item_name}</h4>
-                    <span class="${statusClass}">${o.status || 'Pending'}</span>
+                    <h4>${escapeHtml(o.product_name)} - ${escapeHtml(o.item_name)}</h4>
+                    <span class="${statusClass}">${escapeHtml(o.status || 'Pending')}</span>
                 </div>
-                <p>Pembeli: ${o.user_name}</p>
-                <p>ID Tujuan: ${o.target_id}</p>
+                <p>Pembeli: ${escapeHtml(o.user_name)}</p>
+                <p>ID Tujuan: ${escapeHtml(o.target_id)}</p>
                 <p>Total: <strong>${hargaFormat}</strong></p>
             </div>
         `;
@@ -335,7 +358,7 @@ function kirimFormWa(e) {
     const nama = document.getElementById("waName").value.trim();
     const hp = document.getElementById("waPhone").value.trim();
     const pesan = document.getElementById("waMessage").value.trim();
-    const text = `Halo Admin DIGIVEX STORE!%0A%0A*Nama:* ${nama}%0A*No HP:* ${hp}%0A*Pesan:* ${pesan}`;
+    const text = encodeURIComponent(`Halo Admin DIGIVEX STORE!\n\n*Nama:* ${nama}\n*No HP:* ${hp}\n*Pesan:* ${pesan}`);
     window.open(`https://wa.me/${ADMIN_WA_NUMBER}?text=${text}`, "_blank");
     tutupFormWa();
     document.getElementById("formWa").reset();
