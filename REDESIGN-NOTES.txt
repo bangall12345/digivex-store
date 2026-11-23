@@ -15,3 +15,27 @@ Pembaruan V3:
 - Admin dapat mengedit produk dan melihat daftar profil pelanggan (read-only).
 - Workflow APK menyertakan aset lokal dan tidak mengemas admin.html.
 - Versi cache PWA dinaikkan ke digivex-v7.
+
+Pembaruan V4 — fokus visual:
+- Penyegaran header, banner hero, kategori, pencarian, katalog produk, footer, dan navigasi bawah.
+- Kartu produk, profil, menu akun, form, dan modal checkout diberi gaya visual konsisten.
+- Tata letak disesuaikan untuk layar ponsel kecil, tablet, dan desktop.
+- Tidak mengubah alur bisnis, data produk, autentikasi, atau logika pembayaran.
+- Cache PWA dinaikkan ke digivex-v8.
+
+
+Pembaruan V5 — Dashboard Admin DIGIVEX:
+- Dashboard admin disegarkan dengan tema hitam dan ungu neon, kartu statistik, tab navigasi, serta panel yang lebih rapi.
+- Tata letak dashboard dibuat lebih ringkas dan responsif untuk layar HP.
+- Fungsi autentikasi admin, pemeriksaan role, data pesanan, produk, pelanggan, dan alur pembayaran tetap dipertahankan.
+- Cache PWA dinaikkan ke digivex-v9 agar perubahan aset dapat dimuat ulang.
+
+Pembaruan V6 — fitur admin:
+- Grafik penjualan 7/30 hari dan 12 bulan.
+- Riwayat transaksi dengan pencarian dan filter status.
+- Daftar akun pengguna dan role (read-only; perubahan role dilakukan melalui Supabase).
+- Pengaturan akun admin untuk mengganti password.
+- Notifikasi browser pesanan baru saat dashboard terbuka (polling 45 detik).
+- Pelacakan keuntungan berdasarkan harga modal item; transaksi lama tanpa data modal tidak dihitung.
+- supabase-v6-migration.sql menambah cost_price dan menyimpan harga modal untuk pesanan baru.
+- Cache PWA dinaikkan ke digivex-v10.

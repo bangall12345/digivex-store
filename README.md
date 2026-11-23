@@ -71,3 +71,6 @@ Aplikasi toko top-up berbasis HTML/CSS/JavaScript dengan Supabase.
 - Pastikan tabel `profiles` memiliki `id`, `full_name`, dan `email`, serta tabel `user_roles` berisi role admin yang benar.
 - Pembayaran otomatis tetap NONAKTIF (`DIGIVEX_PAYMENT_ENABLED=false`). Kerangka Xendit belum dianggap siap produksi sampai secret, callback, fungsi `mark_order_paid`, dan transaksi sandbox diverifikasi.
 - Jangan membagikan `service_role` key; hanya publishable key boleh berada di file browser.
+
+## Pembaruan V4 — penyempurnaan tampilan
+Fokus rilis ini adalah visual storefront: header, banner, kategori, katalog, footer, navigasi bawah, profil, form, dan modal checkout. CSS responsif disempurnakan untuk ponsel dan layar besar. Logika bisnis, autentikasi, data produk, serta pembayaran tidak diubah. Cache PWA dinaikkan ke `digivex-v8`.
