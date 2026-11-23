@@ -3,6 +3,9 @@
 Aplikasi toko top-up berbasis HTML/CSS/JavaScript dengan Supabase.
 
 ## Perubahan pada paket ini
+- Beranda diperbarui dengan tema ungu-neon dan banner Mobile Legends lokal agar tidak bergantung pada tautan gambar ImgBB yang rusak.
+- Katalog Pulsa menampilkan operator Indonesia: Telkomsel, by.U, IM3, Tri, XL, AXIS, dan Smartfren. Kartu yang belum memiliki nominal di database ditandai “Segera tersedia”; admin perlu menambahkan nominal dan harga melalui dashboard sebelum transaksi dapat dibuat.
+- Katalog Game menyediakan kartu tambahan Steam Wallet, Roblox Gift Cards, Magic Chess: Go Go, dan eFootball bila belum ada di database. Produk tambahan juga memerlukan nominal/harga dari admin sebelum dapat dipesan.
 - Konfigurasi Supabase dipusatkan di `supabase-config.js`.
 - Login/pendaftaran pelanggan menggunakan Supabase Auth (email + password), termasuk konfirmasi password dan penyimpanan profil.
 - Admin dashboard memakai Supabase Auth dan memeriksa role `admin` dari `public.user_roles`.

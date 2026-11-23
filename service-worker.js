@@ -1,7 +1,7 @@
-const CACHE_NAME = 'digivex-v3';
+const CACHE_NAME = 'digivex-v4';
 const urlsToCache = [
   './', 'index.html', 'login.html', 'admin.html', 'components.html',
-  'style.css', 'script.js', 'supabase-config.js', 'manifest.json'
+  'style.css', 'script.js', 'supabase-config.js', 'manifest.json', 'assets/mobile-legends-hero.jpg'
 ];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));

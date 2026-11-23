@@ -8,7 +8,7 @@ let selectedItem = null;
 let userLogin = null;
 let userEmail = null;
 let userRole = 'user'; 
-let currentKategori = 'Game'; 
+let currentKategori = 'Pulsa'; 
 let currentUserId = null;
 
 function showToast(message, type = 'success') {
@@ -68,7 +68,7 @@ async function loadProductsFromDB() {
         } else {
             dataGame = data;
         }
-        filterKategori('Game', document.getElementById('cat-Game'));
+        filterKategori('Pulsa', document.getElementById('cat-Pulsa'));
     } catch (err) {
         container.innerHTML = `<div style="color:red;">Sistem Error: ${err.message}</div>`;
     }
@@ -106,29 +106,68 @@ function filterKategori(kategori, element) {
 }
 
 // Fungsi Render Produk dan Pencarian
+const katalogTambahan = {
+    Pulsa: [
+        { nama: 'Telkomsel', icon: 'fa-signal', color: '#f04455' },
+        { nama: 'by.U', icon: 'fa-sim-card', color: '#6c63ff' },
+        { nama: 'IM3', icon: 'fa-signal', color: '#f5b52e' },
+        { nama: 'Tri (3)', icon: 'fa-signal', color: '#e83e8c' },
+        { nama: 'XL', icon: 'fa-signal', color: '#36a3ff' },
+        { nama: 'AXIS', icon: 'fa-sim-card', color: '#a66bff' },
+        { nama: 'Smartfren', icon: 'fa-signal', color: '#e84b4b' }
+    ],
+    Game: [
+        { nama: 'Mobile Legends', icon: 'fa-shield-halved', color: '#5c9dff' },
+        { nama: 'Free Fire', icon: 'fa-fire', color: '#ff9b32' },
+        { nama: 'Steam Wallet', icon: 'fa-steam', color: '#78a9df' },
+        { nama: 'Roblox Gift Cards', icon: 'fa-cube', color: '#f4f4f4' },
+        { nama: 'Magic Chess: Go Go', icon: 'fa-chess-knight', color: '#b99cff' },
+        { nama: 'eFootball', icon: 'fa-futbol', color: '#42b6ff' }
+    ]
+};
+
 function renderProductGrid() {
     const container = document.getElementById('productList');
-    const keyword = document.getElementById('searchInput').value.toLowerCase();
-    container.innerHTML = "";
-    
-    const filteredData = dataGame.filter(g => 
+    const keyword = (document.getElementById('searchInput')?.value || '').toLowerCase();
+    if (!container) return;
+    container.innerHTML = '';
+
+    const filteredData = dataGame.filter(g =>
         (g.kategori === currentKategori || (!g.kategori && currentKategori === 'Game')) &&
         String(g.nama || '').toLowerCase().includes(keyword)
     );
 
-    if(filteredData.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted); text-align:center; width:100%;">Produk tidak ditemukan.</p>';
+    const suggestions = (katalogTambahan[currentKategori] || []).filter(item =>
+        !dataGame.some(g => { const n = String(g.nama || '').toLowerCase(); const target = item.nama.toLowerCase(); return n === target || n.includes(target) || target.includes(n); }) &&
+        item.nama.toLowerCase().includes(keyword)
+    );
+
+    if (filteredData.length === 0 && suggestions.length === 0) {
+        container.innerHTML = '<p class="empty-catalog">Produk tidak ditemukan.</p>';
         return;
     }
 
     filteredData.forEach(g => {
+        const id = String(g.id);
+        const name = String(g.nama || 'Produk').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
         container.innerHTML += `
-            <div class="product-card" onclick="bukaNominal('${g.id}')" style="background: linear-gradient(135deg, ${(g.color || '#7657d5')}33, #1e293b);">
-                <i class="fa-solid ${g.icon || 'fa-gamepad'} product-icon" style="color: ${g.color || '#a78bfa'};"></i>
-                <div class="product-info"><h4>${g.nama}</h4></div>
-            </div>
-        `;
+            <div class="product-card" onclick="bukaNominal('${id}')" style="--product-color:${g.color || '#9b7bff'};">
+                <i class="fa-solid ${g.icon || 'fa-gamepad'} product-icon"></i>
+                <div class="product-info"><h4>${name}</h4></div>
+            </div>`;
     });
+
+    suggestions.forEach(item => {
+        container.innerHTML += `
+            <div class="product-card catalog-suggestion" onclick="infoProdukBelumAktif('${item.nama}')" style="--product-color:${item.color};">
+                <i class="fa-solid ${item.icon} product-icon"></i>
+                <div class="product-info"><h4>${item.nama}</h4><small>Segera tersedia</small></div>
+            </div>`;
+    });
+}
+
+function infoProdukBelumAktif(nama) {
+    showToast('Nominal ' + nama + ' belum diatur. Admin dapat menambahkannya melalui dashboard Produk.', 'info');
 }
 
 function cariProduk() {

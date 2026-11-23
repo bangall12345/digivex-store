@@ -19,22 +19,20 @@
 
     <!-- HEADER -->
     <header class="app-header">
-        <div class="logo" style="display: flex; align-items: center; gap: 8px; color: var(--text-main);">
-            <img src="https://i.ibb.co.com/6PyY6Z0/logo.png" alt="Logo DIGIVEX" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
-            DIGIVEX STORE
-        </div>
+        <div class="logo"><span class="brand-mark"><i class="fa-solid fa-bolt"></i></span><span>DIGIVEX <b>STORE</b><small>TOP UP • GAME • DIGITAL</small></span></div>
     </header>
 
     <main class="container">
         <!-- BERANDA -->
         <div id="page-home" class="page active">
-            <div class="banner" style="background: url('https://i.ibb.co.com/3Jd9Z9b/mobile-legends.jpg') center/cover no-repeat; height: 180px; display: flex; align-items: flex-end; padding: 20px; position: relative; overflow: hidden; border-radius: 20px; margin-bottom: 25px; box-shadow: var(--shadow-md);">
-                <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);"></div>
-                <div style="position: relative; z-index: 2; color: white;">
-                    <span class="badge" style="background: #facc15; color: #854d0e; font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: 800; display: inline-block; margin-bottom: 5px;">TOP UP INSTAN</span>
-                    <h2 style="font-size: 22px; font-weight: 800; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">Mobile Legends</h2>
-                    <p style="font-size: 12px; margin-top: 4px; color: #e2e8f0;">Proses otomatis 24 jam</p>
+            <div class="banner hero-banner">
+                <div class="hero-copy">
+                    <span class="badge"><i class="fa-solid fa-crown"></i> TOP UP INSTANT</span>
+                    <h2>Mobile Legends</h2>
+                    <p><i class="fa-solid fa-bolt"></i> Proses otomatis 24 jam</p>
+                    <span class="hero-cta">Top Up Sekarang <i class="fa-solid fa-chevron-right"></i></span>
                 </div>
+                <span class="hero-glow" aria-hidden="true"></span>
             </div>
             
             <div class="category-grid">
@@ -49,7 +47,7 @@
                 <input type="text" id="searchInput" placeholder="Cari produk impianmu..." onkeyup="cariProduk()">
             </div>
             
-            <h3 class="section-title" id="sectionTitle">Katalog Game</h3>
+            <h3 class="section-title" id="sectionTitle">Katalog Pulsa</h3>
             <div class="product-grid" id="productList"></div>
         </div>
 
