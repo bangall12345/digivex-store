@@ -75,12 +75,57 @@
             <h3 class="section-title">Profil Saya</h3>
             <div class="profile-box">
                 <i class="fa-solid fa-circle-user"></i>
-                <h3 id="profileNameDisplay">Pengguna</h3>
-                <button class="btn-logout" onclick="prosesLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar Akun</button>
+                <h3 id="profileNameDisplay">Pengunjung</h3>
+                <p id="guestAccountNote" class="profile-caption">Jelajahi toko tanpa login. Masuk hanya saat ingin membeli.</p>
+                <a id="loginAccountBtn" class="btn-submit" href="login.html" style="display:block;margin-top:20px;text-decoration:none;">Masuk / Daftar</a>
+                <button id="logoutAccountBtn" class="btn-logout" onclick="prosesLogout()" hidden><i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar Akun</button>
+            </div>
+            <h3 class="section-title account-menu-title">Menu Akun</h3>
+            <div class="account-menu-grid">
+                <button class="account-menu-card" onclick="gantiHalaman('help', null)"><span class="account-menu-icon"><i class="fa-solid fa-headset"></i></span><span><strong>Pusat Bantuan</strong><small>CS, FAQ, dan informasi toko</small></span><i class="fa-solid fa-chevron-right"></i></button>
+                <button class="account-menu-card" onclick="gantiHalaman('history', document.querySelector('.bottom-nav a:nth-child(3)'))"><span class="account-menu-icon blue"><i class="fa-solid fa-clock-rotate-left"></i></span><span><strong>Riwayat Transaksi</strong><small>Lihat pesanan sebelumnya</small></span><i class="fa-solid fa-chevron-right"></i></button>
+                <button class="account-menu-card" onclick="showToast('Rewards akan tersedia setelah program diaktifkan.', 'info')"><span class="account-menu-icon gold"><i class="fa-solid fa-gift"></i></span><span><strong>Rewards</strong><small>Program hadiah segera hadir</small></span><i class="fa-solid fa-lock"></i></button>
+                <button class="account-menu-card" onclick="showToast('Penukaran voucher belum tersedia.', 'info')"><span class="account-menu-icon green"><i class="fa-solid fa-ticket"></i></span><span><strong>Tukar Voucher</strong><small>Segera hadir</small></span><i class="fa-solid fa-lock"></i></button>
+                <button class="account-menu-card" onclick="bukaFormWa()"><span class="account-menu-icon green"><i class="fa-brands fa-whatsapp"></i></span><span><strong>Hubungi CS</strong><small>Bantuan langsung melalui WhatsApp</small></span><i class="fa-solid fa-chevron-right"></i></button>
+                <button class="account-menu-card" onclick="gantiHalaman('help', null)"><span class="account-menu-icon"><i class="fa-solid fa-circle-info"></i></span><span><strong>Tentang & Kebijakan</strong><small>Informasi DIGIVEX STORE</small></span><i class="fa-solid fa-chevron-right"></i></button>
             </div>
         </div>
 
-        <!-- PANEL ADMIN SUDAH DIHAPUS DARI SINI -->
+        <!-- PUSAT BANTUAN, CS, DAN INFORMASI TOKO -->
+        <div id="page-help" class="page">
+            <div class="help-hero">
+                <span class="help-kicker"><i class="fa-solid fa-shield-heart"></i> DIGIVEX CUSTOMER CARE</span>
+                <h2>Ada yang bisa kami bantu?</h2>
+                <p>Temukan panduan pemesanan atau hubungi tim bantuan DIGIVEX STORE.</p>
+                <button class="help-primary" onclick="bukaFormWa()"><i class="fa-brands fa-whatsapp"></i> Hubungi Customer Service</button>
+            </div>
+
+            <h3 class="section-title">Pusat Bantuan</h3>
+            <div class="help-faq">
+                <details><summary><i class="fa-solid fa-cart-shopping"></i> Bagaimana cara memesan produk?</summary><p>Pilih kategori dan produk, pilih nominal yang tersedia, isi ID tujuan dengan benar, lalu ikuti instruksi pada formulir pesanan.</p></details>
+                <details><summary><i class="fa-solid fa-receipt"></i> Bagaimana melihat status pesanan?</summary><p>Buka menu Lacak untuk mencari pesanan menggunakan nomor invoice atau ID tujuan. Riwayat transaksi juga tersedia pada menu Riwayat.</p></details>
+                <details><summary><i class="fa-solid fa-clock"></i> Berapa lama pesanan diproses?</summary><p>Waktu proses dapat berbeda. Pada mode uji coba, pesanan diperiksa dan dikonfirmasi secara manual oleh admin.</p></details>
+                <details><summary><i class="fa-solid fa-triangle-exclamation"></i> Bagaimana jika ID tujuan salah?</summary><p>Segera hubungi Customer Service dan sertakan nomor invoice. Pastikan data tujuan diperiksa sebelum membuat pesanan.</p></details>
+                <details><summary><i class="fa-solid fa-wallet"></i> Apakah pembayaran otomatis?</summary><p>Saat ini DIGIVEX STORE masih menggunakan mode uji coba dengan konfirmasi manual admin. Pembayaran otomatis belum diaktifkan.</p></details>
+            </div>
+
+            <h3 class="section-title">Layanan Pelanggan</h3>
+            <div class="help-contact-card">
+                <div class="help-contact-icon"><i class="fa-brands fa-whatsapp"></i></div>
+                <div class="help-contact-copy"><strong>Customer Service DIGIVEX</strong><span>Hubungi admin untuk pertanyaan dan kendala pesanan.</span></div>
+                <button onclick="bukaFormWa()" aria-label="Hubungi Customer Service"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+            <h3 class="section-title">Informasi DIGIVEX</h3>
+            <div class="help-info-list">
+                <details><summary>Tentang DIGIVEX STORE</summary><p>DIGIVEX STORE adalah toko digital untuk layanan top up game dan produk digital. Ketersediaan produk mengikuti katalog yang ditampilkan.</p></details>
+                <details><summary>Syarat dan Ketentuan</summary><p>Periksa kembali produk, nominal, metode pembayaran, dan ID tujuan sebelum mengirim pesanan. Simpan nomor invoice sebagai bukti transaksi.</p></details>
+                <details><summary>Kebijakan Privasi</summary><p>Data akun dan transaksi digunakan untuk menjalankan layanan toko, menampilkan riwayat, serta membantu penanganan pesanan. Jangan pernah membagikan kata sandi atau kode keamanan akun.</p></details>
+                <details><summary>Rewards dan Voucher</summary><p>Program rewards dan penukaran voucher belum tersedia. Informasi fitur akan ditampilkan setelah layanan resmi diaktifkan.</p></details>
+            </div>
+            <div class="help-footer"><img src="assets/digivex-mark.svg" alt="DIGIVEX"><strong>DIGIVEX STORE</strong><span>TOP UP • GAME • DIGITAL</span><small>© 2026 DIGIVEX STORE. Semua hak dilindungi.</small></div>
+            <button class="help-back" onclick="gantiHalaman('account', document.querySelector('.bottom-nav a:nth-child(4)'))"><i class="fa-solid fa-arrow-left"></i> Kembali ke Akun</button>
+        </div>
     </main>
 
     <nav class="bottom-nav">

@@ -30,37 +30,56 @@ function showToast(message, type = 'success') {
 
 window.onload = async function() {
     const { data, error } = await sb.auth.getSession();
-    if (error || !data.session) {
-        window.location.replace('login.html');
-        return;
-    }
-    const authUser = data.session.user;
-    currentUserId = authUser.id;
-    userEmail = (authUser.email || '').toLowerCase();
-    userLogin = authUser.user_metadata?.full_name || userEmail.split('@')[0];
-    
-    // Peran admin disimpan pada tabel public.user_roles.
-    const { data: roleData, error: roleError } = await sb
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', currentUserId)
-        .maybeSingle();
-    if (!roleError && roleData && roleData.role === 'admin') {
-        userRole = 'admin';
-    }
+    const loginButton = document.getElementById('loginAccountBtn');
+    const logoutButton = document.getElementById('logoutAccountBtn');
+    const guestNote = document.getElementById('guestAccountNote');
 
-    document.getElementById('profileNameDisplay').innerText = userLogin;
-    const tb = document.getElementById('testBanner'); if (tb && window.DIGIVEX_PAYMENT_ENABLED) tb.remove();
-    
-    // Sembunyikan menu admin jika bukan admin
-    if (userRole !== 'admin') {
+    if (!error && data.session) {
+        const authUser = data.session.user;
+        currentUserId = authUser.id;
+        userEmail = (authUser.email || '').toLowerCase();
+        userLogin = authUser.user_metadata?.full_name || userEmail.split('@')[0];
+
+        // Peran admin tetap diverifikasi dari tabel user_roles.
+        const { data: roleData, error: roleError } = await sb
+            .from('user_roles').select('role').eq('user_id', currentUserId).maybeSingle();
+        if (!roleError && roleData?.role === 'admin') userRole = 'admin';
+
+        document.getElementById('profileNameDisplay').innerText = userLogin;
+        if (loginButton) loginButton.style.display = 'none';
+        if (logoutButton) logoutButton.style.display = 'inline-flex';
+        if (guestNote) guestNote.style.display = 'none';
+        if (userRole !== 'admin') {
+            const adminMenu = document.querySelector('a[href="admin.html"]');
+            if (adminMenu) adminMenu.style.display = 'none';
+        }
+        await loadRiwayatFromDB();
+    } else {
+        document.getElementById('profileNameDisplay').innerText = 'Pengunjung';
+        if (loginButton) loginButton.style.display = 'block';
+        if (logoutButton) logoutButton.style.display = 'none';
+        if (guestNote) guestNote.style.display = 'block';
         const adminMenu = document.querySelector('a[href="admin.html"]');
         if (adminMenu) adminMenu.style.display = 'none';
     }
 
+    const tb = document.getElementById('testBanner');
+    if (tb && window.DIGIVEX_PAYMENT_ENABLED) tb.remove();
     await loadProductsFromDB();
-    await loadRiwayatFromDB();
-}
+
+    // Lanjutkan pilihan nominal setelah pengunjung login.
+    try {
+        const pending = JSON.parse(sessionStorage.getItem('digivex_pending_purchase') || 'null');
+        if (pending && currentUserId) {
+            sessionStorage.removeItem('digivex_pending_purchase');
+            selectedGame = dataGame.find(g => String(g.id) === String(pending.gameId));
+            if (selectedGame && Array.isArray(selectedGame.items)) {
+                const item = selectedGame.items.find(i => i.nama === pending.itemName);
+                if (item) pilihNominal(item.nama, Number(item.harga));
+            }
+        }
+    } catch (e) { console.warn('Pemulihan pilihan produk dilewati:', e); }
+};
 
 async function loadProductsFromDB() {
     const container = document.getElementById('productList');
@@ -83,6 +102,11 @@ async function loadProductsFromDB() {
 }
 
 async function loadRiwayatFromDB() {
+    if (!currentUserId) {
+        const history = document.getElementById('historyList');
+        if (history) history.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-muted);">Masuk untuk melihat riwayat transaksi Anda.</div>';
+        return;
+    }
     // Gunakan user_id agar riwayat akurat
     const { data, error } = await sb.from('orders').select('*').eq('user_id', currentUserId).order('created_at', { ascending: false });
     if (error) return console.error(error);
@@ -93,10 +117,15 @@ async function prosesLogout() {
     await sb.auth.signOut();
     localStorage.clear();
     showToast("Berhasil keluar", "info");
-    setTimeout(() => window.location.replace("login.html"), 700);
+    setTimeout(() => window.location.replace("index.html"), 700);
 }
 
 function gantiHalaman(namaHalaman, element) {
+    if ((namaHalaman === 'history' || namaHalaman === 'tracking') && !currentUserId) {
+        sessionStorage.setItem('digivex_after_login', namaHalaman);
+        window.location.href = 'login.html';
+        return;
+    }
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.getElementById('page-' + namaHalaman).classList.add('active');
     document.querySelectorAll('.bottom-nav a').forEach(a => a.classList.remove('active'));
@@ -224,6 +253,11 @@ function tutupNominal() { document.getElementById('nominalModal').classList.remo
 
 function pilihNominal(namaItem, harga) {
     selectedItem = { nama: namaItem, harga: harga };
+    if (!currentUserId) {
+        sessionStorage.setItem('digivex_pending_purchase', JSON.stringify({ gameId: selectedGame.id, itemName: namaItem }));
+        window.location.href = 'login.html';
+        return;
+    }
     const hargaFormat = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(harga);
     document.getElementById('modalProduct').innerText = selectedGame.nama;
     document.getElementById('modalItem').innerText = namaItem;
@@ -258,6 +292,7 @@ function tutupCheckout() {
 
 async function prosesPesanan(event) {
     event.preventDefault();
+    if (!currentUserId) { window.location.href = 'login.html'; return; }
     const btn = event.target.querySelector('button[type="submit"]');
     btn.innerHTML = 'Memproses...'; btn.disabled = true;
 
@@ -314,6 +349,7 @@ function renderRiwayatUser(orders) {
 }
 
 async function lacakPesanan() {
+    if (!currentUserId) { window.location.href = 'login.html'; return; }
     const input = document.getElementById('trackingInput').value.trim();
     const resContainer = document.getElementById('trackingResult');
     if (!input) return showToast("Masukkan ID atau Nama", "error");
