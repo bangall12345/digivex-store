@@ -1,68 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#4f46e5">
-    <title>Login - DIGIVEX STORE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+  <meta name="theme-color" content="#101223"><title>Masuk / Daftar — DIGIVEX STORE</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    *{box-sizing:border-box}.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:24px 16px;background:radial-gradient(ellipse at 90% 0%,#30245f 0,transparent 42%),#101223}
+    .auth-card{width:100%;max-width:440px;padding:26px;border:1px solid var(--border);border-radius:22px;background:#17172a;box-shadow:0 20px 60px #0005}
+    .auth-logo{width:48px;height:48px;margin:0 auto 14px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(135deg,#a78bfa,#6545c7);font-size:22px}
+    .auth-card h1{text-align:center;margin:0 0 7px;font-size:23px}.auth-sub{text-align:center;color:var(--text-muted);font-size:13px;margin:0 0 22px}
+    .auth-field{display:block;margin:13px 0 6px;font-size:12px;color:#c9c4df;font-weight:700}.auth-input{width:100%;padding:14px;border:1px solid var(--border);border-radius:11px;background:#101020;color:white;font:inherit;outline:none}.auth-input:focus{border-color:#9874f0}
+    .auth-submit{width:100%;padding:14px;margin-top:18px;border:0;border-radius:11px;background:linear-gradient(135deg,#9874f0,#6746c7);color:#fff;font-weight:800;font-size:14px}
+    .auth-switch{text-align:center;color:#aaa4c3;font-size:13px;margin:18px 0 0}.auth-switch button{border:0;background:none;color:#c4b5fd;font-weight:800}.auth-note{font-size:11px;line-height:1.5;color:#8f8aa8;text-align:center;margin-top:16px}
+    #authMessage{display:none;margin-top:13px;padding:11px;border-radius:9px;font-size:12px;line-height:1.5;background:#25213c;color:#ddd}.auth-back{display:block;text-align:center;margin-top:16px;color:#c4b5fd;font-size:12px}
+  </style>
 </head>
-<body style="padding-bottom: 0;">
-
-    <div id="toastContainer"><i class="fa-solid fa-circle-check" id="toastIcon"></i><span id="toastMessage">Pesan</span></div>
-
-    <div style="display: flex; flex-direction: column; justify-content: center; min-height: 100vh; padding: 30px;">
-        <div class="login-logo"><i class="fa-solid fa-bolt"></i></div>
-        <h1 class="login-title">Masuk ke DIGIVEX STORE</h1>
-        
-        <input type="text" id="loginName" class="login-input" placeholder="Masukkan Nama Anda">
-        <input type="email" id="loginEmail" class="login-input" placeholder="Masukkan Email Anda">
-        
-        <button class="login-btn" onclick="prosesLogin()">Masuk Aplikasi</button>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // Koneksi ke database Supabase
-        const sb = supabase.createClient("https://bopjwidqospiraxzpqz.supabase.co", "sb_publishable_DXnkosMz9WhV5D4KDLvPbA_Nkpeg_ZX");
-
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toastContainer');
-            const icon = document.getElementById('toastIcon');
-            document.getElementById('toastMessage').innerText = message;
-            toast.className = 'show ' + type;
-            icon.className = type === 'success' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark';
-            toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 3000);
-        }
-
-        async function prosesLogin() {
-            const nama = document.getElementById('loginName').value.trim();
-            const email = document.getElementById('loginEmail').value.trim();
-            
-            if (!nama || !email) return showToast("Nama dan Email wajib diisi!", "error");
-            
-            showToast("Memproses...", "info");
-
-            // Menyimpan data ke tabel 'users' di Supabase
-            const { error } = await sb.from('users').insert([{ nama: nama, email: email }]);
-            
-            if (error) {
-                console.error(error);
-                return showToast("Gagal menyimpan data ke server.", "error");
-            }
-
-            // Simpan di HP (Local Storage) agar tidak login ulang
-            localStorage.setItem('topup_user', nama);
-            localStorage.setItem('topup_email', email);
-            
-            showToast("Login berhasil! Mengalihkan...", "success");
-            setTimeout(() => {
-                window.location.href = "index.html";
-            }, 1500);
-        }
-    </script>
-</body>
-</html>
+<body><div id="toastContainer"><i id="toastIcon" class="fa-solid fa-circle-info"></i><span id="toastMessage"></span></div>
+<main class="auth-wrap"><section class="auth-card"><div class="auth-logo"><i class="fa-solid fa-bolt"></i></div>
+  <h1 id="authTitle">Masuk ke DIGIVEX STORE</h1><p class="auth-sub" id="authSubtitle">Masuk menggunakan email dan password.</p>
+  <form id="authForm">
+    <div id="nameGroup" hidden><label class="auth-field" for="fullName">Nama lengkap</label><input class="auth-input" id="fullName" autocomplete="name" maxlength="80" placeholder="Masukkan nama lengkap"></div>
+    <label class="auth-field" for="email">Email</label><input class="auth-input" id="email" type="email" autocomplete="email" required placeholder="nama@email.com">
+    <label class="auth-field" for="password">Password</label><input class="auth-input" id="password" type="password" autocomplete="current-password" minlength="8" required placeholder="Minimal 8 karakter">
+    <div id="confirmGroup" hidden><label class="auth-field" for="confirmPassword">Konfirmasi password (ulangi password)</label><input class="auth-input" id="confirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Ulangi password"></div>
+    <button class="auth-submit" id="submitBtn" type="submit">MASUK</button>
+  </form>
+  <div id="authMessage" role="status" aria-live="polite"></div>
+  <p class="auth-switch"><span id="switchText">Belum punya akun?</span> <button id="switchMode" type="button">Daftar sekarang</button></p>
+  <p class="auth-note" id="authNote">Login aman menggunakan Supabase Auth.</p>
+  <a class="auth-back" href="index.html">Kembali ke toko</a>
+</section></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
+<script>
+const sb=createDigivexClient(); let mode='login';
+const $=id=>document.getElementById(id);
+function message(text,isError=false){const el=$('authMessage');el.textContent=text;el.style.display='block';el.style.background=isError?'#4a202b':'#25213c';}
+function setMode(next){mode=next;const signup=mode==='signup';$('authTitle').textContent=signup?'Buat Akun DIGIVEX STORE':'Masuk ke DIGIVEX STORE';$('authSubtitle').textContent=signup?'Daftar menggunakan email dan password.':'Masuk menggunakan email dan password.';$('nameGroup').hidden=!signup;$('confirmGroup').hidden=!signup;$('fullName').required=signup;$('confirmPassword').required=signup;$('password').autocomplete=signup?'new-password':'current-password';$('submitBtn').textContent=signup?'DAFTAR SEKARANG':'MASUK';$('switchText').textContent=signup?'Sudah punya akun?':'Belum punya akun?';$('switchMode').textContent=signup?'Masuk di sini':'Daftar sekarang';$('authNote').textContent=signup?'Pendaftaran terhubung ke Supabase Auth dan tabel profiles. Akun baru otomatis menjadi pengguna biasa, bukan Admin.':'Login aman menggunakan Supabase Auth.';$('authMessage').style.display='none';}
+$('switchMode').addEventListener('click',()=>setMode(mode==='login'?'signup':'login'));
+$('authForm').addEventListener('submit',async e=>{e.preventDefault();const email=$('email').value.trim().toLowerCase(),password=$('password').value;
+  $('submitBtn').disabled=true;$('submitBtn').textContent='MEMPROSES...';
+  try{
+    if(mode==='signup'){
+      const fullName=$('fullName').value.trim(); if(!fullName)throw Error('Nama lengkap wajib diisi.');
+      if(password.length<8)throw Error('Password minimal 8 karakter.');
+      if(password!==$('confirmPassword').value)throw Error('Konfirmasi password tidak sama.');
+      const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name:fullName}}});if(error)throw error;
+      if(data.user && data.session){
+        const {error:profileError}=await sb.from('profiles').upsert({id:data.user.id,full_name:fullName,email},{onConflict:'id'});
+        if(profileError)throw Error('Akun Auth berhasil dibuat, tetapi profil belum tersimpan: '+profileError.message+'. Periksa kolom dan kebijakan RLS tabel profiles.');
+        message('Pendaftaran berhasil. Mengalihkan ke toko...');setTimeout(()=>location.replace('index.html'),900);
+      } else {message('Pendaftaran berhasil dibuat. Silakan periksa email untuk konfirmasi, lalu masuk.');setMode('login');}
+    } else {
+      const {data,error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;
+      const {data:profile,error:profileError}=await sb.from('profiles').select('id').eq('id',data.user.id).maybeSingle();
+      if(profileError)console.warn('Pemeriksaan profil:',profileError.message);
+      if(!profile){const fullName=data.user.user_metadata?.full_name||email.split('@')[0];const {error:saveError}=await sb.from('profiles').upsert({id:data.user.id,full_name:fullName,email},{onConflict:'id'});if(saveError)console.warn('Profil belum tersimpan:',saveError.message);}
+      message('Login berhasil. Mengalihkan...');setTimeout(()=>location.replace('index.html'),650);
+    }
+  }catch(err){message(err.message||'Terjadi kesalahan. Silakan coba lagi.',true);}
+  finally{$('submitBtn').disabled=false;$('submitBtn').textContent=mode==='signup'?'DAFTAR SEKARANG':'MASUK';}
+});
+(async()=>{try{const {data}=await sb.auth.getSession();if(data.session)location.replace('index.html');}catch(e){message(e.message,true);}})();
+</script></body></html>
