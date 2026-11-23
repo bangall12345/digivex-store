@@ -1,0 +1,17 @@
+DIGIVEX STORE - UI REDESIGN
+
+Perubahan pada versi ini:
+- Header responsif dengan tombol pencarian, label ID/IDR, dan menu samping.
+- Menu samping untuk Top Up, Cek Transaksi, Riwayat, Bantuan, Akun, dan tautan Admin yang hanya ditampilkan setelah role admin terverifikasi.
+- Beranda diperbarui dengan banner, ringkasan layanan, kategori, katalog dua kolom, dan panel bantuan.
+- Kartu produk, modal nominal, profil, footer, dan navigasi diberi tema gelap-ungu.
+- File JavaScript bisnis, konfigurasi Supabase, halaman login/admin, dan skema database dipertahankan.
+
+CATATAN PEMBAYARAN:
+Konfigurasi awal masih menetapkan DIGIVEX_PAYMENT_ENABLED=false. Karena itu checkout tetap mode uji coba dan dikonfirmasi manual admin. Jangan mengaktifkan pembayaran otomatis sebelum kredensial gateway, webhook, dan pengujian end-to-end dikonfigurasi.
+
+Pembaruan V3:
+- Pemuatan modal checkout menunggu komponen selesai diunduh.
+- Admin dapat mengedit produk dan melihat daftar profil pelanggan (read-only).
+- Workflow APK menyertakan aset lokal dan tidak mengemas admin.html.
+- Versi cache PWA dinaikkan ke digivex-v7.

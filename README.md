@@ -49,3 +49,25 @@ Aplikasi toko top-up berbasis HTML/CSS/JavaScript dengan Supabase.
 3. `supabase functions deploy create-payment` dan `supabase functions deploy xendit-webhook` (gabungkan `supabase/config.toml.example`).
 4. Di dashboard Xendit (sandbox), isi URL webhook invoice: `https://<project>.supabase.co/functions/v1/xendit-webhook`.
 5. Uji alur penuh di sandbox, cocokkan nama field dengan dokumentasi Xendit terbaru, lalu set `DIGIVEX_PAYMENT_ENABLED = true` dan aktifkan blok GO-LIVE di SQL.
+
+
+## Penyempurnaan tampilan Premium Level 2
+- Halaman Akun kini memiliki menu Pusat Bantuan, Riwayat, Rewards (belum aktif), Tukar Voucher (belum aktif), Hubungi CS, dan informasi toko.
+- Halaman Pusat Bantuan memuat FAQ, kontak WhatsApp melalui formulir CS yang sudah ada, informasi toko, syarat, dan kebijakan privasi.
+- Perubahan visual hanya pada `index.html` dan `style.css`; alur autentikasi, query Supabase, database, `script.js`, konfigurasi, dan dashboard admin tidak diubah.
+- Rewards dan voucher ditampilkan sebagai fitur segera hadir, bukan fitur aktif. Customer Service menggunakan nomor WhatsApp admin yang sudah ada di `script.js`.
+
+
+## Pembaruan lanjutan V3 (23 Nov 2026)
+- Memperbaiki race condition pemuatan `components.html`: aplikasi menunggu modal checkout/nominal tersedia sebelum inisialisasi selesai.
+- Dashboard Admin kini dapat mengedit produk yang sudah ada (nama, ikon, kategori, dan daftar nominal/harga), selain tambah dan hapus.
+- Dashboard Admin memiliki tab data pelanggan yang hanya-baca dari `profiles` (`id`, `full_name`, `email`). Pengelolaan akun Auth atau penonaktifan pelanggan belum disediakan.
+- Workflow APK kini menyalin aset lokal ke `www/assets`, menyertakan konfigurasi Supabase, dan tidak membundel `admin.html` ke APK.
+- Cache PWA dinaikkan ke `digivex-v7` agar file versi baru terambil.
+
+### Sebelum dipakai
+- Deploy ulang seluruh folder hasil ekstrak, bukan hanya `index.html`.
+- Jalankan `supabase-migration.sql` dan `supabase-payments.sql` pada proyek Supabase yang dipakai DIGIVEX jika belum dijalankan. Backup database terlebih dahulu.
+- Pastikan tabel `profiles` memiliki `id`, `full_name`, dan `email`, serta tabel `user_roles` berisi role admin yang benar.
+- Pembayaran otomatis tetap NONAKTIF (`DIGIVEX_PAYMENT_ENABLED=false`). Kerangka Xendit belum dianggap siap produksi sampai secret, callback, fungsi `mark_order_paid`, dan transaksi sandbox diverifikasi.
+- Jangan membagikan `service_role` key; hanya publishable key boleh berada di file browser.

@@ -5,9 +5,9 @@
 <main id="dashboard" class="adm-shell" hidden><header class="adm-top"><div class="adm-brand"><div class="adm-logo"><i class="fa-solid fa-bolt"></i></div><div><b>DIGIVEX STORE</b><small>ADMIN CONTROL CENTER</small></div></div><div class="adm-actions"><button class="adm-btn" id="refreshBtn"><i class="fa-solid fa-rotate"></i> Refresh</button><button class="adm-btn" id="logoutBtn">Keluar</button></div></header>
 <section class="adm-hero"><small>OVERVIEW / DASHBOARD</small><h1>Selamat datang, Admin</h1><p>Pantau transaksi dan kelola katalog DIGIVEX STORE dari satu tempat.</p></section>
 <section class="adm-stats"><article class="adm-stat"><i class="fa-solid fa-receipt"></i><span>Total Pesanan</span><strong id="statOrders">—</strong></article><article class="adm-stat"><i class="fa-solid fa-wallet"></i><span>Pendapatan sukses</span><strong id="statRevenue">—</strong></article><article class="adm-stat"><i class="fa-solid fa-hourglass-half"></i><span>Menunggu</span><strong id="statPending">—</strong></article><article class="adm-stat"><i class="fa-solid fa-box"></i><span>Produk</span><strong id="statProducts">—</strong></article></section>
-<nav class="adm-tabs"><button class="adm-tab active" data-tab="orders">Pesanan</button><button class="adm-tab" data-tab="products">Produk</button></nav>
+<nav class="adm-tabs"><button class="adm-tab active" data-tab="orders">Pesanan</button><button class="adm-tab" data-tab="products">Produk</button><button class="adm-tab" data-tab="customers">Pelanggan</button></nav>
 <section id="view-orders" class="adm-view active adm-panel"><h2>Manajemen Pesanan</h2><p class="adm-muted">Perbarui status pesanan setelah pembayaran dan proses top up diverifikasi.</p><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>WAKTU</th><th>PEMBELI</th><th>PRODUK</th><th>TARGET</th><th>TOTAL</th><th>STATUS</th><th>AKSI</th></tr></thead><tbody id="ordersBody"><tr><td colspan="7">Memuat data…</td></tr></tbody></table></div></section>
-<section id="view-products" class="adm-view"><div class="adm-panel"><h2>Tambah Produk</h2><p class="adm-muted">Kolom kategori dan daftar item mengikuti struktur tabel products saat ini.</p><form id="productForm"><input class="adm-input" id="prodId" placeholder="ID unik, contoh: ml-new" required><input class="adm-input" id="prodName" placeholder="Nama produk" required><input class="adm-input" id="prodIcon" placeholder="Ikon Font Awesome, contoh: fa-gamepad" value="fa-gamepad"><input class="adm-input" id="prodCategory" placeholder="Kategori: Game / Pulsa / Data" required><textarea class="adm-input" id="prodItems" rows="4" placeholder='[{"nama":"5 Diamond","harga":1000}]' required></textarea><button class="adm-primary">Simpan Produk</button></form></div><div class="adm-panel" style="margin-top:14px"><h2>Katalog Produk</h2><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>ID</th><th>NAMA</th><th>KATEGORI</th><th>ITEM</th><th>AKSI</th></tr></thead><tbody id="productsBody"></tbody></table></div></div></section></main>
+<section id="view-products" class="adm-view"><div class="adm-panel"><h2>Tambah Produk</h2><p class="adm-muted">Kolom kategori dan daftar item mengikuti struktur tabel products saat ini.</p><form id="productForm"><input class="adm-input" id="prodId" placeholder="ID unik, contoh: ml-new" required><input class="adm-input" id="prodName" placeholder="Nama produk" required><input class="adm-input" id="prodIcon" placeholder="Ikon Font Awesome, contoh: fa-gamepad" value="fa-gamepad"><input class="adm-input" id="prodCategory" placeholder="Kategori: Game / Pulsa / Data" required><textarea class="adm-input" id="prodItems" rows="4" placeholder='[{"nama":"5 Diamond","harga":1000}]' required></textarea><button class="adm-primary" id="saveProductBtn">Simpan Produk</button> <button type="button" class="adm-btn" id="cancelEditBtn" hidden>Batal Edit</button></form></div><div class="adm-panel" style="margin-top:14px"><h2>Katalog Produk</h2><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>ID</th><th>NAMA</th><th>KATEGORI</th><th>ITEM</th><th>AKSI</th></tr></thead><tbody id="productsBody"></tbody></table></div></div></section><section id="view-customers" class="adm-view adm-panel"><h2>Data Pelanggan</h2><p class="adm-muted">Daftar profil yang tersedia di tabel profiles. Halaman ini hanya menampilkan data, tidak mengubah akun Auth.</p><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>NAMA</th><th>EMAIL</th><th>USER ID</th></tr></thead><tbody id="customersBody"><tr><td colspan="3">Memuat data…</td></tr></tbody></table></div></section></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script>
 const sb=createDigivexClient();const money=n=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(Number(n)||0);
 function toast(m,type='info'){const t=document.getElementById('toastContainer');document.getElementById('toastMessage').textContent=m;t.className='show '+type;document.getElementById('toastIcon').className=type==='error'?'fa-solid fa-circle-xmark':'fa-solid fa-circle-info';}
@@ -17,14 +17,75 @@ document.getElementById('loginForm').onsubmit=async e=>{e.preventDefault();const
 document.getElementById('logoutBtn').onclick=async()=>{await sb.auth.signOut();location.reload();};
 document.getElementById('refreshBtn').onclick=refreshAll;
 document.getElementById('ordersBody').onclick=e=>{const b=e.target.closest('button[data-s]');if(b)setStatus(b.dataset.id,b.dataset.s);};
-document.getElementById('productsBody').onclick=e=>{const b=e.target.closest('button[data-del]');if(b)deleteProduct(b.dataset.del);};
+document.getElementById('productsBody').onclick=e=>{const edit=e.target.closest('button[data-edit]');const del=e.target.closest('button[data-del]');if(edit)startEditProduct(edit.dataset.edit);if(del)deleteProduct(del.dataset.del);};
 document.querySelectorAll('.adm-tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.adm-tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.adm-view').forEach(x=>x.classList.toggle('active',x.id==='view-'+b.dataset.tab));});
-async function refreshAll(){await Promise.all([loadOrders(),loadProducts()]);}
+async function refreshAll(){await Promise.all([loadOrders(),loadProducts(),loadCustomers()]);}
 async function loadOrders(){const body=document.getElementById('ordersBody');const {data,error}=await sb.from('orders').select('*').order('created_at',{ascending:false}).limit(200);if(error){body.innerHTML='<tr><td colspan="7">Gagal memuat: '+escapeHtml(error.message)+'</td></tr>';return;}const rows=data||[];document.getElementById('statOrders').textContent=rows.length;document.getElementById('statPending').textContent=rows.filter(x=>(x.status||'Pending')==='Pending').length;document.getElementById('statRevenue').textContent=money(rows.filter(x=>x.status==='Sukses').reduce((a,x)=>a+Number(x.price||0),0));body.innerHTML=rows.length?rows.map(o=>`<tr><td>${new Date(o.created_at).toLocaleString('id-ID')}</td><td>${escapeHtml(o.user_name||'—')}</td><td>${escapeHtml((o.product_name||'')+' '+(o.item_name||''))}</td><td>${escapeHtml(o.target_id||'—')}</td><td>${money(o.price)}</td><td><span class="adm-status">${escapeHtml(o.status||'Pending')}</span></td><td><div class="adm-actions"><button data-id="${escapeHtml(o.id)}" data-s="Diproses">Proses</button>${window.DIGIVEX_PAYMENT_ENABLED?'':`<button data-id="${escapeHtml(o.id)}" data-s="Sukses">Sukses</button>`}<button data-id="${escapeHtml(o.id)}" data-s="Gagal">Gagal</button></div></td></tr>`).join(''):'<tr><td colspan="7">Belum ada pesanan.</td></tr>';}
 async function setStatus(id,status){const {error}=await sb.from('orders').update({status}).eq('id',id);if(error){toast(error.message,'error');return;}toast('Status pesanan diperbarui.');await loadOrders();}
-async function loadProducts(){const body=document.getElementById('productsBody');const {data,error}=await sb.from('products').select('*').order('nama');if(error){body.innerHTML='<tr><td colspan="5">'+escapeHtml(error.message)+'</td></tr>';return;}document.getElementById('statProducts').textContent=(data||[]).length;body.innerHTML=(data||[]).map(p=>`<tr><td>${escapeHtml(p.id)}</td><td>${escapeHtml(p.nama)}</td><td>${escapeHtml(p.kategori||'—')}</td><td>${Array.isArray(p.items)?p.items.length:0} item</td><td><button data-del="${escapeHtml(p.id)}">Hapus</button></td></tr>`).join('')||'<tr><td colspan="5">Belum ada produk.</td></tr>';}
-document.getElementById('productForm').onsubmit=async e=>{e.preventDefault();let items;try{items=JSON.parse(document.getElementById('prodItems').value);if(!Array.isArray(items)||!items.every(i=>i&&typeof i.nama==='string'&&Number(i.harga)>0))throw Error('items harus array berisi {nama, harga>0}');}catch(err){toast('Format items tidak valid: '+err.message,'error');return;}const icon=document.getElementById('prodIcon').value.trim();if(!/^fa-[a-z0-9-]+$/.test(icon)){toast('Ikon harus berformat fa-nama','error');return;}const row={id:document.getElementById('prodId').value.trim(),nama:document.getElementById('prodName').value.trim(),icon,kategori:document.getElementById('prodCategory').value.trim(),items};const {error}=await sb.from('products').insert(row);if(error){toast(error.message,'error');return;}e.target.reset();document.getElementById('prodIcon').value='fa-gamepad';toast('Produk ditambahkan.');await loadProducts();};
-async function deleteProduct(id){if(!confirm('Hapus produk '+id+'?'))return;const {error}=await sb.from('products').delete().eq('id',id);if(error){toast(error.message,'error');return;}await loadProducts();}
+async function loadProducts(){const body=document.getElementById('productsBody');const {data,error}=await sb.from('products').select('*').order('nama');if(error){body.innerHTML='<tr><td colspan="5">'+escapeHtml(error.message)+'</td></tr>';return;}document.getElementById('statProducts').textContent=(data||[]).length;window.productRows=data||[];body.innerHTML=window.productRows.map(p=>`<tr><td>${escapeHtml(p.id)}</td><td>${escapeHtml(p.nama)}</td><td>${escapeHtml(p.kategori||'—')}</td><td>${Array.isArray(p.items)?p.items.length:0} item</td><td><div class="adm-actions"><button data-edit="${escapeHtml(p.id)}">Edit</button><button data-del="${escapeHtml(p.id)}">Hapus</button></div></td></tr>`).join('')||'<tr><td colspan="5">Belum ada produk.</td></tr>';}
+let editingProductId = null;
+const productForm = document.getElementById('productForm');
+const productIdInput = document.getElementById('prodId');
+const saveProductBtn = document.getElementById('saveProductBtn');
+const cancelEditBtn = document.getElementById('cancelEditBtn');
+
+function startEditProduct(id){
+  const p=(window.productRows||[]).find(x=>String(x.id)===String(id));
+  if(!p)return;
+  editingProductId=String(p.id);
+  productIdInput.value=p.id;
+  productIdInput.readOnly=true;
+  document.getElementById('prodName').value=p.nama||'';
+  document.getElementById('prodIcon').value=p.icon||'fa-gamepad';
+  document.getElementById('prodCategory').value=p.kategori||'Game';
+  document.getElementById('prodItems').value=JSON.stringify(p.items||[],null,2);
+  saveProductBtn.textContent='Simpan Perubahan';
+  cancelEditBtn.hidden=false;
+  productForm.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function resetProductEditor(){
+  editingProductId=null;productForm.reset();productIdInput.readOnly=false;
+  document.getElementById('prodIcon').value='fa-gamepad';
+  saveProductBtn.textContent='Simpan Produk';cancelEditBtn.hidden=true;
+}
+cancelEditBtn.onclick=resetProductEditor;
+
+productForm.onsubmit=async e=>{
+  e.preventDefault();
+  let items;
+  try{
+    items=JSON.parse(document.getElementById('prodItems').value);
+    if(!Array.isArray(items)||!items.length||!items.every(i=>i&&typeof i.nama==='string'&&i.nama.trim()&&Number.isFinite(Number(i.harga))&&Number(i.harga)>0))
+      throw Error('Isi array item dengan nama dan harga lebih dari 0.');
+  }catch(err){toast('Format item tidak valid: '+err.message,'error');return;}
+  const icon=document.getElementById('prodIcon').value.trim();
+  if(!/^fa-[a-z0-9-]+$/.test(icon)){toast('Ikon harus berformat fa-nama','error');return;}
+  const row={id:productIdInput.value.trim(),nama:document.getElementById('prodName').value.trim(),icon,kategori:document.getElementById('prodCategory').value.trim(),items};
+  if(!row.id||!row.nama||!row.kategori){toast('Lengkapi ID, nama, dan kategori produk.','error');return;}
+  saveProductBtn.disabled=true;
+  const result=editingProductId
+    ? await sb.from('products').update({nama:row.nama,icon:row.icon,kategori:row.kategori,items:row.items}).eq('id',editingProductId)
+    : await sb.from('products').insert(row);
+  saveProductBtn.disabled=false;
+  if(result.error){toast(result.error.message,'error');return;}
+  toast(editingProductId?'Produk berhasil diperbarui.':'Produk berhasil ditambahkan.','info');
+  resetProductEditor();await loadProducts();
+};
+
+async function loadCustomers(){
+  const body=document.getElementById('customersBody');
+  if(!body)return;
+  const {data,error}=await sb.from('profiles').select('id,full_name,email').order('full_name',{ascending:true}).limit(500);
+  if(error){body.innerHTML='<tr><td colspan="3">Tidak dapat memuat profil: '+escapeHtml(error.message)+'</td></tr>';return;}
+  body.innerHTML=(data||[]).map(u=>`<tr><td>${escapeHtml(u.full_name||'—')}</td><td>${escapeHtml(u.email||'—')}</td><td><small>${escapeHtml(u.id)}</small></td></tr>`).join('')||'<tr><td colspan="3">Belum ada profil pelanggan.</td></tr>';
+}
+async function deleteProduct(id){
+  if(!confirm('Hapus produk '+id+'?'))return;
+  const {error}=await sb.from('products').delete().eq('id',id);
+  if(error){toast(error.message,'error');return;}
+  if(editingProductId===String(id))resetProductEditor();
+  toast('Produk dihapus.','info');await loadProducts();
+}
 function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 boot();
 </script></body></html>

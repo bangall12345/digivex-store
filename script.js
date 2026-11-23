@@ -29,6 +29,8 @@ function showToast(message, type = 'success') {
 }
 
 window.onload = async function() {
+    // Pastikan modal checkout/nominal sudah tersedia sebelum pengguna bisa bertransaksi.
+    try { await window.digivexComponentsReady; } catch (e) { showToast('Komponen toko gagal dimuat. Muat ulang halaman.', 'error'); console.error(e); }
     const { data, error } = await sb.auth.getSession();
     const loginButton = document.getElementById('loginAccountBtn');
     const logoutButton = document.getElementById('logoutAccountBtn');

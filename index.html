@@ -19,8 +19,24 @@
 
     <!-- HEADER -->
     <header class="app-header">
-        <div class="logo"><img class="brand-mark" src="assets/digivex-mark.svg" alt="Logo DIGIVEX"><span>DIGIVEX <b>STORE</b><small>TOP UP • GAME • DIGITAL</small></span></div>
+        <a class="logo" href="#home" onclick="gantiHalaman('home', document.querySelector('.bottom-nav a:first-child'));return false;"><img class="brand-mark" src="assets/digivex-mark.svg" alt="Logo DIGIVEX"><span>DIGIVEX <b>STORE</b><small>TOP UP • GAME • DIGITAL</small></span></a>
+        <div class="header-actions">
+            <button class="header-icon" type="button" aria-label="Cari produk" onclick="document.getElementById('searchInput').focus();gantiHalaman('home',document.querySelector('.bottom-nav a:first-child'));"><i class="fa-solid fa-magnifying-glass"></i></button>
+            <span class="currency-chip"><span class="flag-id">🇮🇩</span> ID / IDR</span>
+            <button class="header-icon menu-trigger" type="button" aria-label="Buka menu" onclick="toggleStoreMenu()"><i class="fa-solid fa-bars"></i></button>
+        </div>
     </header>
+    <div class="store-drawer-backdrop" id="storeDrawerBackdrop" onclick="toggleStoreMenu(false)"></div>
+    <aside class="store-drawer" id="storeDrawer" aria-label="Menu utama">
+        <div class="drawer-head"><div class="logo"><img class="brand-mark" src="assets/digivex-mark.svg" alt=""><span>DIGIVEX <b>STORE</b><small>TOP UP • GAME • DIGITAL</small></span></div><button class="header-icon" onclick="toggleStoreMenu(false)" aria-label="Tutup menu"><i class="fa-solid fa-xmark"></i></button></div>
+        <button onclick="drawerGo('home')"><span>Top Up</span><i class="fa-solid fa-bag-shopping"></i></button>
+        <button onclick="drawerGo('tracking')"><span>Cek Transaksi</span><i class="fa-solid fa-receipt"></i></button>
+        <button onclick="drawerGo('history')"><span>Riwayat Pesanan</span><i class="fa-solid fa-clock-rotate-left"></i></button>
+        <button onclick="drawerGo('help')"><span>Pusat Bantuan</span><i class="fa-solid fa-headset"></i></button>
+        <button onclick="drawerGo('account')"><span>Akun Saya</span><i class="fa-solid fa-user"></i></button>
+        <a href="admin.html" id="drawerAdminLink" style="display:none"><span>Panel Admin</span><i class="fa-solid fa-shield-halved"></i></a>
+        <div class="drawer-foot">Belanja digital lebih mudah bersama DIGIVEX STORE</div>
+    </aside>
 
     <div id="testBanner" style="background:#3a2d12;color:#f7bd58;font-size:12px;text-align:center;padding:8px;">MODE UJI COBA — pembayaran dikonfirmasi manual oleh admin</div>
 
@@ -37,6 +53,8 @@
                 <span class="hero-glow" aria-hidden="true"></span>
             </div>
             
+            <div class="store-trust-row"><span><i class="fa-solid fa-bolt"></i> Proses praktis</span><span><i class="fa-solid fa-headset"></i> Bantuan CS</span><span><i class="fa-solid fa-shield-halved"></i> Pesanan tercatat</span></div>
+            <div class="popular-heading"><div><span class="popular-kicker">PILIH KEBUTUHANMU</span><h3>Populer Sekarang <span>🔥</span></h3><p>Temukan produk digital favoritmu.</p></div></div>
             <div class="category-grid">
                 <div class="category-item active-cat" id="cat-Pulsa" onclick="filterKategori('Pulsa', this)"><i class="fa-solid fa-mobile-screen cat-icon text-blue"></i><span>Pulsa</span></div>
                 <div class="category-item" id="cat-Data" onclick="filterKategori('Data', this)"><i class="fa-solid fa-wifi cat-icon text-green"></i><span>Data</span></div>
@@ -49,8 +67,9 @@
                 <input type="text" id="searchInput" placeholder="Cari produk impianmu..." onkeyup="cariProduk()">
             </div>
             
-            <h3 class="section-title" id="sectionTitle">Katalog Pulsa</h3>
+            <div class="catalog-heading"><div><h3 class="section-title" id="sectionTitle">Katalog Pulsa</h3><p>Pilih produk untuk melihat pilihan nominal.</p></div><span class="catalog-live"><i></i> KATALOG</span></div>
             <div class="product-grid" id="productList"></div>
+            <div class="store-bottom-info"><strong>Butuh bantuan memilih produk?</strong><span>Tim DIGIVEX siap membantu pesananmu.</span><button onclick="bukaFormWa()"><i class="fa-brands fa-whatsapp"></i> Hubungi CS</button></div>
         </div>
 
         <!-- LACAK PESANAN -->
@@ -128,6 +147,8 @@
         </div>
     </main>
 
+    <footer class="store-footer"><div class="footer-brand"><img src="assets/digivex-mark.svg" alt=""><strong>DIGIVEX STORE</strong></div><p>Tempat top up game dan produk digital dengan proses pemesanan yang praktis.</p><div class="footer-links"><button onclick="gantiHalaman('home',document.querySelector('.bottom-nav a:first-child'))">Beranda</button><button onclick="gantiHalaman('help',null)">Bantuan</button><button onclick="gantiHalaman('account',document.querySelector('.bottom-nav a:nth-child(4)'))">Kebijakan</button></div><small>© 2026 DIGIVEX STORE. All rights reserved.</small></footer>
+
     <nav class="bottom-nav">
         <a onclick="gantiHalaman('home', this)" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
         <a onclick="gantiHalaman('tracking', this)"><i class="fa-solid fa-truck-fast"></i><span>Lacak</span></a>
@@ -148,8 +169,19 @@
     <script src="script.js"></script>
     
     <script>
+        function toggleStoreMenu(force) {
+            const drawer = document.getElementById('storeDrawer');
+            const backdrop = document.getElementById('storeDrawerBackdrop');
+            const open = typeof force === 'boolean' ? force : !drawer.classList.contains('open');
+            drawer.classList.toggle('open', open); backdrop.classList.toggle('show', open);
+            document.body.classList.toggle('drawer-open', open);
+        }
+        function drawerGo(page) {
+            const links = {home:'.bottom-nav a:nth-child(1)',tracking:'.bottom-nav a:nth-child(2)',history:'.bottom-nav a:nth-child(3)',account:'.bottom-nav a:nth-child(4)'};
+            gantiHalaman(page, links[page] ? document.querySelector(links[page]) : null); toggleStoreMenu(false);
+        }
         // Memuat modal dari components.html
-        fetch('components.html').then(r => r.text()).then(d => document.getElementById('modal-container').innerHTML = d);
+        window.digivexComponentsReady = fetch('components.html').then(r => { if (!r.ok) throw new Error('Komponen toko gagal dimuat'); return r.text(); }).then(d => { document.getElementById('modal-container').innerHTML = d; });
         
         // Service worker PWA (opsional jika sudah ada)
         if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('service-worker.js'); }); }
