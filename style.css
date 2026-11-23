@@ -260,7 +260,7 @@ button:active, .product-card:active, .category-item:active { transform: scale(.9
 .logo { display:flex; align-items:center; gap:11px; font-size:20px; letter-spacing:-.5px; }
 .logo b { color:#a66cff; }
 .logo small { display:block; margin-top:2px; color:#b7a9d9; font-size:9px; font-weight:600; letter-spacing:1.7px; }
-.brand-mark { display:grid; place-items:center; width:48px; height:48px; border:1px solid rgba(190,119,255,.7); border-radius:15px; background:linear-gradient(145deg,#8b39ff,#4010a0); color:#fff; font-size:24px; box-shadow:0 0 22px rgba(139,57,255,.35); }
+.brand-mark { display:block; flex:0 0 48px; width:48px; height:48px; border:1px solid rgba(190,119,255,.7); border-radius:15px; object-fit:cover; box-shadow:0 0 22px rgba(139,57,255,.42); }
 .container { padding-top:17px; }
 .hero-banner { position:relative; min-height:250px; height:250px; align-items:flex-end; padding:22px !important; margin-bottom:25px; border:1px solid rgba(166,108,255,.8); border-radius:24px !important; background-image:linear-gradient(90deg,rgba(15,5,34,.12),rgba(15,5,34,.04)),url('assets/mobile-legends-hero.jpg') !important; background-size:auto 132% !important; background-position:right center !important; box-shadow:0 12px 35px rgba(84,26,171,.28),inset 0 0 28px rgba(160,91,255,.2) !important; }
 .hero-banner:after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(13,5,32,.55) 0%,rgba(13,5,32,.15) 55%,rgba(13,5,32,.02) 100%); pointer-events:none; }
@@ -277,6 +277,11 @@ button:active, .product-card:active, .category-item:active { transform: scale(.9
 .section-title { display:flex; align-items:center; gap:9px; font-size:20px; }
 .section-title:before { content:""; display:inline-block; width:7px; height:25px; border-radius:8px; background:linear-gradient(#d05cff,#713cff); box-shadow:0 0 12px #9a42ff; }
 .product-card { min-height:175px; border-radius:21px; border-color:rgba(173,110,255,.42); background:linear-gradient(145deg,#29204a,#111020 78%); box-shadow:0 12px 28px rgba(0,0,0,.3); }
+.product-card.has-artwork { isolation:isolate; background:#171329; }
+.product-artwork { position:absolute; inset:0; z-index:0; width:100%; height:100%; object-fit:cover; object-position:center 28%; opacity:.94; transition:transform .35s ease; }
+.product-card.has-artwork:after { content:""; position:absolute; inset:0; z-index:1; background:linear-gradient(180deg,rgba(8,5,22,.02) 15%,rgba(8,5,22,.10) 43%,rgba(13,5,29,.82) 100%); pointer-events:none; }
+.product-card.has-artwork .product-info { z-index:2; background:linear-gradient(0deg,rgba(18,8,35,.98),rgba(18,8,35,.68)); }
+.product-card.has-artwork:active .product-artwork { transform:scale(1.04); }
 .product-icon { color:var(--product-color,#b58cff); font-size:49px; filter:drop-shadow(0 0 15px var(--product-color,#9b7bff)); }
 .product-info { padding:15px 9px; background:linear-gradient(0deg,rgba(28,12,48,.98),rgba(28,12,48,.78)); }
 .product-info h4 { margin:0; font-size:14px; line-height:1.3; }

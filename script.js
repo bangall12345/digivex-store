@@ -117,8 +117,8 @@ const katalogTambahan = {
         { nama: 'Smartfren', icon: 'fa-signal', color: '#e84b4b' }
     ],
     Game: [
-        { nama: 'Mobile Legends', icon: 'fa-shield-halved', color: '#5c9dff' },
-        { nama: 'Free Fire', icon: 'fa-fire', color: '#ff9b32' },
+        { nama: 'Mobile Legends', icon: 'fa-shield-halved', color: '#5c9dff', image: 'assets/mobile-legends-hero.jpg' },
+        { nama: 'Free Fire', icon: 'fa-fire', color: '#ff9b32', image: 'https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/09d54b4426b623dde923aa83beeccbe5.jpg' },
         { nama: 'Steam Wallet', icon: 'fa-steam', color: '#78a9df' },
         { nama: 'Roblox Gift Cards', icon: 'fa-cube', color: '#f4f4f4' },
         { nama: 'Magic Chess: Go Go', icon: 'fa-chess-knight', color: '#b99cff' },
@@ -147,21 +147,33 @@ function renderProductGrid() {
         return;
     }
 
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const artworkFor = (name, category) => {
+        if (category !== 'Game') return '';
+        const normalized = String(name || '').toLowerCase();
+        if (normalized.includes('mobile legends')) return 'assets/mobile-legends-hero.jpg';
+        if (normalized.includes('free fire')) return 'https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/09d54b4426b623dde923aa83beeccbe5.jpg';
+        return '';
+    };
+
     filteredData.forEach(g => {
-        const id = String(g.id);
-        const name = String(g.nama || 'Produk').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
+        const id = escapeHtml(g.id);
+        const name = escapeHtml(g.nama || 'Produk');
+        const artwork = artworkFor(g.nama, g.kategori || currentKategori);
         container.innerHTML += `
-            <div class="product-card" onclick="bukaNominal('${id}')" style="--product-color:${g.color || '#9b7bff'};">
-                <i class="fa-solid ${g.icon || 'fa-gamepad'} product-icon"></i>
+            <div class="product-card ${artwork ? 'has-artwork' : ''}" onclick="bukaNominal('${id}')" style="--product-color:${g.color || '#9b7bff'};">
+                ${artwork ? `<img class="product-artwork" src="${artwork}" alt="Artwork ${name}" loading="lazy" onerror="this.remove();this.parentElement.classList.remove('has-artwork');">` : `<i class="fa-solid ${g.icon || 'fa-gamepad'} product-icon"></i>`}
                 <div class="product-info"><h4>${name}</h4></div>
             </div>`;
     });
 
     suggestions.forEach(item => {
+        const artwork = item.image || artworkFor(item.nama, currentKategori);
+        const name = escapeHtml(item.nama);
         container.innerHTML += `
-            <div class="product-card catalog-suggestion" onclick="infoProdukBelumAktif('${item.nama}')" style="--product-color:${item.color};">
-                <i class="fa-solid ${item.icon} product-icon"></i>
-                <div class="product-info"><h4>${item.nama}</h4><small>Segera tersedia</small></div>
+            <div class="product-card catalog-suggestion ${artwork ? 'has-artwork' : ''}" onclick="infoProdukBelumAktif('${name}')" style="--product-color:${item.color};">
+                ${artwork ? `<img class="product-artwork" src="${artwork}" alt="Artwork ${name}" loading="lazy" onerror="this.remove();this.parentElement.classList.remove('has-artwork');">` : `<i class="fa-solid ${item.icon} product-icon"></i>`}
+                <div class="product-info"><h4>${name}</h4><small>Segera tersedia</small></div>
             </div>`;
     });
 }
