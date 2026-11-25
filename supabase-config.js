@@ -2,7 +2,7 @@
 window.DIGIVEX_SUPABASE_URL = 'https://bopjwildqosplraxzpqz.supabase.co';
 window.DIGIVEX_SUPABASE_KEY = 'sb_publishable_DXnkosMz9WhV5D4KDLvPbA_Nkpeg_ZX';
 // false = mode uji coba (konfirmasi manual admin). Ubah ke true setelah gateway aktif.
-window.DIGIVEX_PAYMENT_ENABLED = false;
+window.DIGIVEX_PAYMENT_ENABLED = true;
 window.createDigivexClient = () => {
   if (!window.supabase?.createClient) throw new Error('Library Supabase belum dimuat.');
   return window.supabase.createClient(window.DIGIVEX_SUPABASE_URL, window.DIGIVEX_SUPABASE_KEY);
