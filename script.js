@@ -318,7 +318,7 @@ async function prosesPesanan(event) {
     } else {
         if (window.DIGIVEX_PAYMENT_ENABLED && order?.id) {
             const { data: pay, error: payErr } = await sb.functions.invoke('create-payment', { body: { order_id: order.id } });
-            if (!payErr && pay?.invoice_url) { window.location.href = pay.invoice_url; return; }
+            if (!payErr && pay?.redirect_url) { window.location.href = pay.redirect_url; return; }
             showToast("Pesanan dibuat, tetapi pembayaran gagal dibuka. Coba lagi dari Riwayat.", "error");
         }
         tutupCheckout();
