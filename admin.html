@@ -44,8 +44,12 @@ body{background:radial-gradient(ellipse at 50% -18%,rgba(109,40,217,.24),transpa
 .adm-grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.adm-kpi{padding:15px;border:1px solid var(--adm-line);border-radius:14px;background:#100f1d}.adm-kpi small{display:block;color:#aaa2c5;font-size:11px;margin-bottom:7px}.adm-kpi strong{font-size:19px}.adm-chart{width:100%;height:230px;display:block;background:#0c0b16;border:1px solid var(--adm-line);border-radius:13px}.adm-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}.adm-select{padding:10px;border:1px solid var(--adm-line);border-radius:10px;background:#0b0a15;color:white}.adm-note{padding:12px;border:1px solid rgba(245,158,11,.25);background:rgba(245,158,11,.08);border-radius:12px;color:#f6d28b;font-size:12px;line-height:1.6}@media(max-width:700px){.adm-grid2{grid-template-columns:1fr}.adm-chart{height:210px}}
 .adm-image-help{font-size:11px;color:#aaa4c3;margin:-5px 0 10px}
 #prodImageFile{padding:9px}
-</style></head><body style="padding-bottom:20px"><div id="toastContainer"><i class="fa-solid fa-circle-info" id="toastIcon"></i><span id="toastMessage"></span></div>
+</style><style>[hidden]{display:none!important}</style></head><body style="padding-bottom:20px"><div id="toastContainer"><i class="fa-solid fa-circle-info" id="toastIcon"></i><span id="toastMessage"></span></div>
 <section id="loginPanel" class="adm-login"><div class="adm-logo" style="margin:auto"><i class="fa-solid fa-shield-halved"></i></div><h1>Admin DIGIVEX</h1><p class="adm-muted" style="text-align:center">Masuk menggunakan akun admin terdaftar.</p><form id="loginForm"><input id="email" type="email" placeholder="Email admin" required><input id="password" type="password" placeholder="Password" required><button class="adm-primary" style="width:100%">Masuk Dashboard</button></form><p class="adm-muted" style="text-align:center"><a href="index.html">Kembali ke toko</a></p></section>
+<section id="mfaPanel" class="adm-login" hidden><div class="adm-logo" style="margin:auto"><i class="fa-solid fa-lock"></i></div><h1>Verifikasi 2 langkah</h1><p class="adm-muted" id="mfaHelp" style="text-align:center"></p>
+<div id="mfaEnroll" hidden style="text-align:center"><a id="mfaOpen" class="adm-primary" style="display:block;text-decoration:none;margin:10px 0;text-align:center">Buka di aplikasi authenticator</a><p class="adm-muted">Atau masukkan kode ini secara manual:</p><code id="mfaSecret" style="word-break:break-all;user-select:all;display:block;margin:8px 0"></code><p class="adm-muted">Memakai komputer? Pindai QR ini:</p><img id="mfaQr" alt="QR code authenticator" style="width:180px;height:180px;background:#fff;padding:8px;border-radius:12px"></div>
+<form id="mfaForm"><input id="mfaCode" class="adm-input" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="Kode 6 digit" required><button class="adm-primary" style="width:100%">Verifikasi</button></form>
+<p class="adm-muted" style="text-align:center"><a href="#" id="mfaLogout">Keluar</a></p></section>
 <main id="dashboard" class="adm-shell" hidden><header class="adm-top"><div class="adm-brand"><div class="adm-logo"><i class="fa-solid fa-bolt"></i></div><div><b>DIGIVEX STORE</b><small>ADMIN CONTROL CENTER</small></div></div><div class="adm-actions"><button class="adm-btn" id="refreshBtn"><i class="fa-solid fa-rotate"></i> Refresh</button><button class="adm-btn" id="logoutBtn">Keluar</button></div></header>
 <section class="adm-hero"><small>OVERVIEW / DASHBOARD</small><h1>Selamat datang, Admin</h1><p>Pantau transaksi dan kelola katalog DIGIVEX STORE dari satu tempat.</p></section>
 <section class="adm-stats"><article class="adm-stat"><i class="fa-solid fa-receipt"></i><span>Total Pesanan</span><strong id="statOrders">—</strong></article><article class="adm-stat"><i class="fa-solid fa-wallet"></i><span>Pendapatan sukses</span><strong id="statRevenue">—</strong></article><article class="adm-stat"><i class="fa-solid fa-hourglass-half"></i><span>Menunggu</span><strong id="statPending">—</strong></article><article class="adm-stat"><i class="fa-solid fa-box"></i><span>Produk</span><strong id="statProducts">—</strong></article></section>
@@ -65,7 +69,7 @@ body{background:radial-gradient(ellipse at 50% -18%,rgba(109,40,217,.24),transpa
 const sb=createDigivexClient();const money=n=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(Number(n)||0);
 function toast(m,type='info'){const t=document.getElementById('toastContainer');document.getElementById('toastMessage').textContent=m;t.className='show '+type;document.getElementById('toastIcon').className=type==='error'?'fa-solid fa-circle-xmark':'fa-solid fa-circle-info';}
 async function requireAdmin(){const {data,error}=await sb.auth.getSession();if(error||!data.session)return false;const {data:role,error:re}=await sb.from('user_roles').select('role').eq('user_id',data.session.user.id).maybeSingle();if(re)throw re;if(role?.role!=='admin'){await sb.auth.signOut();throw new Error('Akun belum memiliki role admin.');}return true;}
-async function boot(){try{const ok=await requireAdmin();if(!ok)return;document.getElementById('loginPanel').hidden=true;document.getElementById('dashboard').hidden=false;await refreshAll();}catch(e){toast(e.message,'error');}}
+async function boot(){try{const ok=await requireAdmin();if(!ok)return;const {data:aal,error:ae}=await sb.auth.mfa.getAuthenticatorAssuranceLevel();if(ae)throw ae;if(aal.currentLevel!=='aal2'){await showMfa();return;}document.getElementById('mfaPanel').hidden=true;document.getElementById('loginPanel').hidden=true;document.getElementById('dashboard').hidden=false;await refreshAll();}catch(e){toast(e.message,'error');}}
 document.getElementById('loginForm').onsubmit=async e=>{e.preventDefault();const {error}=await sb.auth.signInWithPassword({email:document.getElementById('email').value.trim(),password:document.getElementById('password').value});if(error){toast(error.message,'error');return;}await boot();};
 document.getElementById('logoutBtn').onclick=async()=>{await sb.auth.signOut();location.reload();};
 document.getElementById('refreshBtn').onclick=refreshAll;
@@ -200,6 +204,29 @@ document.getElementById('passwordForm')?.addEventListener('submit',async e=>{e.p
 document.getElementById('enableNotifications')?.addEventListener('click',async()=>{if(!('Notification'in window)){toast('Browser tidak mendukung notifikasi.','error');return;}let p=await Notification.requestPermission();document.getElementById('notificationState').textContent='Status: '+p;if(p==='granted')toast('Notifikasi aktif.');});
 let knownOrderIds=new Set();async function pollNewOrders(){let {data,error}=await sb.from('orders').select('id,created_at').order('created_at',{ascending:false}).limit(30);if(error||!data)return;let ids=new Set(data.map(o=>String(o.id)));if(knownOrderIds.size){let fresh=data.filter(o=>!knownOrderIds.has(String(o.id)));if(fresh.length&&'Notification'in window&&Notification.permission==='granted')new Notification('DIGIVEX STORE',{body:fresh.length+' pesanan baru masuk.'});}knownOrderIds=ids;}
 sb.auth.getUser().then(({data})=>{let el=document.getElementById('adminIdentity');if(el)el.textContent=data.user?.email||'Admin';});setInterval(()=>{if(!document.getElementById('dashboard').hidden)pollNewOrders();},45000);
+
+let mfaFactorId=null;
+async function showMfa(){
+  document.getElementById('loginPanel').hidden=true;
+  document.getElementById('mfaPanel').hidden=false;
+  const {data:f,error:fe}=await sb.auth.mfa.listFactors();if(fe)throw fe;
+  const verified=(f?.totp||[])[0],box=document.getElementById('mfaEnroll');
+  if(verified){mfaFactorId=verified.id;box.hidden=true;document.getElementById('mfaHelp').textContent='Masukkan kode 6 digit dari aplikasi authenticator Anda.';return;}
+  for(const x of (f?.all||[]))if(x.factor_type==='totp'&&x.status==='unverified')await sb.auth.mfa.unenroll({factorId:x.id});
+  const {data,error}=await sb.auth.mfa.enroll({factorType:'totp',friendlyName:'DIGIVEX Admin '+Date.now()});if(error)throw error;
+  mfaFactorId=data.id;
+  document.getElementById('mfaQr').src=data.totp.qr_code;
+  document.getElementById('mfaSecret').textContent=data.totp.secret;
+  document.getElementById('mfaOpen').href=data.totp.uri;
+  box.hidden=false;
+  document.getElementById('mfaHelp').textContent='Daftarkan akun ini di aplikasi authenticator, lalu masukkan kode 6 digit.';
+}
+document.getElementById('mfaForm').onsubmit=async e=>{e.preventDefault();
+  const code=document.getElementById('mfaCode').value.trim();
+  const {error}=await sb.auth.mfa.challengeAndVerify({factorId:mfaFactorId,code});
+  if(error){toast('Kode salah atau kedaluwarsa. Coba lagi.','error');return;}
+  document.getElementById('mfaCode').value='';await boot();};
+document.getElementById('mfaLogout').onclick=async e=>{e.preventDefault();await sb.auth.signOut();location.reload();};
 
 function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 boot();
