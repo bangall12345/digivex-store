@@ -110,7 +110,7 @@ async function loadRiwayatFromDB() {
         return;
     }
     // Gunakan user_id agar riwayat akurat
-    const { data, error } = await sb.from('orders').select('*').eq('user_id', currentUserId).order('created_at', { ascending: false });
+    const { data, error } = await sb.from('orders').select('id,created_at,user_name,product_name,item_name,price,target_id,payment_method,status').eq('user_id', currentUserId).order('created_at', { ascending: false });
     if (error) return console.error(error);
     renderRiwayatUser(data);
 }
@@ -360,7 +360,7 @@ async function lacakPesanan() {
     const clean = input.replace(/[^A-Za-z0-9@._ -]/g, '').slice(0, 60).trim();
     if (!clean) return showToast("Karakter tidak valid", "error");
     const { data, error } = await sb.from('orders')
-        .select('*')
+        .select('id,created_at,user_name,product_name,item_name,price,target_id,payment_method,status')
         .eq('user_id', currentUserId)
         .or(`target_id.ilike.%${clean}%,user_name.ilike.%${clean}%`)
         .order('created_at', { ascending: false });

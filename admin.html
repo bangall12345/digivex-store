@@ -73,7 +73,7 @@ document.getElementById('ordersBody').onclick=e=>{const b=e.target.closest('butt
 document.getElementById('productsBody').onclick=e=>{const edit=e.target.closest('button[data-edit]');const del=e.target.closest('button[data-del]');if(edit)startEditProduct(edit.dataset.edit);if(del)deleteProduct(del.dataset.del);};
 document.querySelectorAll('.adm-tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.adm-tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.adm-view').forEach(x=>x.classList.toggle('active',x.id==='view-'+b.dataset.tab));});
 async function refreshAll(){await Promise.all([loadOrders(),loadProducts(),loadCustomers()]);await Promise.all([loadAnalytics(),loadUsers()]);renderHistory();}
-async function loadOrders(){const body=document.getElementById('ordersBody');const {data,error}=await sb.from('orders').select('*').order('created_at',{ascending:false}).limit(200);if(error){body.innerHTML='<tr><td colspan="7">Gagal memuat: '+escapeHtml(error.message)+'</td></tr>';return;}const rows=data||[];window.orderRows=rows;document.getElementById('statOrders').textContent=rows.length;document.getElementById('statPending').textContent=rows.filter(x=>(x.status||'Pending')==='Pending').length;document.getElementById('statRevenue').textContent=money(rows.filter(x=>x.status==='Sukses').reduce((a,x)=>a+Number(x.price||0),0));body.innerHTML=rows.length?rows.map(o=>`<tr><td>${new Date(o.created_at).toLocaleString('id-ID')}</td><td>${escapeHtml(o.user_name||'—')}</td><td>${escapeHtml((o.product_name||'')+' '+(o.item_name||''))}</td><td>${escapeHtml(o.target_id||'—')}</td><td>${money(o.price)}</td><td><span class="adm-status">${escapeHtml(o.status||'Pending')}</span></td><td><div class="adm-actions"><button data-id="${escapeHtml(o.id)}" data-s="Diproses">Proses</button>${window.DIGIVEX_PAYMENT_ENABLED?'':`<button data-id="${escapeHtml(o.id)}" data-s="Sukses">Sukses</button>`}<button data-id="${escapeHtml(o.id)}" data-s="Gagal">Gagal</button></div></td></tr>`).join(''):'<tr><td colspan="7">Belum ada pesanan.</td></tr>';if(document.getElementById('historyBody'))renderHistory();if(document.getElementById('salesChart'))loadAnalytics();}
+async function loadOrders(){const body=document.getElementById('ordersBody');const {data,error}=await sb.from('orders_admin').select('*').order('created_at',{ascending:false}).limit(200);if(error){body.innerHTML='<tr><td colspan="7">Gagal memuat: '+escapeHtml(error.message)+'</td></tr>';return;}const rows=data||[];window.orderRows=rows;document.getElementById('statOrders').textContent=rows.length;document.getElementById('statPending').textContent=rows.filter(x=>(x.status||'Pending')==='Pending').length;document.getElementById('statRevenue').textContent=money(rows.filter(x=>x.status==='Sukses').reduce((a,x)=>a+Number(x.price||0),0));body.innerHTML=rows.length?rows.map(o=>`<tr><td>${new Date(o.created_at).toLocaleString('id-ID')}</td><td>${escapeHtml(o.user_name||'—')}</td><td>${escapeHtml((o.product_name||'')+' '+(o.item_name||''))}</td><td>${escapeHtml(o.target_id||'—')}</td><td>${money(o.price)}</td><td><span class="adm-status">${escapeHtml(o.status||'Pending')}</span></td><td><div class="adm-actions"><button data-id="${escapeHtml(o.id)}" data-s="Diproses">Proses</button>${window.DIGIVEX_PAYMENT_ENABLED?'':`<button data-id="${escapeHtml(o.id)}" data-s="Sukses">Sukses</button>`}<button data-id="${escapeHtml(o.id)}" data-s="Gagal">Gagal</button></div></td></tr>`).join(''):'<tr><td colspan="7">Belum ada pesanan.</td></tr>';if(document.getElementById('historyBody'))renderHistory();if(document.getElementById('salesChart'))loadAnalytics();}
 async function setStatus(id,status){const {error}=await sb.from('orders').update({status}).eq('id',id);if(error){toast(error.message,'error');return;}toast('Status pesanan diperbarui.');await loadOrders();}
 async function loadProducts(){const body=document.getElementById('productsBody');const {data,error}=await sb.from('products').select('*').order('nama');if(error){body.innerHTML='<tr><td colspan="6">'+escapeHtml(error.message)+'</td></tr>';return;}document.getElementById('statProducts').textContent=(data||[]).length;window.productRows=data||[];body.innerHTML=window.productRows.map(p=>`<tr><td>${p.image_url?`<img src="${escapeHtml(p.image_url)}" alt="" style="width:42px;height:42px;object-fit:cover;border-radius:9px">`:'—'}</td><td>${escapeHtml(p.id)}</td><td>${escapeHtml(p.nama)}</td><td>${escapeHtml(p.kategori||'—')}</td><td>${Array.isArray(p.items)?p.items.length:0} item</td><td><div class="adm-actions"><button data-edit="${escapeHtml(p.id)}">Edit</button><button data-del="${escapeHtml(p.id)}">Hapus</button></div></td></tr>`).join('')||'<tr><td colspan="6">Belum ada produk.</td></tr>';}
 let editingProductId = null;
@@ -82,7 +82,7 @@ const productIdInput = document.getElementById('prodId');
 const saveProductBtn = document.getElementById('saveProductBtn');
 const cancelEditBtn = document.getElementById('cancelEditBtn');
 
-function startEditProduct(id){
+async function startEditProduct(id){
   const p=(window.productRows||[]).find(x=>String(x.id)===String(id));
   if(!p)return;
   editingProductId=String(p.id);
@@ -91,7 +91,9 @@ function startEditProduct(id){
   document.getElementById('prodName').value=p.nama||'';
   document.getElementById('prodIcon').value=p.icon||'fa-gamepad';
   document.getElementById('prodCategory').value=p.kategori||'Game';
-  document.getElementById('prodItems').value=JSON.stringify(p.items||[],null,2);
+  let merged=p.items||[];
+  try{const {data:cs}=await sb.from('product_costs').select('item_name,modal').eq('product_id',String(p.id));const m=new Map((cs||[]).map(c=>[c.item_name,Number(c.modal)]));merged=(p.items||[]).map(i=>m.has(i.nama)?{...i,modal:m.get(i.nama)}:i);}catch(_){}
+  document.getElementById('prodItems').value=JSON.stringify(merged,null,2);
   selectedProductImageFile=null;productImageFile.value='';
   productImageUrl.value=p.image_url||'';showProductImage(p.image_url||'');
   saveProductBtn.textContent='Simpan Perubahan';
@@ -143,6 +145,9 @@ productForm.onsubmit=async e=>{
     if(!Array.isArray(items)||!items.length||!items.every(i=>i&&typeof i.nama==='string'&&i.nama.trim()&&Number.isFinite(Number(i.harga))&&Number(i.harga)>0))
       throw Error('Isi array item dengan nama dan harga lebih dari 0.');
   }catch(err){toast('Format item tidak valid: '+err.message,'error');return;}
+  const costs=[];
+  for(const i of items){if(i.modal!==undefined&&i.modal!==null&&i.modal!==''){const m=Number(i.modal);if(!Number.isFinite(m)||m<0||m>Number(i.harga)){toast('Modal "'+i.nama+'" harus 0 sampai harga jual.','error');return;}costs.push({item_name:i.nama,modal:m});}}
+  items=items.map(({modal,...rest})=>rest);
   const icon=document.getElementById('prodIcon').value.trim();
   if(!/^fa-[a-z0-9-]+$/.test(icon)){toast('Ikon harus berformat fa-nama','error');return;}
   let imageUrl=productImageUrl.value.trim()||currentProductImageUrl||'';
@@ -161,6 +166,9 @@ productForm.onsubmit=async e=>{
     : await sb.from('products').insert(row);
   saveProductBtn.disabled=false;
   if(result.error){toast(result.error.message,'error');return;}
+  {const pid=editingProductId||row.id;const del=await sb.from('product_costs').delete().eq('product_id',pid);
+   if(del.error)toast('Produk tersimpan, modal gagal diperbarui: '+del.error.message,'error');
+   else if(costs.length){const ins=await sb.from('product_costs').insert(costs.map(c=>({product_id:pid,...c})));if(ins.error)toast('Produk tersimpan, modal gagal disimpan: '+ins.error.message,'error');}}
   toast(editingProductId?'Produk berhasil diperbarui.':'Produk berhasil ditambahkan.','info');
   resetProductEditor();await loadProducts();
 };
@@ -176,6 +184,7 @@ async function deleteProduct(id){
   if(!confirm('Hapus produk '+id+'?'))return;
   const {error}=await sb.from('products').delete().eq('id',id);
   if(error){toast(error.message,'error');return;}
+  await sb.from('product_costs').delete().eq('product_id',String(id));
   if(editingProductId===String(id))resetProductEditor();
   toast('Produk dihapus.','info');await loadProducts();
 }
