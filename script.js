@@ -52,7 +52,7 @@ window.onload = async function() {
         if (logoutButton) logoutButton.style.display = 'inline-flex';
         if (guestNote) guestNote.style.display = 'none';
         if (userRole !== 'admin') {
-            const adminMenu = document.querySelector('a[href="admin.html"]');
+            document.querySelectorAll('a[href="admin.html"]').forEach(a => a.style.display = 'none'); const adminMenu = null;
             if (adminMenu) adminMenu.style.display = 'none';
         }
         await loadRiwayatFromDB();
@@ -61,7 +61,7 @@ window.onload = async function() {
         if (loginButton) loginButton.style.display = 'block';
         if (logoutButton) logoutButton.style.display = 'none';
         if (guestNote) guestNote.style.display = 'block';
-        const adminMenu = document.querySelector('a[href="admin.html"]');
+        document.querySelectorAll('a[href="admin.html"]').forEach(a => a.style.display = 'none'); const adminMenu = null;
         if (adminMenu) adminMenu.style.display = 'none';
     }
 
