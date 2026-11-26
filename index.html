@@ -67,25 +67,23 @@
             <div class="store-bottom-info"><strong>Butuh bantuan memilih produk?</strong><span>Tim DIGIVEX siap membantu pesananmu.</span><button onclick="bukaFormWa()"><i class="fa-brands fa-whatsapp"></i> Hubungi CS</button></div>
         </div>
 
-        <!-- HALAMAN DETAIL GAME: halaman mandiri untuk setiap game -->
-        <section id="page-product" class="page game-detail-page">
-            <button class="game-back" type="button" onclick="tutupHalamanProduk()"><i class="fa-solid fa-arrow-left"></i> Kembali ke Katalog</button>
-            <div class="game-detail-hero">
-                <img id="detailGameImage" src="assets/mobile-legends-hero.jpg" alt="" onerror="this.style.display='none'">
-                <div class="game-detail-shade"></div>
-                <div class="game-detail-title"><span class="game-detail-kicker">DIGIVEX GAME CENTER</span><h1 id="detailGameName">Mobile Legends</h1><p id="detailGamePublisher">Moonton</p></div>
+        <!-- HALAMAN DETAIL GAME -->
+        <section id="page-game" class="page game-page">
+            <button class="game-back" type="button" onclick="gantiHalaman('home', null)"><i class="fa-solid fa-arrow-left"></i> Kembali ke katalog</button>
+            <div class="game-hero-card">
+                <img id="gameHeroImage" src="assets/mobile-legends-hero.jpg" alt="" onerror="this.style.display='none'">
+                <div class="game-hero-shade"></div>
+                <div class="game-hero-copy"><span class="game-kicker">TOP UP GAME • DIGIVEX</span><h1 id="gamePageTitle">Mobile Legends</h1><p id="gamePagePublisher">Moonton</p></div>
             </div>
-            <div class="game-benefits"><span><i class="fa-solid fa-bolt"></i> Proses cepat</span><span><i class="fa-solid fa-comments"></i> Layanan chat</span><span><i class="fa-solid fa-shield-halved"></i> Pembayaran aman</span></div>
-            <div class="game-tabs"><button class="active" type="button" onclick="gantiTabGame('transaksi',this)">Transaksi</button><button type="button" onclick="gantiTabGame('keterangan',this)">Keterangan</button></div>
+            <div class="game-benefits"><span>⚡ Proses cepat</span><span>💬 Layanan bantuan</span><span>✓ Pembayaran aman</span></div>
+            <div class="game-tabs"><button class="active" type="button" data-tab="transaction" onclick="switchGameTab('transaction')">Transaksi</button><button type="button" data-tab="description" onclick="switchGameTab('description')">Keterangan</button></div>
             <div id="gameTransactionPanel">
-                <div class="game-step-heading"><b>1</b><strong>Masukkan Data Akun</strong></div>
-                <div class="game-target-fields"><label id="detailUserIdLabel">ID</label><input id="detailUserId" type="text" placeholder="Masukkan ID" autocomplete="off"><label id="detailZoneLabel">Server</label><input id="detailZoneId" type="text" placeholder="Masukkan Server" autocomplete="off"></div>
-                <div class="game-step-heading game-step-two"><b>2</b><strong>Pilih Nominal</strong></div>
-                <div id="gameItemCategories" class="game-item-categories"></div>
-                <div id="gameItemGrid" class="game-item-grid"></div>
-                <div class="game-order-bar"><div><small>Produk dipilih</small><strong id="gameSelectedItem">Belum ada item produk yang dipilih.</strong><b id="gameSelectedPrice"></b></div><button type="button" onclick="buatPesananDariHalamanProduk()"><i class="fa-solid fa-bag-shopping"></i> Pesan Sekarang!</button></div>
+                <section class="game-step"><div class="game-step-title"><b>1</b><strong>Masukkan Data Akun</strong></div><div class="game-input-grid"><label>ID Tujuan<input id="gameTargetId" type="text" inputmode="numeric" placeholder="Masukkan User ID"></label><label id="gameServerLabel">Server<input id="gameServerId" type="text" inputmode="numeric" placeholder="Masukkan Server (opsional)"></label></div></section>
+                <section class="game-step"><div class="game-step-title"><b>2</b><strong>Pilih Nominal</strong></div><div class="game-product-heading">Produk tersedia <span>Harga dalam IDR</span></div><div id="gameNominalGrid" class="game-nominal-grid"></div></section>
+                <div class="game-selection" id="gameSelectionSummary">Belum ada item produk yang dipilih.</div>
+                <button class="game-order-button" type="button" id="gameOrderButton" disabled onclick="submitGameSelection()"><i class="fa-solid fa-bag-shopping"></i> Pesan Sekarang!</button>
             </div>
-            <div id="gameDescriptionPanel" class="game-description-panel" hidden><h3 id="gameDescriptionTitle">Tentang Mobile Legends</h3><p id="gameDescriptionText">Pilih nominal yang tersedia, masukkan data akun dengan benar, lalu lanjutkan pemesanan.</p></div>
+            <div id="gameDescriptionPanel" class="game-description" hidden><h3 id="gameDescriptionTitle">Tentang produk</h3><p>Pilih nominal yang tersedia, masukkan data akun dengan benar, lalu lanjutkan pemesanan. Pastikan ID tujuan sudah sesuai sebelum melakukan pembayaran.</p></div>
         </section>
 
         <!-- LACAK PESANAN -->
