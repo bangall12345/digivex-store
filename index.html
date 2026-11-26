@@ -43,6 +43,11 @@
     <main class="container">
         <!-- BERANDA -->
         <div id="page-home" class="page active">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Cari produk impianmu..." onkeyup="cariProduk()">
+            </div>
+            
             <div class="banner hero-banner">
                 <div class="hero-copy">
                     <span class="badge"><i class="fa-solid fa-crown"></i> TOP UP MUDAH</span>
@@ -62,11 +67,6 @@
                 <div class="category-item" onclick="showToast('Fitur Listrik segera hadir!', 'info')"><i class="fa-solid fa-bolt cat-icon text-orange"></i><span>Listrik</span></div>
             </div>
 
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="Cari produk impianmu..." onkeyup="cariProduk()">
-            </div>
-            
             <div class="catalog-heading"><div><h3 class="section-title" id="sectionTitle">Katalog Pulsa</h3><p>Pilih produk untuk melihat pilihan nominal.</p></div><span class="catalog-live"><i></i> KATALOG</span></div>
             <div class="product-grid" id="productList"></div>
             <div class="store-bottom-info"><strong>Butuh bantuan memilih produk?</strong><span>Tim DIGIVEX siap membantu pesananmu.</span><button onclick="bukaFormWa()"><i class="fa-brands fa-whatsapp"></i> Hubungi CS</button></div>
