@@ -17,6 +17,7 @@ let userEmail = null;
 let userRole = 'user'; 
 let currentKategori = 'Game'; 
 let currentUserId = null;
+let activeGameCategory = 'Semua';
 
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toastContainer');
@@ -77,7 +78,7 @@ window.onload = async function() {
             selectedGame = dataGame.find(g => String(g.id) === String(pending.gameId));
             if (selectedGame && Array.isArray(selectedGame.items)) {
                 const item = selectedGame.items.find(i => i.nama === pending.itemName);
-                if (item) pilihNominal(item.nama, Number(item.harga));
+                if (item) { pilihNominal(item.nama, Number(item.harga)); if (pending.targetId) document.getElementById('userId').value = pending.targetId; if (pending.zoneId) document.getElementById('zoneId').value = pending.zoneId; }
             }
         }
     } catch (e) { console.warn('Pemulihan pilihan produk dilewati:', e); }
@@ -132,6 +133,8 @@ function gantiHalaman(namaHalaman, element) {
     document.getElementById('page-' + namaHalaman).classList.add('active');
     document.querySelectorAll('.bottom-nav a').forEach(a => a.classList.remove('active'));
     if(element) element.classList.add('active');
+    document.body.classList.toggle('settings-view', namaHalaman === 'settings');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     if(namaHalaman === 'history') loadRiwayatFromDB();
 }
 
@@ -171,7 +174,7 @@ function renderProductGrid() {
     container.innerHTML = '';
     container.onclick = e => {
         const card = e.target.closest('.product-card'); if (!card) return;
-        if (card.dataset.id) bukaNominal(card.dataset.id);
+        if (card.dataset.id) bukaHalamanProduk(card.dataset.id);
         else if (card.dataset.soon) infoProdukBelumAktif(card.dataset.soon);
     };
 
@@ -228,27 +231,91 @@ function cariProduk() {
     renderProductGrid();
 }
 
-function bukaNominal(gameId) {
-    selectedGame = dataGame.find(g => g.id === gameId);
+function bukaHalamanProduk(gameId) {
+    selectedGame = dataGame.find(g => String(g.id) === String(gameId));
     if (!selectedGame) return;
-    document.getElementById('nominalTitle').innerText = "Pilih Nominal - " + selectedGame.nama;
-    const listContainer = document.getElementById('nominalList');
-    listContainer.innerHTML = "";
-    const items = Array.isArray(selectedGame.items) ? selectedGame.items : [];
-    items.forEach((item, i) => {
-        listContainer.innerHTML += `
-            <div class="nominal-item" data-i="${i}">
-                <div class="nominal-info"><h4>${escapeHtml(item.nama)}</h4></div>
-                <div class="nominal-price">${escapeHtml(rupiah(item.harga))}</div>
-            </div>`;
-    });
-    listContainer.onclick = e => {
-        const el = e.target.closest('.nominal-item'); if (!el) return;
-        const it = items[Number(el.dataset.i)];
-        if (it) pilihNominal(String(it.nama), Number(it.harga));
-    };
-    document.getElementById('nominalModal').classList.add('active');
+    activeGameCategory = 'Semua';
+    selectedItem = null;
+    const name = selectedGame.nama || 'Game';
+    const normalized = name.toLowerCase();
+    const image = selectedGame.image_url || (normalized.includes('mobile legends') ? 'assets/mobile-legends-hero.jpg' : '');
+    const hero = document.getElementById('detailGameImage');
+    hero.style.display = image ? 'block' : 'none';
+    if (image) hero.src = image;
+    document.getElementById('detailGameName').innerText = name;
+    document.getElementById('detailGamePublisher').innerText = normalized.includes('mobile legends') ? 'Moonton' : (selectedGame.publisher || 'DIGIVEX STORE');
+    document.getElementById('gameDescriptionTitle').innerText = 'Tentang ' + name;
+    document.getElementById('gameDescriptionText').innerText = selectedGame.deskripsi || ('Pilih produk ' + name + ' yang tersedia, masukkan data akun dengan benar, lalu tekan Pesan Sekarang untuk melanjutkan.');
+    document.getElementById('detailZoneLabel').style.display = normalized.includes('mobile legends') ? '' : 'none';
+    document.getElementById('detailZoneId').style.display = normalized.includes('mobile legends') ? '' : 'none';
+    document.getElementById('detailUserIdLabel').innerText = normalized.includes('mobile legends') ? 'User ID' : 'ID / Nomor Tujuan';
+    document.getElementById('detailUserId').placeholder = normalized.includes('mobile legends') ? 'Masukkan User ID' : 'Masukkan ID / Nomor Tujuan';
+    document.getElementById('detailUserId').value = '';
+    document.getElementById('detailZoneId').value = '';
+    document.getElementById('gameSelectedItem').innerText = 'Belum ada item produk yang dipilih.';
+    document.getElementById('gameSelectedPrice').innerText = '';
+    renderItemGame();
+    document.querySelectorAll('.game-tabs button').forEach((b,i)=>b.classList.toggle('active',i===0));
+    document.getElementById('gameTransactionPanel').hidden = false;
+    document.getElementById('gameDescriptionPanel').hidden = true;
+    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+    document.getElementById('page-product').classList.add('active');
+    document.body.classList.add('product-view');
+    window.scrollTo({top:0,behavior:'smooth'});
 }
+
+function tutupHalamanProduk() {
+    document.getElementById('page-product').classList.remove('active');
+    document.getElementById('page-home').classList.add('active');
+    document.body.classList.remove('product-view');
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function gantiTabGame(tab, button) {
+    document.querySelectorAll('.game-tabs button').forEach(b=>b.classList.remove('active'));
+    button.classList.add('active');
+    document.getElementById('gameTransactionPanel').hidden = tab !== 'transaksi';
+    document.getElementById('gameDescriptionPanel').hidden = tab !== 'keterangan';
+}
+
+function kategoriItemGame(nama) {
+    const n = String(nama || '').toLowerCase();
+    if (n.includes('promo')) return 'Promo';
+    if (n.includes('weekly') || n.includes('twilight') || n.includes('starlight') || n.includes('pass')) return 'Special Items';
+    if (n.includes('first top') || n.includes('firsttop')) return 'First Top Up';
+    return 'Top Up';
+}
+
+function renderItemGame() {
+    if (!selectedGame) return;
+    const items = Array.isArray(selectedGame.items) ? selectedGame.items : [];
+    const categories = ['Semua', ...new Set(items.map(i=>kategoriItemGame(i.nama)))];
+    const categoryBox = document.getElementById('gameItemCategories');
+    categoryBox.innerHTML = categories.map(c=>`<button type="button" class="${c===activeGameCategory?'active':''}" data-category="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join('');
+    categoryBox.onclick = e => { const b=e.target.closest('button[data-category]'); if(!b)return; activeGameCategory=b.dataset.category; renderItemGame(); };
+    const filtered = items.map((item,index)=>({...item,_index:index})).filter(item=>activeGameCategory==='Semua'||kategoriItemGame(item.nama)===activeGameCategory);
+    const grid = document.getElementById('gameItemGrid');
+    if (!filtered.length) { grid.innerHTML='<p class="game-empty">Belum ada nominal yang tersedia.</p>'; return; }
+    grid.innerHTML = filtered.map(item=>`<button type="button" class="game-item-card ${selectedItem?.nama===item.nama?'selected':''}" data-index="${item._index}"><strong>${escapeHtml(item.nama)}</strong><span>${escapeHtml(rupiah(item.harga))}</span><small><i class="fa-solid fa-bolt"></i> Pengiriman instan</small></button>`).join('');
+    grid.onclick = e => { const b=e.target.closest('button[data-index]'); if(!b)return; const item=items[Number(b.dataset.index)]; selectedItem={nama:item.nama,harga:Number(item.harga)}; document.getElementById('gameSelectedItem').innerText=item.nama; document.getElementById('gameSelectedPrice').innerText=rupiah(item.harga); renderItemGame(); };
+}
+
+function buatPesananDariHalamanProduk() {
+    if (!selectedGame || !selectedItem) { showToast('Pilih nominal produk terlebih dahulu.','info'); return; }
+    const userId = document.getElementById('detailUserId').value.trim();
+    const zoneId = document.getElementById('detailZoneId').value.trim();
+    const isML = String(selectedGame.nama||'').toLowerCase().includes('mobile legends');
+    if (!userId || (isML && !zoneId)) { showToast(isML ? 'Masukkan User ID dan Server terlebih dahulu.' : 'Masukkan ID tujuan terlebih dahulu.','error'); return; }
+    if (!currentUserId) {
+        sessionStorage.setItem('digivex_pending_purchase', JSON.stringify({gameId:selectedGame.id,itemName:selectedItem.nama,targetId:userId,zoneId}));
+        window.location.href='login.html'; return;
+    }
+    pilihNominal(selectedItem.nama, Number(selectedItem.harga));
+    document.getElementById('userId').value=userId;
+    if (isML) document.getElementById('zoneId').value=zoneId;
+}
+
+function bukaNominal(gameId) { bukaHalamanProduk(gameId); }
 
 function tutupNominal() { document.getElementById('nominalModal').classList.remove('active'); }
 

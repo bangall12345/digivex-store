@@ -35,6 +35,7 @@
         <button onclick="drawerGo('rules')"><span>Peraturan</span><i class="fa-solid fa-shield-halved"></i></button>
         <button onclick="drawerGo('help')"><span>Pusat Bantuan</span><i class="fa-solid fa-headset"></i></button>
         <button onclick="drawerGo('account')"><span>Akun Saya</span><i class="fa-solid fa-user"></i></button>
+        <button onclick="drawerGo('settings')"><span>Pengaturan</span><i class="fa-solid fa-gear"></i></button>
         <a href="admin.html" id="drawerAdminLink" style="display:none"><span>Panel Admin</span><i class="fa-solid fa-shield-halved"></i></a>
         <div class="drawer-foot">Belanja digital lebih mudah bersama DIGIVEX STORE</div>
     </aside>
@@ -66,6 +67,27 @@
             <div class="store-bottom-info"><strong>Butuh bantuan memilih produk?</strong><span>Tim DIGIVEX siap membantu pesananmu.</span><button onclick="bukaFormWa()"><i class="fa-brands fa-whatsapp"></i> Hubungi CS</button></div>
         </div>
 
+        <!-- HALAMAN DETAIL GAME: halaman mandiri untuk setiap game -->
+        <section id="page-product" class="page game-detail-page">
+            <button class="game-back" type="button" onclick="tutupHalamanProduk()"><i class="fa-solid fa-arrow-left"></i> Kembali ke Katalog</button>
+            <div class="game-detail-hero">
+                <img id="detailGameImage" src="assets/mobile-legends-hero.jpg" alt="" onerror="this.style.display='none'">
+                <div class="game-detail-shade"></div>
+                <div class="game-detail-title"><span class="game-detail-kicker">DIGIVEX GAME CENTER</span><h1 id="detailGameName">Mobile Legends</h1><p id="detailGamePublisher">Moonton</p></div>
+            </div>
+            <div class="game-benefits"><span><i class="fa-solid fa-bolt"></i> Proses cepat</span><span><i class="fa-solid fa-comments"></i> Layanan chat</span><span><i class="fa-solid fa-shield-halved"></i> Pembayaran aman</span></div>
+            <div class="game-tabs"><button class="active" type="button" onclick="gantiTabGame('transaksi',this)">Transaksi</button><button type="button" onclick="gantiTabGame('keterangan',this)">Keterangan</button></div>
+            <div id="gameTransactionPanel">
+                <div class="game-step-heading"><b>1</b><strong>Masukkan Data Akun</strong></div>
+                <div class="game-target-fields"><label id="detailUserIdLabel">ID</label><input id="detailUserId" type="text" placeholder="Masukkan ID" autocomplete="off"><label id="detailZoneLabel">Server</label><input id="detailZoneId" type="text" placeholder="Masukkan Server" autocomplete="off"></div>
+                <div class="game-step-heading game-step-two"><b>2</b><strong>Pilih Nominal</strong></div>
+                <div id="gameItemCategories" class="game-item-categories"></div>
+                <div id="gameItemGrid" class="game-item-grid"></div>
+                <div class="game-order-bar"><div><small>Produk dipilih</small><strong id="gameSelectedItem">Belum ada item produk yang dipilih.</strong><b id="gameSelectedPrice"></b></div><button type="button" onclick="buatPesananDariHalamanProduk()"><i class="fa-solid fa-bag-shopping"></i> Pesan Sekarang!</button></div>
+            </div>
+            <div id="gameDescriptionPanel" class="game-description-panel" hidden><h3 id="gameDescriptionTitle">Tentang Mobile Legends</h3><p id="gameDescriptionText">Pilih nominal yang tersedia, masukkan data akun dengan benar, lalu lanjutkan pemesanan.</p></div>
+        </section>
+
         <!-- LACAK PESANAN -->
         <div id="page-tracking" class="page">
             <h3 class="section-title">Lacak Pesanan</h3>
@@ -94,6 +116,29 @@
                 <button id="logoutAccountBtn" class="btn-logout" onclick="prosesLogout()" hidden><i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar Akun</button>
             </div>
         </div>
+
+        <!-- PENGATURAN: HALAMAN TERPISAH -->
+        <section id="page-settings" class="page settings-page">
+            <button class="settings-back" type="button" onclick="gantiHalaman('home', null)"><i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda</button>
+            <div class="settings-hero">
+                <span class="settings-kicker"><i class="fa-solid fa-sliders"></i> PREFERENSI TOKO</span>
+                <h1>Pengaturan</h1>
+                <p>Atur preferensi dan informasi DIGIVEX STORE.</p>
+            </div>
+            <h3 class="settings-section-title">Preferensi</h3>
+            <div class="settings-list">
+                <div class="settings-row"><span class="settings-icon"><i class="fa-solid fa-globe"></i></span><span class="settings-row-copy"><strong>Negara & Mata Uang</strong><small>Indonesia (IDR)</small></span><span class="settings-value">IDR</span></div>
+                <div class="settings-row"><span class="settings-icon"><i class="fa-solid fa-language"></i></span><span class="settings-row-copy"><strong>Bahasa</strong><small>Bahasa Indonesia</small></span><span class="settings-value">ID</span></div>
+                <div class="settings-row"><span class="settings-icon"><i class="fa-solid fa-moon"></i></span><span class="settings-row-copy"><strong>Tampilan</strong><small>Mode gelap DIGIVEX</small></span><span class="settings-value">Gelap</span></div>
+            </div>
+            <h3 class="settings-section-title">Akun & Bantuan</h3>
+            <div class="settings-list">
+                <button class="settings-row settings-action" type="button" onclick="gantiHalaman('account', null)"><span class="settings-icon"><i class="fa-solid fa-user"></i></span><span class="settings-row-copy"><strong>Akun Saya</strong><small>Lihat informasi akun</small></span><i class="fa-solid fa-chevron-right settings-chevron"></i></button>
+                <button class="settings-row settings-action" type="button" onclick="gantiHalaman('help', null)"><span class="settings-icon"><i class="fa-solid fa-headset"></i></span><span class="settings-row-copy"><strong>Pusat Bantuan</strong><small>Hubungi Customer Service</small></span><i class="fa-solid fa-chevron-right settings-chevron"></i></button>
+                <button class="settings-row settings-action" type="button" onclick="gantiHalaman('help', null);setTimeout(()=>document.getElementById('helpRulesHeading')?.scrollIntoView({behavior:'smooth'}),100)"><span class="settings-icon"><i class="fa-solid fa-shield-halved"></i></span><span class="settings-row-copy"><strong>Kebijakan & Privasi</strong><small>Syarat dan ketentuan toko</small></span><i class="fa-solid fa-chevron-right settings-chevron"></i></button>
+            </div>
+            <div class="settings-about"><img src="assets/digivex-mark.svg" alt=""><strong>DIGIVEX STORE</strong><small>TOP UP • GAME • DIGITAL</small><span>Versi aplikasi 1.0</span></div>
+        </section>
 
         <!-- PUSAT BANTUAN, CS, DAN INFORMASI TOKO -->
         <div id="page-help" class="page">
