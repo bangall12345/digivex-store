@@ -1,0 +1,13 @@
+DIGIVEX STORE - UI TEST UPDATE
+
+Base used: DIGIVEX-STORE-PREMIUM-GOLD.zip (latest prepared project archive).
+
+Changes in this test build:
+- Removed the Pulsa, Data, Game, and Listrik shortcut tiles from the home page.
+- Home catalog now opens in Game mode and filters to Game products (legacy products with no category are treated as games).
+- Removed the fixed bottom navigation bar.
+- Moved Beranda, Lacak Pesanan, Riwayat Pesanan, Peraturan, Pusat Bantuan, and Akun Saya into the right-side drawer.
+- Drawer remains off-screen until the menu button is tapped; it closes with X, outside tap, or Escape.
+- Bumped service-worker cache name to digivex-v12 so the UI update can refresh.
+
+Existing Supabase, authentication, admin, checkout components, and payment-related files were retained from the base archive. This is a static code/UI smoke test only; live Supabase login, database reads, payment flow, and webhook behavior still require testing on the deployed site.

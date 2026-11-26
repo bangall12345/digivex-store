@@ -15,7 +15,7 @@ let selectedItem = null;
 let userLogin = null;
 let userEmail = null;
 let userRole = 'user'; 
-let currentKategori = 'Pulsa'; 
+let currentKategori = 'Game'; 
 let currentUserId = null;
 
 function showToast(message, type = 'success') {
@@ -97,7 +97,7 @@ async function loadProductsFromDB() {
         } else {
             dataGame = data;
         }
-        filterKategori('Pulsa', document.getElementById('cat-Pulsa'));
+        filterKategori('Game', null);
     } catch (err) {
         container.innerHTML = `<div style="color:red;">Sistem Error: ${escapeHtml(err.message)}</div>`;
     }
@@ -138,9 +138,8 @@ function gantiHalaman(namaHalaman, element) {
 function filterKategori(kategori, element) {
     currentKategori = kategori;
     document.querySelectorAll('.category-item').forEach(el => el.classList.remove('active-cat'));
-    if(element) element.classList.add('active-cat');
 
-    document.getElementById('sectionTitle').innerText = "Katalog " + kategori;
+    document.getElementById('sectionTitle').innerText = 'Katalog Game';
     renderProductGrid();
 }
 
@@ -177,7 +176,7 @@ function renderProductGrid() {
     };
 
     const filteredData = dataGame.filter(g =>
-        (g.kategori === currentKategori || (!g.kategori && currentKategori === 'Game')) &&
+        (String(g.kategori || 'Game').toLowerCase() === 'game') &&
         String(g.nama || '').toLowerCase().includes(keyword)
     );
 
