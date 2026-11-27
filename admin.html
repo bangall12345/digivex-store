@@ -53,7 +53,7 @@ body{background:radial-gradient(ellipse at 50% -18%,rgba(109,40,217,.24),transpa
 <main id="dashboard" class="adm-shell" hidden><header class="adm-top"><div class="adm-brand"><div class="adm-logo"><i class="fa-solid fa-bolt"></i></div><div><b>DIGIVEX STORE</b><small>ADMIN CONTROL CENTER</small></div></div><div class="adm-actions"><button class="adm-btn" id="refreshBtn"><i class="fa-solid fa-rotate"></i> Refresh</button><button class="adm-btn" id="logoutBtn">Keluar</button></div></header>
 <section class="adm-hero"><small>OVERVIEW / DASHBOARD</small><h1>Selamat datang, Admin</h1><p>Pantau transaksi dan kelola katalog DIGIVEX STORE dari satu tempat.</p></section>
 <section class="adm-stats"><article class="adm-stat"><i class="fa-solid fa-receipt"></i><span>Total Pesanan</span><strong id="statOrders">—</strong></article><article class="adm-stat"><i class="fa-solid fa-wallet"></i><span>Pendapatan sukses</span><strong id="statRevenue">—</strong></article><article class="adm-stat"><i class="fa-solid fa-hourglass-half"></i><span>Menunggu</span><strong id="statPending">—</strong></article><article class="adm-stat"><i class="fa-solid fa-box"></i><span>Produk</span><strong id="statProducts">—</strong></article></section>
-<nav class="adm-tabs"><button class="adm-tab active" data-tab="orders"><i class="fa-solid fa-receipt"></i> Pesanan</button><button class="adm-tab" data-tab="products"><i class="fa-solid fa-cubes"></i> Produk</button><button class="adm-tab" data-tab="customers"><i class="fa-solid fa-users"></i> Pelanggan</button><button class="adm-tab" data-tab="analytics"><i class="fa-solid fa-chart-line"></i> Analitik</button><button class="adm-tab" data-tab="history"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</button><button class="adm-tab" data-tab="users"><i class="fa-solid fa-user-gear"></i> Akun</button><button class="adm-tab" data-tab="settings"><i class="fa-solid fa-gear"></i> Pengaturan</button></nav>
+<nav class="adm-tabs"><button class="adm-tab active" data-tab="orders"><i class="fa-solid fa-receipt"></i> Pesanan</button><button class="adm-tab" data-tab="chat" id="acTab"><i class="fa-solid fa-comments"></i> Chat <span class="ac-badge" id="acBadge" hidden></span></button><button class="adm-tab" data-tab="products"><i class="fa-solid fa-cubes"></i> Produk</button><button class="adm-tab" data-tab="customers"><i class="fa-solid fa-users"></i> Pelanggan</button><button class="adm-tab" data-tab="analytics"><i class="fa-solid fa-chart-line"></i> Analitik</button><button class="adm-tab" data-tab="history"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</button><button class="adm-tab" data-tab="users"><i class="fa-solid fa-user-gear"></i> Akun</button><button class="adm-tab" data-tab="settings"><i class="fa-solid fa-gear"></i> Pengaturan</button></nav>
 <section id="view-orders" class="adm-view active adm-panel"><h2>Manajemen Pesanan</h2><p class="adm-muted">Perbarui status pesanan setelah pembayaran dan proses top up diverifikasi.</p><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>WAKTU</th><th>PEMBELI</th><th>PRODUK</th><th>TARGET</th><th>TOTAL</th><th>STATUS</th><th>AKSI</th></tr></thead><tbody id="ordersBody"><tr><td colspan="7">Memuat data…</td></tr></tbody></table></div></section>
 <section id="view-products" class="adm-view"><div class="adm-panel"><h2>Tambah Produk</h2><p class="adm-muted">Kolom kategori dan daftar item mengikuti struktur tabel products saat ini.</p><form id="productForm"><input class="adm-input" id="prodId" placeholder="ID unik, contoh: ml-new" required><input class="adm-input" id="prodName" placeholder="Nama produk" required><input class="adm-input" id="prodIcon" placeholder="Ikon Font Awesome, contoh: fa-gamepad" value="fa-gamepad"><input class="adm-input" id="prodCategory" placeholder="Kategori: Game / Pulsa / Data" required>
 <label class="adm-muted" for="prodImageFile">Foto produk (bisa upload dari galeri HP)</label>
@@ -63,6 +63,13 @@ body{background:radial-gradient(ellipse at 50% -18%,rgba(109,40,217,.24),transpa
 <textarea class="adm-input" id="prodItems" rows="4" placeholder='[{"nama":"5 Diamond","harga":1000,"modal":800}] (modal opsional untuk hitung keuntungan)' required></textarea><button class="adm-primary" id="saveProductBtn">Simpan Produk</button> <button type="button" class="adm-btn" id="cancelEditBtn" hidden>Batal Edit</button></form></div><div class="adm-panel" style="margin-top:14px"><h2>Katalog Produk</h2><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>FOTO</th><th>ID</th><th>NAMA</th><th>KATEGORI</th><th>ITEM</th><th>AKSI</th></tr></thead><tbody id="productsBody"></tbody></table></div></div></section><section id="view-customers" class="adm-view adm-panel"><h2>Data Pelanggan</h2><p class="adm-muted">Daftar profil yang tersedia di tabel profiles. Halaman ini hanya menampilkan data, tidak mengubah akun Auth.</p><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>NAMA</th><th>EMAIL</th><th>USER ID</th></tr></thead><tbody id="customersBody"><tr><td colspan="3">Memuat data…</td></tr></tbody></table></div></section>
 <section id="view-analytics" class="adm-view"><div class="adm-panel"><h2>Analitik Penjualan</h2><p class="adm-muted">Penjualan sukses berdasarkan tanggal transaksi.</p><div class="adm-toolbar"><select id="chartPeriod" class="adm-select"><option value="7">7 hari terakhir</option><option value="30">30 hari terakhir</option><option value="month">12 bulan terakhir</option></select><button class="adm-btn" id="chartRefresh">Perbarui</button></div><canvas id="salesChart" class="adm-chart" width="900" height="280"></canvas><div class="adm-grid2" style="margin-top:12px"><div class="adm-kpi"><small>Transaksi sukses</small><strong id="analyticsCount">0</strong></div><div class="adm-kpi"><small>Omzet sukses</small><strong id="analyticsRevenue">Rp0</strong></div></div></div><div class="adm-panel" style="margin-top:14px"><h2>Keuntungan Toko</h2><p class="adm-muted">Harga jual dikurangi harga modal item.</p><div class="adm-grid2"><div class="adm-kpi"><small>Keuntungan tercatat</small><strong id="profitTotal">—</strong></div><div class="adm-kpi"><small>Tanpa data modal</small><strong id="profitMissing">—</strong></div></div><p class="adm-note" style="margin-top:12px">Isi nilai <b>modal</b> pada JSON setiap item produk dan jalankan supabase-v6-migration.sql. Pesanan lama tanpa data modal tidak bisa dihitung.</p></div></section>
 <section id="view-history" class="adm-view adm-panel"><h2>Riwayat Transaksi</h2><div class="adm-toolbar"><input id="historySearch" class="adm-input" style="max-width:360px;margin:0" placeholder="Cari nama, produk, ID tujuan…"><select id="historyStatus" class="adm-select"><option value="">Semua status</option><option>Pending</option><option>Diproses</option><option>Sukses</option><option>Gagal</option></select></div><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>WAKTU</th><th>PEMBELI</th><th>PRODUK</th><th>TARGET</th><th>TOTAL</th><th>STATUS</th></tr></thead><tbody id="historyBody"></tbody></table></div></section>
+<section id="view-chat" class="adm-view adm-panel"><h2>Chat Pelanggan</h2><p class="adm-muted">Balas pesan pelanggan di sini. Pesan baru muncul otomatis.</p>
+<div class="ac-wrap" id="acWrap">
+<div class="ac-listbox"><div class="ac-list" id="acList"><p class="adm-muted">Memuat percakapan...</p></div></div>
+<div class="ac-threadbox"><div class="ac-thead"><button type="button" class="ac-back" id="acBack" aria-label="Kembali"><i class="fa-solid fa-arrow-left"></i></button><div><strong id="acName">Pilih percakapan</strong><small id="acMail"></small></div></div>
+<div class="ac-msgs" id="acMsgs"><p class="adm-muted ac-hint">Pilih percakapan di daftar untuk mulai membalas.</p></div>
+<form class="ac-form" id="acForm" hidden><input id="acInput" class="ac-input" type="text" maxlength="1000" placeholder="Tulis balasan..." autocomplete="off"><button type="submit" class="adm-primary" id="acSend"><i class="fa-solid fa-paper-plane"></i></button></form></div>
+</div></section>
 <section id="view-users" class="adm-view adm-panel"><h2>Manajemen Akun Pengguna</h2><p class="adm-muted">Daftar profil dan role. Perubahan role admin tetap dilakukan melalui Supabase SQL/Authentication agar tidak bisa dinaikkan dari browser.</p><input id="userSearch" class="adm-input" style="max-width:360px" placeholder="Cari nama atau email…"><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>NAMA</th><th>EMAIL</th><th>PERAN</th><th>USER ID</th></tr></thead><tbody id="usersBody"></tbody></table></div></section>
 <section id="view-settings" class="adm-view adm-panel"><h2>Pengaturan Admin</h2><div class="adm-kpi"><small>Akun admin</small><strong id="adminIdentity">—</strong></div><div class="adm-grid2" style="margin-top:12px"><div><h3>Ubah password</h3><form id="passwordForm"><input id="newPassword" class="adm-input" type="password" minlength="8" placeholder="Password baru (min. 8 karakter)" required><input id="confirmPassword" class="adm-input" type="password" minlength="8" placeholder="Ulangi password" required><button class="adm-primary">Simpan password</button></form></div><div><h3>Notifikasi pesanan</h3><p class="adm-muted">Aktifkan notifikasi browser. Dashboard harus tetap terbuka.</p><button class="adm-primary" id="enableNotifications">Aktifkan notifikasi</button><p id="notificationState" class="adm-muted">Belum diaktifkan</p></div></div></section></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2"></script><script src="supabase-config.js"></script><script>
@@ -230,4 +237,109 @@ document.getElementById('mfaLogout').onclick=async e=>{e.preventDefault();await 
 
 function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 boot();
-</script></body></html>
+</script><style>
+.ac-badge{display:inline-block;min-width:17px;height:17px;margin-left:5px;padding:0 5px;border-radius:99px;background:#ff4d6d;color:#fff;font:800 10px/17px Inter,system-ui,sans-serif;text-align:center;vertical-align:middle}
+.ac-wrap{display:block;margin-top:12px}
+.ac-listbox{border:1px solid var(--border);border-radius:14px;background:#101020;max-height:60vh;overflow-y:auto}
+.ac-conv{display:flex;gap:10px;align-items:center;width:100%;padding:12px 13px;border:0;border-bottom:1px solid rgba(167,139,250,.12);background:transparent;color:#eee;text-align:left;cursor:pointer}
+.ac-conv:hover,.ac-conv.on{background:rgba(139,92,246,.16)}
+.ac-av{flex:0 0 38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#8b5cf6,#6535c4);color:#fff;font-weight:800}
+.ac-ct{flex:1;min-width:0}.ac-ct b{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ac-ct span{display:block;font-size:12px;color:#9a90ad;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ac-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-size:10px;color:#8d84a6}
+.ac-threadbox{display:none;border:1px solid var(--border);border-radius:14px;background:#101020;overflow:hidden}
+.ac-wrap.thread-open .ac-listbox{display:none}.ac-wrap.thread-open .ac-threadbox{display:block}
+.ac-thead{display:flex;align-items:center;gap:10px;padding:11px 13px;border-bottom:1px solid rgba(167,139,250,.16)}
+.ac-thead strong{display:block;font-size:14px}.ac-thead small{font-size:11px;color:#9a90ad}
+.ac-back{width:34px;height:34px;border:1px solid var(--border);border-radius:10px;background:#19192e;color:#fff;cursor:pointer}
+.ac-msgs{height:52vh;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:8px}
+.ac-msg{max-width:82%;display:flex;flex-direction:column;gap:3px}.ac-msg.u{align-self:flex-start}.ac-msg.a{align-self:flex-end;align-items:flex-end}
+.ac-bub{padding:9px 13px;font-size:14px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}
+.ac-msg.u .ac-bub{background:#26223a;color:#efe9ff;border-radius:16px 16px 16px 4px}.ac-msg.a .ac-bub{background:linear-gradient(135deg,#8b5cf6,#6535c4);color:#fff;border-radius:16px 16px 4px 16px}
+.ac-msg small{font-size:10px;color:#8d84a6;padding:0 4px}
+.ac-form{display:flex;gap:8px;padding:10px;border-top:1px solid rgba(167,139,250,.16)}.ac-form[hidden],.ac-badge[hidden]{display:none!important}
+.ac-input{flex:1;min-width:0;margin:0;font-size:16px}
+@media(min-width:860px){.ac-wrap{display:grid;grid-template-columns:330px 1fr;gap:12px}.ac-wrap .ac-listbox,.ac-wrap.thread-open .ac-listbox{display:block}.ac-threadbox,.ac-wrap.thread-open .ac-threadbox{display:block}.ac-back{display:none}.ac-msgs{height:56vh}}
+</style>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+let started=false,convs=new Map(),names={},current=null,seen=new Set(),sending=false,refreshT=null;
+const tm=ts=>{try{const d=new Date(ts),n=new Date();return d.toDateString()===n.toDateString()?d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}):d.toLocaleDateString('id-ID',{day:'2-digit',month:'short'});}catch(e){return '';}};
+const chatActive=()=>$('view-chat').classList.contains('active');
+const who=uid=>{const p=names[uid]||{};return p.full_name||p.email||('Pelanggan '+String(uid).slice(0,6));};
+function badge(){let n=0;convs.forEach(c=>n+=c.unread);const b=$('acBadge');b.hidden=n<=0;b.textContent=n>9?'9+':String(n);}
+function renderList(){
+ const list=$('acList');
+ const arr=[...convs.values()].sort((x,y)=>(y.last.created_at>x.last.created_at?1:-1));
+ if(!arr.length){list.innerHTML='<p class="adm-muted" style="padding:14px">Belum ada percakapan.</p>';return;}
+ list.innerHTML=arr.map(c=>{const nm=who(c.uid);return '<button type="button" class="ac-conv'+(c.uid===current?' on':'')+'" data-uid="'+escapeHtml(c.uid)+'"><div class="ac-av">'+escapeHtml(nm.charAt(0).toUpperCase())+'</div><div class="ac-ct"><b>'+escapeHtml(nm)+'</b><span>'+(c.last.sender==='admin'?'Anda: ':'')+escapeHtml(c.last.body)+'</span></div><div class="ac-meta"><span>'+escapeHtml(tm(c.last.created_at))+'</span>'+(c.unread?'<span class="ac-badge">'+(c.unread>9?'9+':c.unread)+'</span>':'')+'</div></button>';}).join('');
+}
+async function loadConvs(){
+ const {data,error}=await sb.from('chat_messages').select('id,user_id,sender,body,admin_read,created_at').order('created_at',{ascending:false}).limit(500);
+ if(error){$('acList').innerHTML='<p class="adm-muted" style="padding:14px">Chat belum aktif. Jalankan file supabase-chat.sql di Supabase terlebih dulu.</p>';return;}
+ const m=new Map();
+ (data||[]).forEach(x=>{let c=m.get(x.user_id);if(!c){c={uid:x.user_id,last:x,unread:0};m.set(x.user_id,c);}if(x.sender==='user'&&!x.admin_read&&!(x.user_id===current&&chatActive()))c.unread++;});
+ convs=m;
+ const need=[...m.keys()].filter(id=>!names[id]);
+ if(need.length){const {data:p}=await sb.from('profiles').select('id,full_name,email').in('id',need);(p||[]).forEach(x=>names[x.id]=x);}
+ renderList();badge();
+}
+function addMsg(m){
+ if(!m||!m.id||seen.has(m.id))return;seen.add(m.id);
+ const box=$('acMsgs');const h=box.querySelector('.ac-hint');if(h)h.remove();
+ const row=document.createElement('div');row.className='ac-msg '+(m.sender==='admin'?'a':'u');
+ const b=document.createElement('div');b.className='ac-bub';b.textContent=m.body;
+ const s=document.createElement('small');s.textContent=tm(m.created_at);
+ row.append(b,s);box.appendChild(row);box.scrollTop=box.scrollHeight;
+}
+async function markRead(uid){
+ if(!uid)return;
+ await sb.from('chat_messages').update({admin_read:true}).eq('user_id',uid).eq('sender','user').eq('admin_read',false);
+ const c=convs.get(uid);if(c){c.unread=0;renderList();badge();}
+}
+async function loadThread(uid){
+ const {data,error}=await sb.from('chat_messages').select('id,sender,body,created_at').eq('user_id',uid).order('created_at',{ascending:true}).limit(300);
+ if(error){toast('Gagal memuat pesan.','error');return;}
+ if(uid!==current)return;
+ (data||[]).forEach(addMsg);
+}
+async function openConv(uid){
+ current=uid;seen=new Set();
+ $('acMsgs').innerHTML='';$('acName').textContent=who(uid);$('acMail').textContent=(names[uid]&&names[uid].email)||'';
+ $('acForm').hidden=false;$('acWrap').classList.add('thread-open');renderList();
+ await loadThread(uid);await markRead(uid);
+ const i=$('acInput');if(i&&window.innerWidth>=860)i.focus();
+}
+function onInsert(m){
+ if(!m)return;
+ if(current&&m.user_id===current){addMsg(m);if(m.sender==='user'&&chatActive())markRead(current);}
+ if(m.sender==='user'&&!(m.user_id===current&&chatActive())){toast('Pesan baru dari '+who(m.user_id),'info');}
+ clearTimeout(refreshT);refreshT=setTimeout(loadConvs,400);
+}
+async function send(e){
+ e.preventDefault();
+ const inp=$('acInput'),text=(inp.value||'').trim();
+ if(!text||!current||sending)return;
+ sending=true;$('acSend').disabled=true;
+ try{
+  const {data,error}=await sb.from('chat_messages').insert({user_id:current,sender:'admin',body:text,admin_read:true}).select('id,sender,body,created_at').single();
+  if(error)throw error;
+  inp.value='';addMsg(data);loadConvs();
+ }catch(err){toast('Balasan gagal terkirim: '+(err.message||'coba lagi'),'error');}
+ finally{sending=false;$('acSend').disabled=false;inp.focus();}
+}
+function start(){
+ if(started)return;started=true;
+ loadConvs();
+ try{sb.channel('admin-chat').on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages'},p=>onInsert(p.new)).subscribe();}catch(e){}
+ // Cadangan bila realtime belum aktif.
+ setInterval(()=>{if(document.hidden)return;loadConvs();if(current&&chatActive())loadThread(current);},10000);
+}
+$('acList').addEventListener('click',e=>{const b=e.target.closest('.ac-conv');if(b)openConv(b.dataset.uid);});
+$('acBack').onclick=()=>{$('acWrap').classList.remove('thread-open');};
+$('acForm').addEventListener('submit',send);
+$('acTab').addEventListener('click',()=>{loadConvs();if(current){loadThread(current);markRead(current);}});
+const w=setInterval(()=>{const d=$('dashboard');if(d&&!d.hidden){clearInterval(w);start();}},800);
+})();
+</script>
+</body></html>

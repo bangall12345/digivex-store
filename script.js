@@ -534,3 +534,115 @@ function renderPopularList() {
     });
     start();
 })();
+
+// ===== CHAT ADMIN (sisi pelanggan) =====
+(function () {
+    const $ = id => document.getElementById(id);
+    let uid = null, started = false, isOpen = false, channel = null, timer = null, sending = false, unread = 0, lastTs = '';
+    const seen = new Set();
+    const seenKey = () => 'digivex_chat_seen_' + uid;
+    const hhmm = ts => { try { return new Date(ts).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };
+
+    function setBadge(n) {
+        unread = Math.max(0, n);
+        const b = $('chatBadge'); if (!b) return;
+        b.hidden = unread <= 0; b.textContent = unread > 9 ? '9+' : String(unread);
+    }
+    function markRead(ts) {
+        if (ts && ts > lastTs) lastTs = ts;
+        try { if (uid && lastTs) localStorage.setItem(seenKey(), lastTs); } catch (e) {}
+        setBadge(0);
+    }
+    function showNote(text) {
+        const box = $('chatBody'); if (!box) return;
+        box.innerHTML = ''; const d = document.createElement('div'); d.className = 'chat-empty'; d.textContent = text; box.appendChild(d);
+    }
+    function addMsg(m) {
+        if (!m || !m.id || seen.has(m.id)) return;
+        seen.add(m.id);
+        const box = $('chatBody'); if (!box) return;
+        const ph = box.querySelector('.chat-empty'); if (ph) ph.remove();
+        const row = document.createElement('div');
+        row.className = 'chat-msg ' + (m.sender === 'admin' ? 'from-admin' : 'from-me');
+        const t = document.createElement('div'); t.className = 'chat-text'; t.textContent = m.body;
+        const s = document.createElement('small'); s.textContent = hhmm(m.created_at);
+        row.append(t, s); box.appendChild(row);
+        box.scrollTop = box.scrollHeight;
+    }
+    async function loadAll() {
+        if (!uid) return;
+        const { data, error } = await sb.from('chat_messages').select('id,sender,body,created_at')
+            .eq('user_id', uid).order('created_at', { ascending: true }).limit(300);
+        if (error) { if (!seen.size) showNote('Chat belum tersedia saat ini. Silakan coba lagi nanti.'); return; }
+        (data || []).forEach(addMsg);
+        const box = $('chatBody');
+        if (box && !box.querySelector('.chat-msg') && !box.querySelector('.chat-empty')) showNote('Halo! Tulis pesanmu di bawah, admin akan membalas secepatnya.');
+        if (isOpen && data && data.length) markRead(data[data.length - 1].created_at);
+    }
+    async function checkUnread() {
+        if (!uid || isOpen) return;
+        let since = ''; try { since = localStorage.getItem(seenKey()) || ''; } catch (e) {}
+        const { count, error } = await sb.from('chat_messages').select('id', { count: 'exact', head: true })
+            .eq('user_id', uid).eq('sender', 'admin').gt('created_at', since || '1970-01-01T00:00:00Z');
+        if (!error) setBadge(count || 0);
+    }
+    function onIncoming(m) {
+        if (!m) return;
+        if (isOpen) { addMsg(m); if (m.sender === 'admin') markRead(m.created_at); }
+        else if (m.sender === 'admin' && !seen.has(m.id)) { seen.add(m.id); setBadge(unread + 1); }
+    }
+    function start() {
+        if (started || !uid) return;
+        started = true;
+        try {
+            if (typeof sb.channel === 'function') {
+                channel = sb.channel('chat-' + uid)
+                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: 'user_id=eq.' + uid }, p => onIncoming(p.new))
+                    .subscribe();
+            }
+        } catch (e) { channel = null; }
+        checkUnread();
+        // Cadangan bila realtime belum aktif: cek berkala.
+        timer = setInterval(() => { if (document.hidden) return; isOpen ? loadAll() : checkUnread(); }, 8000);
+    }
+
+    window.bukaChat = async function () {
+        const sheet = $('chatSheet'); if (!sheet) return;
+        sheet.classList.add('open'); sheet.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('chat-open'); isOpen = true;
+        const logged = typeof currentUserId !== 'undefined' && !!currentUserId;
+        $('chatGuest').hidden = logged; $('chatForm').hidden = !logged; $('chatBody').hidden = !logged;
+        if (!logged) return;
+        uid = currentUserId; start();
+        await loadAll();
+        setTimeout(() => { const i = $('chatInput'); if (i) i.focus(); }, 280);
+    };
+    window.tutupChat = function () {
+        const sheet = $('chatSheet'); if (!sheet) return;
+        sheet.classList.remove('open'); sheet.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('chat-open'); isOpen = false;
+        if (uid) markRead(lastTs);
+    };
+    window.kirimChat = function (e) {
+        if (e) e.preventDefault();
+        const input = $('chatInput'); const text = (input.value || '').trim();
+        if (!text || sending || !uid) return false;
+        sending = true; $('chatSend').disabled = true;
+        sb.from('chat_messages').insert({ user_id: uid, sender: 'user', body: text }).select('id,sender,body,created_at').single()
+            .then(({ data, error }) => {
+                if (error) { showToast(/banyak pesan/i.test(error.message || '') ? 'Terlalu banyak pesan. Coba lagi sebentar.' : 'Pesan gagal terkirim. Coba lagi.', 'error'); return; }
+                input.value = ''; addMsg(data); if (data.created_at > lastTs) lastTs = data.created_at;
+            })
+            .catch(() => showToast('Pesan gagal terkirim. Coba lagi.', 'error'))
+            .finally(() => { sending = false; $('chatSend').disabled = false; input.focus(); });
+        return false;
+    };
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && isOpen) window.tutupChat(); });
+
+    // Mulai memantau pesan baru begitu status login diketahui.
+    let tries = 0;
+    const waiter = setInterval(() => {
+        if (typeof currentUserId !== 'undefined' && currentUserId) { clearInterval(waiter); uid = currentUserId; start(); }
+        else if (++tries > 40) clearInterval(waiter);
+    }, 1000);
+})();

@@ -7,7 +7,7 @@
     <title>DIGIVEX STORE</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=17">
+    <link rel="stylesheet" href="style.css?v=18">
     
     <!-- Favicon & PWA -->
     <link rel="icon" type="image/svg+xml" href="assets/digivex-mark.svg">
@@ -179,12 +179,22 @@
         <i class="fa-brands fa-whatsapp"></i>
     </div>
 
+    <!-- CHAT ADMIN -->
+    <div class="chat-floating" id="chatFab" role="button" tabindex="0" aria-label="Chat Admin" onclick="bukaChat()" onkeydown="if(event.key==='Enter')bukaChat()"><i class="fa-solid fa-comments"></i><span class="chat-badge" id="chatBadge" hidden></span></div>
+    <div class="chat-backdrop" id="chatBackdrop" onclick="tutupChat()"></div>
+    <section class="chat-sheet" id="chatSheet" aria-hidden="true" aria-label="Chat Admin">
+        <div class="chat-head"><div><strong>Chat Admin</strong><small>Kami balas secepatnya</small></div><button type="button" onclick="tutupChat()" aria-label="Tutup chat"><i class="fa-solid fa-xmark"></i></button></div>
+        <div class="chat-guest" id="chatGuest" hidden><i class="fa-solid fa-comments"></i><p>Masuk ke akunmu dulu untuk mulai chat dengan admin.</p><a href="login.html">Masuk / Daftar</a></div>
+        <div class="chat-body" id="chatBody"></div>
+        <form class="chat-form" id="chatForm" onsubmit="return kirimChat(event)"><input id="chatInput" type="text" maxlength="1000" placeholder="Tulis pesan..." autocomplete="off" enterkeyhint="send"><button type="submit" id="chatSend" aria-label="Kirim"><i class="fa-solid fa-paper-plane"></i></button></form>
+    </section>
+
     <!-- SEMUA MODAL (NOMINAL, CHECKOUT, INVOICE, WA) ADA DI components.html -->
     <div id="modal-container"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
-    <script src="script.js?v=17"></script>
+    <script src="script.js?v=18"></script>
     
     <script>
         function toggleStoreMenu(force) {
