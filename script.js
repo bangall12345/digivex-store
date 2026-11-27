@@ -84,9 +84,9 @@ window.onload = async function() {
 };
 
 async function loadProductsFromDB() {
-    const container = document.getElementById('productList');
+    const container = document.getElementById('popularList') || document.getElementById('productList');
     if(!container) return;
-    container.innerHTML = '<p style="color:var(--text-muted); text-align:center; width:100%;">Menghubungkan ke database...</p>';
+    container.innerHTML = '<p style="grid-column:1/-1; color:var(--text-muted); text-align:center; width:100%;">Menghubungkan ke database...</p>';
     
     try {
         const { data, error } = await sb.from('products').select('*');
@@ -480,7 +480,7 @@ function renderPopularList() {
     const soon = (katalogTambahan.Game || []).filter(it => it.nama.toLowerCase().includes(keyword) &&
         !dataGame.some(g => { const n = String(g.nama||'').toLowerCase(), t = it.nama.toLowerCase(); return n === t || n.includes(t) || t.includes(n); }))
         .map(it => ({ soon: it.nama, nama: it.nama, pub: 'Segera tersedia', img: it.image || art(it.nama), color: it.color, icon: it.icon }));
-    const items = active.concat(soon).slice(0, 8);
+    const items = active.concat(soon);
     const section = box.closest('.popular-section'); if (section) section.hidden = !items.length;
     box.innerHTML = items.map((it, i) => {
         const p = popularPalette[i % popularPalette.length];
