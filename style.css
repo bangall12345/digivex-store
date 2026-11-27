@@ -862,3 +862,179 @@ body.chat-open .cs-floating,body.chat-open .chat-floating{display:none!important
 .chat-guest a{padding:11px 20px;border-radius:12px;background:linear-gradient(135deg,#a678ff,#6535c4);color:#fff;font-weight:700;text-decoration:none}
 @media(min-width:600px){.chat-sheet{left:auto;right:16px;bottom:16px;width:400px;border-radius:20px;border-bottom:1px solid rgba(190,150,255,.25)}}
 .chat-guest[hidden],.chat-form[hidden],.chat-body[hidden],.chat-badge[hidden]{display:none!important}
+
+
+/* ==========================================================
+   DIGIVEX STORE — PREMIUM REDESIGN V2
+   Visual-only layer: preserves existing IDs and interactions.
+   ========================================================== */
+:root{
+  --primary:#a879ff;--primary-hover:#8e5df0;--accent:#c9a875;
+  --bg-color:#09090f;--card-bg:#171521;--surface:#211b30;
+  --text-main:#f8f6fc;--text-muted:#aaa4b8;
+  --border:rgba(191,160,255,.18);
+}
+html,body{background:#09090f!important}
+body{
+  background:
+    radial-gradient(ellipse at 12% 0%,rgba(120,75,205,.17),transparent 34%),
+    radial-gradient(ellipse at 92% 34%,rgba(82,48,130,.12),transparent 36%),
+    #09090f!important;
+  font-family:Inter,system-ui,-apple-system,sans-serif;
+}
+.app-header{
+  min-height:76px;padding:12px clamp(16px,4vw,34px);
+  background:rgba(18,17,23,.96)!important;
+  border-bottom:1px solid rgba(201,168,117,.16);
+  box-shadow:0 8px 30px rgba(0,0,0,.28);
+}
+.logo-stack{flex-direction:row;gap:10px;align-items:center}
+.logo-stack img{width:43px;height:43px;filter:drop-shadow(0 0 12px rgba(160,110,255,.45))}
+.logo-word{font-size:20px;font-weight:900;letter-spacing:-.8px;color:#fff}
+.logo-word em{font-weight:900;color:#b58aff}
+.header-actions{gap:10px}
+.header-icon,.currency-chip{
+  height:44px;border-radius:13px;border-color:rgba(255,255,255,.13);
+  background:linear-gradient(145deg,#211e29,#17151d);color:#f6f1ff;
+}
+.header-icon{width:44px;font-size:16px}
+.currency-chip{padding:0 13px;font-size:12px}
+.container{width:min(100%,1160px);max-width:1160px;padding:25px clamp(14px,3vw,28px) 44px}
+#page-home.active{display:flex;flex-direction:column;gap:0}
+#page-home>.banner-carousel{order:1;margin:0 0 25px}
+.banner-track{border-radius:24px}
+.banner-slide{
+  aspect-ratio:2.15/1;border-radius:24px;
+  border:1px solid rgba(201,168,117,.28);
+  box-shadow:0 16px 38px rgba(0,0,0,.32);
+}
+.banner-slide img{object-fit:cover}
+.banner-dots{margin-top:10px}
+.banner-dots i.on{background:#c6a1ff;box-shadow:0 0 12px rgba(169,121,255,.6)}
+#page-home>.popular-section{order:2;margin:0 0 22px}
+.popular-title{font-size:clamp(19px,2.3vw,24px);letter-spacing:.3px}
+.popular-sub{margin:6px 0 16px 29px;font-size:13px;color:#aaa3b7}
+.popular-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.pop-card{
+  min-height:86px;padding:11px 13px;border-radius:18px;
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 8px 20px rgba(0,0,0,.17);
+  transition:transform .18s ease,border-color .18s ease,filter .18s ease;
+}
+.pop-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.28);filter:brightness(1.06)}
+.pop-card img,.pop-fallback{width:62px;height:62px;flex-basis:62px;border-radius:14px}
+.pop-text b{font-size:13px;line-height:1.25}
+.pop-text span{font-size:11px;opacity:.84}
+#page-home>.cat-chips{order:3;margin:2px 0 13px}
+.chip{
+  height:40px;padding:0 19px;border:1px solid rgba(201,168,117,.22);
+  border-radius:12px;background:#24212a;color:#eee7f5;
+}
+.chip.active{background:linear-gradient(135deg,#d5bd98,#a98a61);color:#21180f;border-color:#e2c9a2}
+#page-home>.search-box{order:4;margin:0 0 18px;padding:15px 17px;border-radius:15px;background:#17151f;border-color:rgba(190,160,255,.22)}
+.search-box input{font-size:14px}
+#page-home>.product-grid{order:5}
+.product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.product-card{
+  min-height:185px;border-radius:20px;border-color:rgba(185,150,255,.2);
+  background:linear-gradient(145deg,#28203b,#15121e 76%);
+  box-shadow:0 12px 26px rgba(0,0,0,.25);
+}
+.product-card.has-artwork{min-height:190px}
+.product-info{padding:13px 10px;background:linear-gradient(0deg,rgba(8,7,13,.97),rgba(8,7,13,.66))}
+.product-info h4{font-size:13px}
+.game-page,.tracking-box,.profile-box,.settings-list,.help-contact-card,.help-faq details,.help-info-list details{
+  border-color:rgba(190,160,255,.2)!important;
+}
+.game-hero-card{border-radius:22px;overflow:hidden;box-shadow:0 16px 34px rgba(0,0,0,.32)}
+.game-step,.game-selection{background:linear-gradient(145deg,#1b1728,#12111b)!important;border:1px solid rgba(190,160,255,.17)!important;border-radius:17px!important}
+.game-order-button,.btn-submit,.help-primary{background:linear-gradient(135deg,#a879ff,#6f43d2)!important;box-shadow:0 9px 24px rgba(122,75,220,.28)}
+.store-drawer{background:linear-gradient(180deg,#21172f,#15131d)!important;border-left:1px solid rgba(190,160,255,.2)}
+.drawer-head{border-bottom-color:rgba(190,160,255,.18)}
+.store-drawer>button,.store-drawer>a{padding:17px 9px;border-radius:11px;margin:3px 0;border-bottom:0}
+.store-drawer>button:hover,.store-drawer>a:hover{background:rgba(165,125,255,.12)}
+.store-drawer>button i,.store-drawer>a i{color:#c09aff}
+.cs-floating{width:54px;height:54px;right:18px;bottom:22px;box-shadow:0 8px 26px rgba(32,189,112,.28)}
+.chat-floating{bottom:88px}
+.profile-box{background:linear-gradient(145deg,#20182e,#14121d)!important;border-radius:22px!important}
+.profile-box>i{color:#b68aff!important;filter:drop-shadow(0 0 16px rgba(172,130,255,.35))}
+.settings-hero,.help-hero{background:linear-gradient(115deg,#2b1d45,#171523)!important;border:1px solid rgba(190,160,255,.2);border-radius:22px}
+.help-footer{border-top:1px solid rgba(190,160,255,.15)}
+#toastContainer{border-radius:14px}
+@media(min-width:760px){
+  .app-header{padding-left:max(28px,calc((100vw - 1160px)/2));padding-right:max(28px,calc((100vw - 1160px)/2))}
+  .popular-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .pop-card{min-height:96px}
+  .pop-card img,.pop-fallback{width:68px;height:68px;flex-basis:68px}
+}
+@media(max-width:600px){
+  .app-header{min-height:68px;padding:10px 13px}
+  .logo-stack img{width:39px;height:39px}
+  .logo-word{font-size:18px}
+  .header-actions{gap:6px}
+  .header-icon,.currency-chip{height:40px}
+  .header-icon{width:40px}
+  .currency-chip{padding:0 8px;font-size:10px}
+  .container{padding:18px 14px 36px}
+  .banner-slide{aspect-ratio:1.95/1;border-radius:20px}
+  .popular-grid{gap:9px}
+  .pop-card{min-height:75px;padding:8px;border-radius:16px;gap:8px}
+  .pop-card img,.pop-fallback{width:48px;height:48px;flex-basis:48px;border-radius:12px}
+  .pop-text b{font-size:11px}
+  .pop-text span{font-size:10px}
+  .popular-sub{font-size:11px;margin-left:26px}
+  .product-card,.product-card.has-artwork{min-height:155px}
+}
+@media(max-width:360px){
+  .currency-chip{font-size:9px;gap:4px;padding:0 6px}
+  .logo-word{font-size:16px}
+  .pop-card{gap:6px;padding:7px}
+  .pop-card img,.pop-fallback{width:42px;height:42px;flex-basis:42px}
+}
+
+
+/* DIGIVEX STORE — Warm Charcoal / Champagne Gold theme (no purple) */
+:root{
+ --primary:#c5a36d!important;--primary-hover:#a9854e!important;--accent:#e0c596!important;
+ --bg-color:#171916!important;--card-bg:#222520!important;--surface:#2b2e28!important;
+ --text-main:#f5f0e6!important;--text-muted:#b7b1a4!important;
+ --border:rgba(202,172,119,.22)!important;
+ --shadow-sm:0 5px 18px rgba(0,0,0,.2);--shadow-md:0 12px 30px rgba(0,0,0,.3);--shadow-lg:0 22px 55px rgba(0,0,0,.45);
+}
+html,body{background:#171916!important;color:#f5f0e6!important}
+.app-header{background:rgba(28,30,27,.97)!important;border-bottom-color:rgba(202,172,119,.18)!important}
+.logo-word em{color:#d3b27d!important}
+.header-icon,.currency-chip{background:linear-gradient(145deg,#30332d,#222520)!important;border-color:rgba(202,172,119,.22)!important;color:#f5f0e6!important}
+.header-icon:active,.header-icon:hover{border-color:#c5a36d!important;color:#e0c596!important}
+.banner-slide{border-color:rgba(202,172,119,.38)!important}
+.banner-dots i.on{background:#d3b27d!important;box-shadow:0 0 12px rgba(211,178,125,.55)!important}
+.pop-card{border-color:rgba(255,255,255,.12)!important}
+.chip{background:#2a2d27!important;border-color:rgba(202,172,119,.25)!important;color:#eee8dc!important}
+.chip.active{background:linear-gradient(135deg,#e0c596,#b58e55)!important;color:#241d12!important;border-color:#e4cda5!important}
+.search-box{background:#222520!important;border-color:rgba(202,172,119,.28)!important}
+.product-card{border-color:rgba(202,172,119,.24)!important;background:linear-gradient(145deg,#34372f,#20231f 76%)!important}
+.product-info{background:linear-gradient(0deg,rgba(16,18,15,.97),rgba(16,18,15,.65))!important}
+.game-page,.tracking-box,.profile-box,.settings-list,.help-contact-card,.help-faq details,.help-info-list details{border-color:rgba(202,172,119,.25)!important}
+.game-step,.game-selection{background:linear-gradient(145deg,#30332d,#222520)!important;border-color:rgba(202,172,119,.2)!important}
+.game-order-button,.btn-submit,.help-primary,.login-btn,.btn-admin-save{background:linear-gradient(135deg,#dfc18d,#aa8148)!important;color:#241b0e!important;box-shadow:0 9px 24px rgba(169,129,72,.22)!important}
+.store-drawer{background:linear-gradient(180deg,#30332d,#1d201c)!important;border-left-color:rgba(202,172,119,.25)!important}
+.store-drawer>button:hover,.store-drawer>a:hover{background:rgba(197,163,109,.13)!important}
+.store-drawer>button i,.store-drawer>a i,.category-item.active-cat span{color:#dfc18d!important}
+.bottom-nav{background:rgba(27,29,26,.96)!important;border-top-color:rgba(202,172,119,.22)!important}
+.bottom-nav a.active{color:#dfc18d!important}
+.profile-box{background:linear-gradient(145deg,#30332d,#20231f)!important}
+.profile-box>i{color:#dfc18d!important;filter:drop-shadow(0 0 13px rgba(211,178,125,.28))!important}
+.settings-hero,.help-hero{background:linear-gradient(115deg,#3a352b,#242720)!important;border-color:rgba(202,172,119,.25)!important}
+.account-menu-card{border-color:rgba(202,172,119,.2)!important;background:linear-gradient(120deg,#30332d,#222520)!important}
+.account-menu-card i,.help-contact-card i{color:#dfc18d!important}
+.section-title,.popular-title{color:#f5f0e6!important}
+.text-purple{color:#dfc18d!important}
+input:focus,select:focus,textarea:focus,.login-input:focus{border-color:#c5a36d!important;box-shadow:0 0 0 3px rgba(197,163,109,.15)!important}
+.nominal-item{background:#2b2e28!important}
+.nominal-price,.invoice-total{color:#e0c596!important}
+#page-admin{background:linear-gradient(160deg,#252820,#171916 65%)!important}
+.admin-header-box,.admin-box,.admin-login-box,.stat-card{background:linear-gradient(145deg,#30332d,#222520)!important}
+.admin-tab-btn.active,.admin-tabs-modern .admin-tab-btn.active{background:linear-gradient(135deg,#dfc18d,#aa8148)!important;color:#241b0e!important}
+.admin-login-box i,.admin-card-icon{color:#dfc18d!important}
+.admin-card-icon{background:rgba(197,163,109,.15)!important}
+.invoice-total{border-top-color:#c5a36d!important}
