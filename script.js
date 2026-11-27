@@ -225,7 +225,7 @@ function renderProductGrid() {
 }
 
 function infoProdukBelumAktif(nama) {
-    showToast('Nominal ' + nama + ' belum diatur. Admin dapat menambahkannya melalui dashboard Produk.', 'info');
+    showToast(nama + ' belum tersedia saat ini. Silakan hubungi Customer Service.', 'info');
 }
 
 function cariProduk() {
