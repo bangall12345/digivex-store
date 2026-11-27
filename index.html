@@ -19,7 +19,7 @@
 
     <!-- HEADER -->
     <header class="app-header">
-        <a class="logo" href="#home" onclick="gantiHalaman('home', null);return false;"><img class="brand-mark" src="assets/digivex-mark.svg" alt="Logo DIGIVEX"><span>DIGIVEX <b>STORE</b><small>TOP UP • GAME • DIGITAL</small></span></a>
+        <a class="logo-stack" href="#home" aria-label="DIGIVEX Store" onclick="gantiHalaman('home', null);return false;"><img src="assets/digivex-mark-bare.svg" alt=""><span class="logo-word">digivex<em>store</em></span></a>
         <div class="header-actions">
             <button class="header-icon" type="button" aria-label="Cari produk" onclick="gantiHalaman('home',null);document.getElementById('searchInput').focus();"><i class="fa-solid fa-magnifying-glass"></i></button>
             <span class="currency-chip"><span class="flag-id">🇮🇩</span> ID / IDR</span>
@@ -50,19 +50,18 @@
                 <input type="text" id="searchInput" placeholder="Cari produk impianmu..." onkeyup="cariProduk()">
             </div>
             
-            <div class="banner hero-banner">
-                <div class="hero-copy">
-                    <span class="badge"><i class="fa-solid fa-crown"></i> TOP UP MUDAH</span>
-                    <h2>Mobile Legends</h2>
-                    <p><i class="fa-solid fa-bolt"></i> Pesanan diproses admin</p>
-                    <span class="hero-cta">Top Up Sekarang <i class="fa-solid fa-chevron-right"></i></span>
+            <section class="banner-carousel" id="bannerCarousel" aria-label="Banner promo">
+                <div class="banner-track" id="bannerTrack">
+                    <a class="banner-slide" href="#" data-game="mobile legends" aria-label="Mobile Legends"><img src="assets/banner-ml.jpg" alt="Banner Mobile Legends" draggable="false"></a>
+                    <a class="banner-slide" href="#" data-game="pubg" aria-label="PUBG Mobile"><img src="assets/banner-pubg.jpg" alt="Banner PUBG Mobile" draggable="false"></a>
                 </div>
-                <span class="hero-glow" aria-hidden="true"></span>
-            </div>
-            
-            <div class="catalog-intro"><span class="catalog-kicker"><i class="fa-solid fa-gamepad"></i> PILIH GAME FAVORITMU</span><h3>Katalog Game</h3><p>Top up game favorit dengan mudah di DIGIVEX STORE.</p></div>
+                <div class="banner-dots" id="bannerDots" aria-hidden="true"></div>
+            </section>
 
-            <div class="catalog-heading"><div><h3 class="section-title" id="sectionTitle">Katalog Game</h3><p>Pilih game untuk melihat pilihan nominal.</p></div><span class="catalog-live"><i></i> KATALOG</span></div>
+            <section class="popular-section"><h3 class="popular-title">🔥 POPULER SEKARANG!</h3><p class="popular-sub">Berikut adalah beberapa produk yang paling populer saat ini.</p><div class="popular-grid" id="popularList"></div></section>
+
+            <div class="cat-chips" role="tablist"><button type="button" class="chip active" role="tab" aria-selected="true">Top Up Games</button></div>
+
             <div class="product-grid" id="productList"></div>
             <div class="store-bottom-info"><strong>Butuh bantuan memilih produk?</strong><span>Tim DIGIVEX siap membantu pesananmu.</span><button onclick="bukaFormWa()"><i class="fa-brands fa-whatsapp"></i> Hubungi CS</button></div>
         </div>

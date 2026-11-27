@@ -767,3 +767,67 @@ body.settings-view .store-footer{display:none}
    Ini mencegah katalog tetap menumpuk di atas halaman game/pengaturan. */
 #page-home:not(.active) { display: none !important; }
 #page-home.active { display: flex; }
+
+/* LOGO HEADER GAYA STACKED: ikon di atas, wordmark huruf kecil di bawah, tanpa kotak/border. */
+.app-header{align-items:center;background:rgba(24,22,30,.97)}
+.logo-stack{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;flex:0 0 auto;text-decoration:none;line-height:1}
+.logo-stack img{display:block;width:34px;height:34px;border:0;box-shadow:none;filter:drop-shadow(0 0 8px rgba(160,100,255,.35))}
+.logo-word{font-family:'Inter',system-ui,sans-serif;font-size:15px;font-weight:400;letter-spacing:-.2px;color:#e6d3ff;text-transform:lowercase;white-space:nowrap}
+.logo-word em{font-style:normal;font-weight:300;color:#b89be6}
+.header-icon,.currency-chip{border-radius:13px}
+@media(max-width:390px){.logo-stack img{width:30px;height:30px}.logo-word{font-size:13px}}
+
+/* ===== BERANDA GAYA OURASTORE: Populer Sekarang + chip kategori + poster ===== */
+.popular-section{margin:6px 0 4px}
+.popular-title{font-size:20px;font-weight:800;letter-spacing:.4px;color:#f3ecff;margin:0}
+.popular-sub{margin:4px 0 14px 28px;font-size:12px;color:#a99fba}
+.popular-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pop-card{display:flex;align-items:center;gap:11px;min-height:76px;padding:9px;border-radius:20px;background:var(--pop-bg);color:var(--pop-fg);cursor:pointer;position:relative;overflow:hidden;transition:transform .15s}
+.pop-card::after{content:"";position:absolute;right:-18px;bottom:-30px;width:90px;height:90px;background:rgba(255,255,255,.08);transform:rotate(35deg);pointer-events:none}
+.pop-card:active{transform:scale(.97)}
+.pop-card img,.pop-fallback{width:56px;height:56px;flex:0 0 56px;border-radius:14px;object-fit:cover;background:rgba(0,0,0,.25)}
+.pop-fallback{display:grid;place-items:center;font-weight:800;font-size:22px}
+.pop-text{min-width:0;display:flex;flex-direction:column;gap:2px;position:relative;z-index:1}
+.pop-text b{font-size:12px;line-height:1.2;font-weight:700;overflow-wrap:anywhere}
+.pop-text span{font-size:11px;color:var(--pop-sub)}
+.cat-chips{display:flex;gap:8px;overflow-x:auto;margin:16px 0 14px;padding:2px 0;scrollbar-width:none}
+.cat-chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;height:40px;padding:0 18px;border:0;border-radius:12px;background:#2c2b31;color:#eee;font:700 13px Inter,system-ui,sans-serif;cursor:pointer}
+.chip.active{background:#a89071;color:#1e1a14}
+.catalog-heading{display:none}
+.product-grid{gap:10px}
+.product-card.has-artwork{border-radius:18px;overflow:hidden}
+@media(max-width:390px){.pop-card img,.pop-fallback{width:48px;height:48px;flex-basis:48px}.pop-text b{font-size:11px}}
+/* Urutan beranda: banner -> populer -> chip -> pencarian -> poster */
+#page-home>.hero-banner{order:1}
+#page-home>.popular-section{order:2}
+#page-home>.cat-chips{order:3}
+#page-home>.search-box{order:4}
+#page-home>.product-grid{order:5}
+#page-home>.store-bottom-info{order:6}
+
+/* BANNER PAS LAYAR: rasio lebar seperti Ourastore, gambar tidak terpotong */
+#page-home>.hero-banner{
+  height:auto!important;min-height:0!important;aspect-ratio:2.15/1;
+  background:linear-gradient(90deg,#0c0716 0%,#0c0716 42%,rgba(12,7,22,.55) 62%,rgba(12,7,22,0) 80%),url(assets/mobile-legends-hero.jpg) right center/auto 100% no-repeat,#0c0716!important;
+  display:flex;align-items:center;padding:0 0 0 16px;border-radius:22px!important;overflow:hidden}
+#page-home>.hero-banner .hero-copy{width:60%!important;max-width:60%!important;display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:0!important}
+#page-home>.hero-banner .hero-copy h2{font-size:clamp(17px,5.4vw,22px)!important;line-height:1.1;margin:0}
+#page-home>.hero-banner .hero-copy p{font-size:clamp(9px,2.8vw,11px)!important;margin:0}
+#page-home>.hero-banner .badge{font-size:8px!important;padding:5px 9px!important}
+#page-home>.hero-banner .hero-cta{font-size:clamp(9px,2.8vw,11px)!important;padding:7px 11px!important;gap:5px}
+#page-home>.hero-banner .hero-glow{display:none}
+.container{padding-left:14px;padding-right:14px}
+#page-home>.hero-banner{background:linear-gradient(90deg,#0c0716 0%,#0c0716 54%,rgba(12,7,22,.6) 66%,rgba(12,7,22,0) 88%),url(assets/mobile-legends-hero.jpg) right center/auto 100% no-repeat,#0c0716!important}
+#page-home>.hero-banner .hero-copy{position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;margin:0!important;transform:none!important;width:54%!important;max-width:54%!important;z-index:2}
+#page-home>.hero-banner{justify-content:flex-start!important;padding:0 0 0 16px!important}
+
+/* ===== CAROUSEL BANNER ===== */
+#page-home>.banner-carousel{order:1;position:relative;margin:0 0 4px}
+.banner-track{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-radius:22px;overscroll-behavior-x:contain}
+.banner-track::-webkit-scrollbar{display:none}
+.banner-slide{flex:0 0 100%;scroll-snap-align:center;display:block;aspect-ratio:16/9;border-radius:22px;overflow:hidden;background:#0c0716;border:1px solid rgba(190,150,255,.22);-webkit-tap-highlight-color:transparent}
+.banner-slide img{display:block;width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none}
+.banner-dots{display:flex;justify-content:center;gap:6px;margin-top:9px}
+.banner-dots i{width:6px;height:6px;border-radius:99px;background:rgba(255,255,255,.28);transition:.25s}
+.banner-dots i.on{width:20px;background:#c49aff}

@@ -450,3 +450,87 @@ function kirimFormWa(e) {
     document.getElementById("formWa").reset();
 }
 
+
+
+// ===== POPULER SEKARANG (gaya kartu 2 kolom) =====
+const popularPalette = [
+    { bg: 'linear-gradient(135deg,#c9c9d6,#b3b5c6)', fg: '#1c1b26', sub: '#4b4a5c' },
+    { bg: 'linear-gradient(135deg,#3a2a52,#241a38)', fg: '#fff', sub: '#c9bde0' },
+    { bg: 'linear-gradient(135deg,#5b91c2,#4a7fb3)', fg: '#fff', sub: '#e3eefa' },
+    { bg: 'linear-gradient(135deg,#3b2f6b,#272048)', fg: '#fff', sub: '#cfc6ee' },
+    { bg: 'linear-gradient(135deg,#4a2236,#2e1522)', fg: '#fff', sub: '#e6c3d2' },
+    { bg: 'linear-gradient(135deg,#cfc6dc,#b9afca)', fg: '#1c1b26', sub: '#514a63' },
+    { bg: 'linear-gradient(135deg,#e2dccd,#cfc7b3)', fg: '#1f1d18', sub: '#5a5546' },
+    { bg: 'linear-gradient(135deg,#2b3347,#1b2030)', fg: '#fff', sub: '#c3cadb' }
+];
+
+function renderPopularList() {
+    const box = document.getElementById('popularList');
+    if (!box) return;
+    const keyword = (document.getElementById('searchInput')?.value || '').toLowerCase();
+    const art = name => {
+        const n = String(name || '').toLowerCase();
+        if (n.includes('mobile legends')) return 'assets/mobile-legends-hero.jpg';
+        if (n.includes('pubg')) return 'assets/pubg-mobile.jpg';
+        if (n.includes('free fire')) return 'https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/09d54b4426b623dde923aa83beeccbe5.jpg';
+        return '';
+    };
+    const active = dataGame.filter(g => String(g.kategori || 'Game').toLowerCase() === 'game' && String(g.nama || '').toLowerCase().includes(keyword))
+        .map(g => ({ id: g.id, nama: g.nama || 'Produk', pub: g.publisher || (String(g.nama||'').toLowerCase().includes('mobile legends') ? 'Moonton' : 'DIGIVEX'), img: g.image_url || art(g.nama), color: g.color }));
+    const soon = (katalogTambahan.Game || []).filter(it => it.nama.toLowerCase().includes(keyword) &&
+        !dataGame.some(g => { const n = String(g.nama||'').toLowerCase(), t = it.nama.toLowerCase(); return n === t || n.includes(t) || t.includes(n); }))
+        .map(it => ({ soon: it.nama, nama: it.nama, pub: 'Segera tersedia', img: it.image || art(it.nama), color: it.color, icon: it.icon }));
+    const items = active.concat(soon).slice(0, 8);
+    const section = box.closest('.popular-section'); if (section) section.hidden = !items.length;
+    box.innerHTML = items.map((it, i) => {
+        const p = popularPalette[i % popularPalette.length];
+        const name = escapeHtml(it.nama);
+        const thumb = it.img
+            ? `<img src="${escapeHtml(it.img)}" alt="${name}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'pop-fallback',textContent:'${name.charAt(0)}'}))">`
+            : `<span class="pop-fallback">${name.charAt(0)}</span>`;
+        const attr = it.id !== undefined ? `data-id="${escapeHtml(it.id)}"` : `data-soon="${name}"`;
+        return `<div class="pop-card" ${attr} style="--pop-bg:${p.bg};--pop-fg:${p.fg};--pop-sub:${p.sub}">${thumb}<div class="pop-text"><b>${name}</b><span>${escapeHtml(it.pub)}</span></div></div>`;
+    }).join('');
+    box.onclick = e => {
+        const c = e.target.closest('.pop-card'); if (!c) return;
+        if (c.dataset.id) bukaNominal(c.dataset.id); else if (c.dataset.soon) infoProdukBelumAktif(c.dataset.soon);
+    };
+}
+(function () {
+    const base = renderProductGrid;
+    renderProductGrid = function () { base(); renderPopularList(); };
+})();
+
+
+// ===== CAROUSEL BANNER (geser kiri/kanan + otomatis) =====
+(function () {
+    const track = document.getElementById('bannerTrack');
+    const dotsBox = document.getElementById('bannerDots');
+    if (!track || !dotsBox) return;
+    const slides = Array.from(track.children);
+    let index = 0, timer = null, touched = false;
+    dotsBox.innerHTML = slides.map((_, i) => '<i' + (i === 0 ? ' class="on"' : '') + '></i>').join('');
+    const dots = Array.from(dotsBox.children);
+    const goTo = i => { track.scrollTo({ left: slides[i].offsetLeft - track.offsetLeft, behavior: 'smooth' }); };
+    track.addEventListener('scroll', () => {
+        const w = track.clientWidth || 1;
+        const i = Math.round(track.scrollLeft / w);
+        if (i !== index && dots[i]) { dots[index].classList.remove('on'); dots[i].classList.add('on'); index = i; }
+    }, { passive: true });
+    const start = () => { stop(); if (slides.length > 1) timer = setInterval(() => { if (!touched) goTo((index + 1) % slides.length); touched = false; }, 4500); };
+    const stop = () => { if (timer) clearInterval(timer); timer = null; };
+    ['touchstart', 'pointerdown', 'wheel'].forEach(ev => track.addEventListener(ev, () => { touched = true; }, { passive: true }));
+    document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+    // Klik banner membuka game terkait; geseran tidak dianggap klik.
+    let downX = 0;
+    track.addEventListener('pointerdown', e => { downX = e.clientX; });
+    track.addEventListener('click', e => {
+        const a = e.target.closest('.banner-slide'); if (!a) return;
+        e.preventDefault();
+        if (Math.abs(e.clientX - downX) > 8) return;
+        const key = a.dataset.game || '';
+        const g = (typeof dataGame !== 'undefined' ? dataGame : []).find(x => String(x.nama || '').toLowerCase().includes(key));
+        if (g) bukaNominal(g.id); else if (typeof infoProdukBelumAktif === 'function') infoProdukBelumAktif(a.getAttribute('aria-label'));
+    });
+    start();
+})();
