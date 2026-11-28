@@ -25,7 +25,12 @@ function showToast(message, type = 'success') {
     toast.className = 'show ' + type;
     icon.className = type === 'success' ? 'fa-solid fa-circle-check' : (type === 'error' ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-circle-info');
     toast.classList.add('show');
-    setTimeout(() => { toast.classList.remove('show'); }, 3000);
+    try { if (toast.showPopover && !toast.matches(':popover-open')) toast.showPopover(); } catch (e) {}
+    clearTimeout(window._toastTimer); clearTimeout(window._toastHide);
+    window._toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+        window._toastHide = setTimeout(() => { try { toast.hidePopover(); } catch (e) {} }, 450);
+    }, 3000);
 }
 
 window.onload = async function() {
@@ -299,7 +304,13 @@ function submitGameSelection() {
     }, 0);
 }
 
-function tutupNominal() { document.getElementById('nominalModal').classList.remove('active'); }
+// Modal memakai <dialog> bawaan browser: Escape, fokus, dan latar tidak bisa diklik sudah otomatis.
+function bukaModal(id) { const d = document.getElementById(id); if (d && !d.open) d.showModal(); }
+function tutupModal(id) { const d = document.getElementById(id); if (d && d.open) d.close(); }
+document.addEventListener('close', e => {
+    if (e.target && e.target.id === 'checkoutModal') { const f = document.getElementById('formOrder'); if (f) f.reset(); }
+}, true);
+function tutupNominal() { tutupModal('nominalModal'); }
 
 function pilihNominal(namaItem, harga) {
     selectedItem = { nama: namaItem, harga: harga };
@@ -332,12 +343,12 @@ function pilihNominal(namaItem, harga) {
     const note = document.getElementById('paymentNote');
     if (note) note.innerText = window.DIGIVEX_PAYMENT_ENABLED ? 'Anda akan diarahkan ke halaman pembayaran.' : 'Mode uji coba: pembayaran dikonfirmasi manual oleh admin.';
     tutupNominal();
-    document.getElementById('checkoutModal').classList.add('active');
+    bukaModal('checkoutModal');
 }
 
 function tutupCheckout() {
-    document.getElementById('checkoutModal').classList.remove('active');
-    document.getElementById('formOrder').reset();
+    tutupModal('checkoutModal');
+    const formOrder = document.getElementById('formOrder'); if (formOrder) formOrder.reset();
 }
 
 async function prosesPesanan(event) {
@@ -437,8 +448,8 @@ async function lacakPesanan() {
 }
 
 // FUNGSI UNTUK FORM WA
-function bukaFormWa() { document.getElementById("waModal").classList.add("active"); }
-function tutupFormWa() { document.getElementById("waModal").classList.remove("active"); }
+function bukaFormWa() { bukaModal('waModal'); }
+function tutupFormWa() { tutupModal('waModal'); }
 function kirimFormWa(e) {
     e.preventDefault();
     const nama = document.getElementById("waName").value.trim();

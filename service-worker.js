@@ -1,4 +1,4 @@
-const CACHE_NAME = 'digivex-v23';
+const CACHE_NAME = 'digivex-v24';
 // admin.html sengaja tidak di-cache dan tidak dibundel ke APK.
 const urlsToCache = [
   './', 'index.html', 'login.html', 'components.html',
