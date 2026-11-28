@@ -7,10 +7,10 @@
     <title>DIGIVEX STORE</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=21">
+    <link rel="stylesheet" href="style.css?v=23">
     
     <!-- Favicon & PWA -->
-    <link rel="icon" type="image/svg+xml" href="assets/digivex-mark.svg">
+    <link rel="icon" type="image/png" href="assets/digivex-logo-mark.png"><link rel="apple-touch-icon" href="assets/icon-192.png">
     <link rel="manifest" href="manifest.json">
 </head>
 <body>
@@ -19,7 +19,7 @@
 
     <!-- HEADER -->
     <header class="app-header">
-        <a class="logo-stack" href="#home" aria-label="DIGIVEX Store" onclick="gantiHalaman('home', null);return false;"><img src="assets/digivex-mark-bare.svg" alt=""><span class="logo-word">digivex<em>store</em></span></a>
+        <a class="logo-stack" href="#home" aria-label="DIGIVEX Store" onclick="gantiHalaman('home', null);return false;"><img class="logo-full" src="assets/digivex-logo.png" alt="DIGIVEX STORE" width="720" height="164"></a>
         <div class="header-actions">
             <button class="header-icon" type="button" aria-label="Cari produk" onclick="gantiHalaman('home',null);document.getElementById('searchInput').focus();"><i class="fa-solid fa-magnifying-glass"></i></button>
             <span class="currency-chip"><span class="flag-id">🇮🇩</span> ID / IDR</span>
@@ -28,7 +28,7 @@
     </header>
     <div class="store-drawer-backdrop" id="storeDrawerBackdrop" onclick="toggleStoreMenu(false)"></div>
     <aside class="store-drawer" id="storeDrawer" aria-label="Menu utama" aria-hidden="true">
-        <div class="drawer-head"><div class="logo"><img class="brand-mark" src="assets/digivex-mark.svg" alt=""><span>DIGIVEX <b>STORE</b><small>TOP UP • GAME • DIGITAL</small></span></div><button class="header-icon" onclick="toggleStoreMenu(false)" aria-label="Tutup menu"><i class="fa-solid fa-xmark"></i></button></div>
+        <div class="drawer-head"><div class="logo"><img class="brand-full" src="assets/digivex-logo.png" alt="DIGIVEX STORE" width="720" height="164"><small class="brand-tag">TOP UP • GAME • DIGITAL</small></div><button class="header-icon" onclick="toggleStoreMenu(false)" aria-label="Tutup menu"><i class="fa-solid fa-xmark"></i></button></div>
         <button onclick="drawerGo('home')"><span>Beranda</span><i class="fa-solid fa-house"></i></button>
         <button onclick="drawerGo('tracking')"><span>Lacak Pesanan</span><i class="fa-solid fa-box"></i></button>
         <button onclick="drawerGo('history')"><span>Riwayat Pesanan</span><i class="fa-solid fa-clock-rotate-left"></i></button>
@@ -133,7 +133,7 @@
                 <button class="settings-row settings-action" type="button" onclick="gantiHalaman('help', null)"><span class="settings-icon"><i class="fa-solid fa-headset"></i></span><span class="settings-row-copy"><strong>Pusat Bantuan</strong><small>Hubungi Customer Service</small></span><i class="fa-solid fa-chevron-right settings-chevron"></i></button>
                 <button class="settings-row settings-action" type="button" onclick="gantiHalaman('help', null);setTimeout(()=>document.getElementById('helpRulesHeading')?.scrollIntoView({behavior:'smooth'}),100)"><span class="settings-icon"><i class="fa-solid fa-shield-halved"></i></span><span class="settings-row-copy"><strong>Kebijakan & Privasi</strong><small>Syarat dan ketentuan toko</small></span><i class="fa-solid fa-chevron-right settings-chevron"></i></button>
             </div>
-            <div class="settings-about"><img src="assets/digivex-mark.svg" alt=""><strong>DIGIVEX STORE</strong><small>TOP UP • GAME • DIGITAL</small><span>Versi aplikasi 1.0</span></div>
+            <div class="settings-about"><img class="brand-full" src="assets/digivex-logo.png" alt="DIGIVEX STORE" width="720" height="164"><small>TOP UP • GAME • DIGITAL</small><span>Versi aplikasi 1.0</span></div>
         </section>
 
         <!-- PUSAT BANTUAN, CS, DAN INFORMASI TOKO -->
@@ -168,7 +168,7 @@
                 <details><summary>Kebijakan Privasi</summary><p>Data akun dan transaksi digunakan untuk menjalankan layanan toko, menampilkan riwayat, serta membantu penanganan pesanan. Jangan pernah membagikan kata sandi atau kode keamanan akun.</p></details>
                 <details><summary>Rewards dan Voucher</summary><p>Program rewards dan penukaran voucher belum tersedia. Informasi fitur akan ditampilkan setelah layanan resmi diaktifkan.</p></details>
             </div>
-            <div class="help-footer"><img src="assets/digivex-mark.svg" alt="DIGIVEX"><strong>DIGIVEX STORE</strong><span>TOP UP • GAME • DIGITAL</span><small>© 2026 DIGIVEX STORE. Semua hak dilindungi.</small></div>
+            <div class="help-footer"><img class="brand-full" src="assets/digivex-logo.png" alt="DIGIVEX STORE" width="720" height="164"><span>TOP UP • GAME • DIGITAL</span><small>© 2026 DIGIVEX STORE. Semua hak dilindungi.</small></div>
             <button class="help-back" onclick="gantiHalaman('account', null)"><i class="fa-solid fa-arrow-left"></i> Kembali ke Akun</button>
         </div>
     </main>
@@ -186,7 +186,8 @@
         <div class="chat-head"><div><strong>Chat Admin</strong><small>Kami balas secepatnya</small></div><button type="button" onclick="tutupChat()" aria-label="Tutup chat"><i class="fa-solid fa-xmark"></i></button></div>
         <div class="chat-guest" id="chatGuest" hidden><i class="fa-solid fa-comments"></i><p>Masuk ke akunmu dulu untuk mulai chat dengan admin.</p><a href="login.html">Masuk / Daftar</a></div>
         <div class="chat-body" id="chatBody"></div>
-        <form class="chat-form" id="chatForm" onsubmit="return kirimChat(event)"><input id="chatInput" type="text" maxlength="1000" placeholder="Tulis pesan..." autocomplete="off" enterkeyhint="send"><button type="submit" id="chatSend" aria-label="Kirim"><i class="fa-solid fa-paper-plane"></i></button></form>
+        <div class="chat-prev" id="chatPrev" hidden><img id="chatPrevImg" alt=""><span id="chatPrevName"></span><button type="button" id="chatPrevX" aria-label="Batalkan foto"><i class="fa-solid fa-xmark"></i></button></div>
+        <form class="chat-form" id="chatForm" onsubmit="return kirimChat(event)"><button type="button" class="chat-attach" id="chatAttach" aria-label="Kirim foto"><i class="fa-solid fa-image"></i></button><input type="file" id="chatFile" accept="image/jpeg,image/png,image/webp,image/gif" hidden><input id="chatInput" type="text" maxlength="1000" placeholder="Tulis pesan..." autocomplete="off" enterkeyhint="send"><button type="submit" id="chatSend" aria-label="Kirim"><i class="fa-solid fa-paper-plane"></i></button></form>
     </section>
 
     <!-- SEMUA MODAL (NOMINAL, CHECKOUT, INVOICE, WA) ADA DI components.html -->

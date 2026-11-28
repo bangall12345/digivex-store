@@ -1057,3 +1057,21 @@ html,body{background:#171916!important;color:#f5f0e6!important}
 .header-icon:focus-visible,.header-icon:hover,.currency-chip:hover,
 .search-box:focus-within,.product-card:focus-within{border-color:#c5a36d!important}
 button:focus-visible,a:focus-visible,input:focus,select:focus,textarea:focus{outline-color:#c5a36d!important}
+
+/* ===== Foto di chat (pelanggan) ===== */
+.chat-form .chat-attach{background:#26223a;color:#dfc18d;border:1px solid rgba(255,255,255,.14);flex:none}
+.chat-img{display:block;max-width:220px;max-height:260px;width:100%;border-radius:12px;object-fit:cover;background:#101020}
+.chat-text.has-img{padding:5px}.chat-text.has-img .chat-cap{display:block;padding:7px 8px 3px}
+.chat-prev{display:flex;align-items:center;gap:10px;padding:8px 12px;border-top:1px solid rgba(190,150,255,.16);background:#1b1829}
+.chat-prev[hidden]{display:none!important}
+.chat-prev img{width:48px;height:48px;border-radius:9px;object-fit:cover}
+.chat-prev span{flex:1;min-width:0;font-size:12px;color:#c2b9a8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chat-prev button{width:30px;height:30px;border:1px solid rgba(255,255,255,.14);border-radius:8px;background:#26223a;color:#fff;cursor:pointer}
+
+/* ===== Logo resmi DIGIVEX ===== */
+.logo-stack img.logo-full{width:auto!important;height:34px!important;max-width:60vw;filter:none!important;object-fit:contain}
+.drawer-head .logo{flex-direction:column!important;align-items:flex-start!important;gap:5px!important}
+.drawer-head .logo .brand-full{display:block;height:40px;width:auto;max-width:100%}
+.brand-tag{display:block;margin-left:4px;color:#c2b9a8;font-size:9px;font-weight:800;letter-spacing:2px}
+.settings-about img.brand-full,.help-footer img.brand-full{display:block;width:190px!important;height:auto!important;max-width:80%;margin:0 auto 6px}
+@media(max-width:380px){.logo-stack img.logo-full{height:30px!important}}

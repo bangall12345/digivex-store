@@ -1,8 +1,8 @@
-const CACHE_NAME = 'digivex-v21';
+const CACHE_NAME = 'digivex-v23';
 // admin.html sengaja tidak di-cache dan tidak dibundel ke APK.
 const urlsToCache = [
   './', 'index.html', 'login.html', 'components.html',
-  'style.css', 'script.js', 'supabase-config.js', 'manifest.json', 'assets/mobile-legends-hero.jpg', 'assets/digivex-mark.svg', 'assets/digivex-mark-bare.svg', 'assets/banner-ml.jpg', 'assets/banner-pubg.jpg'
+  'style.css', 'script.js', 'supabase-config.js', 'manifest.json', 'assets/mobile-legends-hero.jpg', 'assets/digivex-mark.svg', 'assets/digivex-mark-bare.svg', 'assets/digivex-logo.png', 'assets/digivex-logo-mark.png', 'assets/icon-192.png', 'assets/icon-512.png', 'assets/banner-ml.jpg', 'assets/banner-pubg.jpg'
 ];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));

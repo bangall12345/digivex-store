@@ -243,7 +243,7 @@ function bukaNominal(gameId) {
     titleNode.textContent = title;
     publisherNode.textContent = isML ? 'Moonton' : (selectedGame.publisher || 'Produk digital');
     document.getElementById('gameDescriptionTitle').textContent = 'Tentang ' + title;
-    hero.src = selectedGame.image_url || (isML ? 'assets/mobile-legends-hero.jpg' : 'assets/digivex-mark.svg');
+    hero.src = selectedGame.image_url || (isML ? 'assets/mobile-legends-hero.jpg' : 'assets/digivex-logo-mark.png');
     hero.alt = title;
     document.getElementById('gameServerLabel').style.display = isML ? '' : 'none';
     document.getElementById('gameTargetId').value = '';
@@ -540,6 +540,24 @@ function renderPopularList() {
     const $ = id => document.getElementById(id);
     let uid = null, started = false, isOpen = false, channel = null, timer = null, sending = false, unread = 0, lastTs = '';
     const seen = new Set();
+    const IMG_BASE = (window.DIGIVEX_SUPABASE_URL || '') + '/storage/v1/object/public/chat-images/';
+    const okImg = u => typeof u === 'string' && u.startsWith(IMG_BASE);
+    let hasImg = true, pendingFile = null, pendingObj = null;
+    const cols = () => 'id,sender,body,created_at' + (hasImg ? ',image_url' : '');
+    function clearPending() {
+        if (pendingObj) URL.revokeObjectURL(pendingObj);
+        pendingFile = null; pendingObj = null;
+        const p = $('chatPrev'); if (p) p.hidden = true;
+        const f = $('chatFile'); if (f) f.value = '';
+    }
+    function pickFile(f) {
+        if (!f) return;
+        if (!/^image\/(jpeg|png|webp|gif)$/.test(f.type)) { showToast('Format foto harus JPG, PNG, WEBP, atau GIF.', 'error'); $('chatFile').value = ''; return; }
+        if (f.size > 5 * 1024 * 1024) { showToast('Ukuran foto maksimal 5 MB.', 'error'); $('chatFile').value = ''; return; }
+        if (pendingObj) URL.revokeObjectURL(pendingObj);
+        pendingFile = f; pendingObj = URL.createObjectURL(f);
+        $('chatPrevImg').src = pendingObj; $('chatPrevName').textContent = f.name; $('chatPrev').hidden = false;
+    }
     const seenKey = () => 'digivex_chat_seen_' + uid;
     const hhmm = ts => { try { return new Date(ts).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };
 
@@ -564,15 +582,27 @@ function renderPopularList() {
         const ph = box.querySelector('.chat-empty'); if (ph) ph.remove();
         const row = document.createElement('div');
         row.className = 'chat-msg ' + (m.sender === 'admin' ? 'from-admin' : 'from-me');
-        const t = document.createElement('div'); t.className = 'chat-text'; t.textContent = m.body;
+        const t = document.createElement('div'); t.className = 'chat-text';
+        if (okImg(m.image_url)) {
+            t.classList.add('has-img');
+            const l = document.createElement('a'); l.href = m.image_url; l.target = '_blank'; l.rel = 'noopener noreferrer';
+            const im = document.createElement('img'); im.className = 'chat-img'; im.loading = 'lazy'; im.alt = 'Foto'; im.src = m.image_url;
+            l.appendChild(im); t.appendChild(l);
+            if (m.body && m.body !== '\u{1F4F7} Foto') { const c = document.createElement('span'); c.className = 'chat-cap'; c.textContent = m.body; t.appendChild(c); }
+        } else { t.textContent = m.body; }
         const s = document.createElement('small'); s.textContent = hhmm(m.created_at);
         row.append(t, s); box.appendChild(row);
         box.scrollTop = box.scrollHeight;
     }
     async function loadAll() {
         if (!uid) return;
-        const { data, error } = await sb.from('chat_messages').select('id,sender,body,created_at')
+        let { data, error } = await sb.from('chat_messages').select(cols())
             .eq('user_id', uid).order('created_at', { ascending: true }).limit(300);
+        if (error && hasImg) {
+            hasImg = false;
+            ({ data, error } = await sb.from('chat_messages').select(cols())
+                .eq('user_id', uid).order('created_at', { ascending: true }).limit(300));
+        }
         if (error) { if (!seen.size) showNote('Chat belum tersedia saat ini. Silakan coba lagi nanti.'); return; }
         (data || []).forEach(addMsg);
         const box = $('chatBody');
@@ -626,17 +656,33 @@ function renderPopularList() {
     window.kirimChat = function (e) {
         if (e) e.preventDefault();
         const input = $('chatInput'); const text = (input.value || '').trim();
-        if (!text || sending || !uid) return false;
-        sending = true; $('chatSend').disabled = true;
-        sb.from('chat_messages').insert({ user_id: uid, sender: 'user', body: text }).select('id,sender,body,created_at').single()
-            .then(({ data, error }) => {
-                if (error) { showToast(/banyak pesan/i.test(error.message || '') ? 'Terlalu banyak pesan. Coba lagi sebentar.' : 'Pesan gagal terkirim. Coba lagi.', 'error'); return; }
-                input.value = ''; addMsg(data); if (data.created_at > lastTs) lastTs = data.created_at;
-            })
-            .catch(() => showToast('Pesan gagal terkirim. Coba lagi.', 'error'))
-            .finally(() => { sending = false; $('chatSend').disabled = false; input.focus(); });
+        if ((!text && !pendingFile) || sending || !uid) return false;
+        sending = true; $('chatSend').disabled = true; $('chatAttach').disabled = true;
+        (async () => {
+            let image_url = null;
+            if (pendingFile) {
+                if (!hasImg) throw new Error('foto-nonaktif');
+                const f = pendingFile, ext = (f.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
+                const path = uid + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+                const up = await sb.storage.from('chat-images').upload(path, f, { contentType: f.type, cacheControl: '31536000', upsert: false });
+                if (up.error) throw up.error;
+                image_url = sb.storage.from('chat-images').getPublicUrl(path).data.publicUrl;
+            }
+            const row = { user_id: uid, sender: 'user', body: text || '\u{1F4F7} Foto' };
+            if (image_url) row.image_url = image_url;
+            const { data, error } = await sb.from('chat_messages').insert(row).select(cols()).single();
+            if (error) throw error;
+            input.value = ''; clearPending(); addMsg(data); if (data.created_at > lastTs) lastTs = data.created_at;
+        })()
+            .catch(err => showToast(/banyak pesan/i.test((err && err.message) || '') ? 'Terlalu banyak pesan. Coba lagi sebentar.' : (err && err.message === 'foto-nonaktif' ? 'Fitur kirim foto belum aktif.' : 'Pesan gagal terkirim. Coba lagi.'), 'error'))
+            .finally(() => { sending = false; $('chatSend').disabled = false; $('chatAttach').disabled = false; input.focus(); });
         return false;
     };
+    (function () {
+        const at = $('chatAttach'), fi = $('chatFile'), x = $('chatPrevX');
+        if (at && fi) { at.addEventListener('click', () => fi.click()); fi.addEventListener('change', ev => pickFile(ev.target.files && ev.target.files[0])); }
+        if (x) x.addEventListener('click', clearPending);
+    })();
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && isOpen) window.tutupChat(); });
 
     // Mulai memantau pesan baru begitu status login diketahui.
