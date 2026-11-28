@@ -262,7 +262,7 @@ button:active, .product-card:active, .category-item:active { transform: scale(.9
 .logo small { display:block; margin-top:2px; color:#b7a9d9; font-size:9px; font-weight:600; letter-spacing:1.7px; }
 .brand-mark { display:block; flex:0 0 48px; width:48px; height:48px; border:1px solid rgba(190,119,255,.7); border-radius:15px; object-fit:cover; box-shadow:0 0 22px rgba(139,57,255,.42); }
 .container { padding-top:17px; }
-.hero-banner { position:relative; min-height:250px; height:250px; align-items:flex-end; padding:22px !important; margin-bottom:25px; border:1px solid rgba(166,108,255,.8); border-radius:24px !important; background-image:linear-gradient(90deg,rgba(15,5,34,.12),rgba(15,5,34,.04)),url('assets/mobile-legends-hero.jpg') !important; background-size:auto 132% !important; background-position:right center !important; box-shadow:0 12px 35px rgba(84,26,171,.28),inset 0 0 28px rgba(160,91,255,.2) !important; }
+.hero-banner { position:relative; min-height:250px; height:250px; align-items:flex-end; padding:22px !important; margin-bottom:25px; border:1px solid rgba(166,108,255,.8); border-radius:24px !important; background-image:linear-gradient(90deg,rgba(15,5,34,.12),rgba(15,5,34,.04)),url('assets/banner-ml.jpg') !important; background-size:auto 132% !important; background-position:right center !important; box-shadow:0 12px 35px rgba(84,26,171,.28),inset 0 0 28px rgba(160,91,255,.2) !important; }
 .hero-banner:after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(13,5,32,.55) 0%,rgba(13,5,32,.15) 55%,rgba(13,5,32,.02) 100%); pointer-events:none; }
 .hero-copy { position:relative; z-index:2; max-width:70%; color:#fff; }
 .hero-copy .badge { padding:7px 11px !important; border-radius:20px !important; font-size:10px !important; }
@@ -574,7 +574,7 @@ body{padding-bottom:100px;background:linear-gradient(180deg,#1e1e1e 0%,#242424 4
 .search-box{margin:0 0 20px;padding:14px 17px;border:1px solid #b49b78;border-radius:14px;background:#55585a;color:#fff;box-shadow:0 0 0 2px rgba(190,164,126,.10)}
 .search-box input{font-size:14px;color:#fff}
 .search-box input::placeholder{color:#dedbd7}
-.hero-banner{height:205px;min-height:205px;margin-bottom:18px!important;padding:20px!important;border:0!important;border-radius:26px!important;background-image:linear-gradient(90deg,rgba(18,17,15,.35),rgba(18,17,15,.03)),url('assets/mobile-legends-hero.jpg')!important;background-size:cover!important;background-position:center 42%!important;box-shadow:none!important}
+.hero-banner{height:205px;min-height:205px;margin-bottom:18px!important;padding:20px!important;border:0!important;border-radius:26px!important;background-image:linear-gradient(90deg,rgba(18,17,15,.35),rgba(18,17,15,.03)),url('assets/banner-ml.jpg')!important;background-size:cover!important;background-position:center 42%!important;box-shadow:none!important}
 .hero-banner:after{background:linear-gradient(90deg,rgba(15,14,12,.48),rgba(15,14,12,.04) 76%)!important}
 .hero-copy{z-index:2;max-width:66%}
 .hero-copy .badge{background:#d8bd91!important;color:#2b241b!important}
@@ -647,7 +647,7 @@ body{background:radial-gradient(ellipse at 50% -15%,rgba(183,135,57,.13),transpa
 .search-box{border:1px solid rgba(215,173,104,.72);background:linear-gradient(110deg,#202020,#141414);box-shadow:0 0 0 2px rgba(215,173,104,.07),inset 0 1px rgba(255,255,255,.04);border-radius:15px}
 .search-box:focus-within{box-shadow:0 0 0 3px rgba(215,173,104,.14)}
 .search-box input{color:#fff}
-.hero-banner{position:relative;display:flex;justify-content:flex-end;align-items:center;height:235px;min-height:235px;border:1px solid rgba(231,193,126,.55)!important;border-radius:25px!important;background-image:linear-gradient(90deg,rgba(7,7,7,.02) 0%,rgba(7,7,7,.08) 42%,rgba(7,7,7,.88) 100%),url('assets/mobile-legends-hero.jpg')!important;background-size:cover!important;background-position:38% center!important;box-shadow:0 12px 36px rgba(0,0,0,.42),0 0 22px rgba(215,173,104,.09)!important}
+.hero-banner{position:relative;display:flex;justify-content:flex-end;align-items:center;height:235px;min-height:235px;border:1px solid rgba(231,193,126,.55)!important;border-radius:25px!important;background-image:linear-gradient(90deg,rgba(7,7,7,.02) 0%,rgba(7,7,7,.08) 42%,rgba(7,7,7,.88) 100%),url('assets/banner-ml.jpg')!important;background-size:cover!important;background-position:38% center!important;box-shadow:0 12px 36px rgba(0,0,0,.42),0 0 22px rgba(215,173,104,.09)!important}
 .hero-banner:after{background:linear-gradient(90deg,rgba(0,0,0,0) 20%,rgba(0,0,0,.08) 43%,rgba(0,0,0,.82) 100%)!important}
 .hero-copy{width:49%;max-width:49%;margin-left:auto;text-align:left}
 .hero-copy .badge{background:linear-gradient(110deg,#f0d18f,#c18e42)!important;color:#21180c!important;box-shadow:0 4px 14px rgba(0,0,0,.24)}
@@ -809,7 +809,7 @@ body.settings-view .store-footer{display:none}
 /* BANNER PAS LAYAR: rasio lebar seperti Ourastore, gambar tidak terpotong */
 #page-home>.hero-banner{
   height:auto!important;min-height:0!important;aspect-ratio:2.15/1;
-  background:linear-gradient(90deg,#0c0716 0%,#0c0716 42%,rgba(12,7,22,.55) 62%,rgba(12,7,22,0) 80%),url(assets/mobile-legends-hero.jpg) right center/auto 100% no-repeat,#0c0716!important;
+  background:linear-gradient(90deg,#0c0716 0%,#0c0716 42%,rgba(12,7,22,.55) 62%,rgba(12,7,22,0) 80%),url(assets/banner-ml.jpg) right center/auto 100% no-repeat,#0c0716!important;
   display:flex;align-items:center;padding:0 0 0 16px;border-radius:22px!important;overflow:hidden}
 #page-home>.hero-banner .hero-copy{width:60%!important;max-width:60%!important;display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:0!important}
 #page-home>.hero-banner .hero-copy h2{font-size:clamp(17px,5.4vw,22px)!important;line-height:1.1;margin:0}
@@ -818,7 +818,7 @@ body.settings-view .store-footer{display:none}
 #page-home>.hero-banner .hero-cta{font-size:clamp(9px,2.8vw,11px)!important;padding:7px 11px!important;gap:5px}
 #page-home>.hero-banner .hero-glow{display:none}
 .container{padding-left:14px;padding-right:14px}
-#page-home>.hero-banner{background:linear-gradient(90deg,#0c0716 0%,#0c0716 54%,rgba(12,7,22,.6) 66%,rgba(12,7,22,0) 88%),url(assets/mobile-legends-hero.jpg) right center/auto 100% no-repeat,#0c0716!important}
+#page-home>.hero-banner{background:linear-gradient(90deg,#0c0716 0%,#0c0716 54%,rgba(12,7,22,.6) 66%,rgba(12,7,22,0) 88%),url(assets/banner-ml.jpg) right center/auto 100% no-repeat,#0c0716!important}
 #page-home>.hero-banner .hero-copy{position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;margin:0!important;transform:none!important;width:54%!important;max-width:54%!important;z-index:2}
 #page-home>.hero-banner{justify-content:flex-start!important;padding:0 0 0 16px!important}
 

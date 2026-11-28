@@ -164,7 +164,7 @@ const katalogTambahan = {
         { nama: 'Smartfren', icon: 'fa-signal', color: '#e84b4b' }
     ],
     Game: [
-        { nama: 'Mobile Legends', icon: 'fa-shield-halved', color: '#5c9dff', image: 'assets/mobile-legends-hero.jpg' },
+        { nama: 'Mobile Legends', icon: 'fa-shield-halved', color: '#5c9dff', image: 'assets/banner-ml.jpg' },
         { nama: 'Free Fire', icon: 'fa-fire', color: '#ff9b32', image: 'https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/09d54b4426b623dde923aa83beeccbe5.jpg' },
         { nama: 'Steam Wallet', icon: 'fa-steam', color: '#78a9df' },
         { nama: 'Roblox Gift Cards', icon: 'fa-cube', color: '#f4f4f4' },
@@ -202,7 +202,7 @@ function renderProductGrid() {
     const artworkFor = (name, category) => {
         if (category !== 'Game') return '';
         const normalized = String(name || '').toLowerCase();
-        if (normalized.includes('mobile legends')) return 'assets/mobile-legends-hero.jpg';
+        if (normalized.includes('mobile legends')) return 'assets/banner-ml.jpg';
         if (normalized.includes('free fire')) return 'https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/09d54b4426b623dde923aa83beeccbe5.jpg';
         return '';
     };
@@ -248,7 +248,7 @@ function bukaNominal(gameId) {
     titleNode.textContent = title;
     publisherNode.textContent = isML ? 'Moonton' : (selectedGame.publisher || 'Produk digital');
     document.getElementById('gameDescriptionTitle').textContent = 'Tentang ' + title;
-    hero.src = selectedGame.image_url || (isML ? 'assets/mobile-legends-hero.jpg' : 'assets/digivex-logo-mark.png');
+    hero.src = selectedGame.image_url || (isML ? 'assets/banner-ml.jpg' : 'assets/digivex-logo-mark.png');
     hero.alt = title;
     document.getElementById('gameServerLabel').style.display = isML ? '' : 'none';
     document.getElementById('gameTargetId').value = '';
@@ -481,7 +481,7 @@ function renderPopularList() {
     const keyword = (document.getElementById('searchInput')?.value || '').toLowerCase();
     const art = name => {
         const n = String(name || '').toLowerCase();
-        if (n.includes('mobile legends')) return 'assets/mobile-legends-hero.jpg';
+        if (n.includes('mobile legends')) return 'assets/banner-ml.jpg';
         if (n.includes('pubg')) return 'assets/pubg-mobile.jpg';
         if (n.includes('free fire')) return 'https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/09d54b4426b623dde923aa83beeccbe5.jpg';
         return '';

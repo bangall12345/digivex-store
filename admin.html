@@ -264,7 +264,7 @@ html,body{background:#171916!important;color:#f5f0e6!important}
 <input class="adm-input" id="prodImageFile" type="file" accept="image/*">
 <div id="prodImagePreviewWrap" style="display:none;margin:4px 0 12px"><img id="prodImagePreview" alt="Pratinjau foto produk" style="width:112px;height:112px;object-fit:cover;border-radius:14px;border:1px solid var(--border)"><button type="button" class="adm-btn" id="removeProdImageBtn">Hapus foto</button></div>
 <input class="adm-input" id="prodImageUrl" placeholder="Atau URL gambar produk (opsional)">
-<textarea class="adm-input" id="prodItems" rows="4" placeholder='[{"nama":"5 Diamond","harga":1000,"modal":800}] (modal opsional untuk hitung keuntungan)' required></textarea><button class="adm-primary" id="saveProductBtn">Simpan Produk</button> <button type="button" class="adm-btn" id="cancelEditBtn" hidden>Batal Edit</button></form></div><div class="adm-panel" style="margin-top:14px"><h2>Katalog Produk</h2><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>FOTO</th><th>ID</th><th>NAMA</th><th>KATEGORI</th><th>ITEM</th><th>AKSI</th></tr></thead><tbody id="productsBody"></tbody></table></div></div></section><section id="view-customers" class="adm-view adm-panel"><h2>Data Pelanggan</h2><p class="adm-muted">Daftar profil yang tersedia di tabel profiles. Halaman ini hanya menampilkan data, tidak mengubah akun Auth.</p><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>NAMA</th><th>EMAIL</th><th>USER ID</th></tr></thead><tbody id="customersBody"><tr><td colspan="3">Memuat data…</td></tr></tbody></table></div></section>
+<textarea class="adm-input" id="prodItems" rows="4" placeholder='[{"nama":"5 Diamond","harga":1000,"modal":800}] (modal opsional untuk hitung keuntungan)' required></textarea><button type="button" class="adm-btn" id="fillMlCatalogBtn" style="margin:8px 0 12px;width:100%"><i class="fa-solid fa-gem"></i> Isi Daftar Diamond Mobile Legends</button><button class="adm-primary" id="saveProductBtn">Simpan Produk</button> <button type="button" class="adm-btn" id="cancelEditBtn" hidden>Batal Edit</button></form></div><div class="adm-panel" style="margin-top:14px"><h2>Katalog Produk</h2><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>FOTO</th><th>ID</th><th>NAMA</th><th>KATEGORI</th><th>ITEM</th><th>AKSI</th></tr></thead><tbody id="productsBody"></tbody></table></div></div></section><section id="view-customers" class="adm-view adm-panel"><h2>Data Pelanggan</h2><p class="adm-muted">Daftar profil yang tersedia di tabel profiles. Halaman ini hanya menampilkan data, tidak mengubah akun Auth.</p><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>NAMA</th><th>EMAIL</th><th>USER ID</th></tr></thead><tbody id="customersBody"><tr><td colspan="3">Memuat data…</td></tr></tbody></table></div></section>
 <section id="view-analytics" class="adm-view"><div class="adm-panel"><h2>Analitik Penjualan</h2><p class="adm-muted">Penjualan sukses berdasarkan tanggal transaksi.</p><div class="adm-toolbar"><select id="chartPeriod" class="adm-select"><option value="7">7 hari terakhir</option><option value="30">30 hari terakhir</option><option value="month">12 bulan terakhir</option></select><button class="adm-btn" id="chartRefresh">Perbarui</button></div><canvas id="salesChart" class="adm-chart" width="900" height="280"></canvas><div class="adm-grid2" style="margin-top:12px"><div class="adm-kpi"><small>Transaksi sukses</small><strong id="analyticsCount">0</strong></div><div class="adm-kpi"><small>Omzet sukses</small><strong id="analyticsRevenue">Rp0</strong></div></div></div><div class="adm-panel" style="margin-top:14px"><h2>Keuntungan Toko</h2><p class="adm-muted">Harga jual dikurangi harga modal item.</p><div class="adm-grid2"><div class="adm-kpi"><small>Keuntungan tercatat</small><strong id="profitTotal">—</strong></div><div class="adm-kpi"><small>Tanpa data modal</small><strong id="profitMissing">—</strong></div></div><p class="adm-note" style="margin-top:12px">Isi nilai <b>modal</b> pada JSON setiap item produk dan jalankan supabase-v6-migration.sql. Pesanan lama tanpa data modal tidak bisa dihitung.</p></div></section>
 <section id="view-history" class="adm-view adm-panel"><h2>Riwayat Transaksi</h2><div class="adm-toolbar"><input id="historySearch" class="adm-input" style="max-width:360px;margin:0" placeholder="Cari nama, produk, ID tujuan…"><select id="historyStatus" class="adm-select"><option value="">Semua status</option><option>Pending</option><option>Diproses</option><option>Sukses</option><option>Gagal</option></select></div><div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>WAKTU</th><th>PEMBELI</th><th>PRODUK</th><th>TARGET</th><th>TOTAL</th><th>STATUS</th></tr></thead><tbody id="historyBody"></tbody></table></div></section>
 <section id="view-chat" class="adm-view adm-panel"><h2>Chat Pelanggan</h2><p class="adm-muted">Balas pesan pelanggan di sini. Pesan baru muncul otomatis.</p>
@@ -323,6 +323,34 @@ function resetProductEditor(){
   saveProductBtn.textContent='Simpan Produk';cancelEditBtn.hidden=true;
 }
 cancelEditBtn.onclick=resetProductEditor;
+
+// Isi katalog Diamond ML ke FORM PRODUK YANG SUDAH ADA (tidak membuat halaman baru).
+const fillMlCatalogBtn=document.getElementById('fillMlCatalogBtn');
+if(fillMlCatalogBtn){
+  fillMlCatalogBtn.addEventListener('click',async()=>{
+    const mlItems="[\n  {\n    \"nama\": \"5 Diamond\",\n    \"harga\": 1707\n  },\n  {\n    \"nama\": \"12 Diamond\",\n    \"harga\": 3988\n  },\n  {\n    \"nama\": \"85 (77+8) Diamonds (PROMO)\",\n    \"harga\": 26138\n  },\n  {\n    \"nama\": \"100 (50+50) Diamonds - First Top Up\",\n    \"harga\": 16116\n  },\n  {\n    \"nama\": \"170 (154+16) Diamonds (PROMO)\",\n    \"harga\": 52404\n  },\n  {\n    \"nama\": \"240 (217+23) Diamonds (PROMO)\",\n    \"harga\": 74048\n  },\n  {\n    \"nama\": \"296 (256+40) Diamonds (PROMO)\",\n    \"harga\": 91181\n  },\n  {\n    \"nama\": \"300 (150+150) Diamonds - First Top Up\",\n    \"harga\": 48203\n  },\n  {\n    \"nama\": \"408 (367+41) Diamonds (PROMO)\",\n    \"harga\": 125311\n  },\n  {\n    \"nama\": \"500 (250+250) Diamonds - First Top Up\",\n    \"harga\": 80076\n  },\n  {\n    \"nama\": \"568 (503+65) Diamonds (PROMO)\",\n    \"harga\": 170879\n  },\n  {\n    \"nama\": \"875 (774+101) Diamonds (PROMO)\",\n    \"harga\": 262013\n  },\n  {\n    \"nama\": \"1000 (500+500) Diamonds - First Top Up\",\n    \"harga\": 162576\n  },\n  {\n    \"nama\": \"2010 (1708+302) Diamonds (PROMO)\",\n    \"harga\": 569589\n  }\n]";
+    const existing=(window.productRows||[]).find(p=>String(p.nama||'').toLowerCase().includes('mobile legends'));
+    if(existing){
+      await startEditProduct(existing.id);
+      document.getElementById('prodItems').value=mlItems;
+      if(!productImageUrl.value.trim()) productImageUrl.value='assets/banner-ml.jpg';
+      showProductImage(productImageUrl.value.trim());
+      toast('Produk Mobile Legends ditemukan. Daftar Diamond sudah diisi; tekan Simpan Perubahan.','info');
+      return;
+    }
+    resetProductEditor();
+    productIdInput.value='mobile-legends';
+    document.getElementById('prodName').value='Mobile Legends';
+    document.getElementById('prodIcon').value='fa-gamepad';
+    document.getElementById('prodCategory').value='Game';
+    productImageUrl.value='assets/banner-ml.jpg';
+    showProductImage('assets/banner-ml.jpg');
+    document.getElementById('prodItems').value=mlItems;
+    toast('Daftar Diamond Mobile Legends sudah diisi. Periksa harga lalu tekan Simpan Produk.','info');
+    productForm.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+}
+
 
 let selectedProductImageFile=null;
 let currentProductImageUrl='';
