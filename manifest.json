@@ -4,8 +4,8 @@
   "description": "Aplikasi Top Up Game & Pulsa Termurah",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#090909",
-  "theme_color": "#090909",
+  "background_color": "#171916",
+  "theme_color": "#171916",
   "icons": [
     {
       "src": "assets/digivex-mark.svg",

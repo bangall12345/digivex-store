@@ -1,4 +1,4 @@
-<!doctype html><html lang="id"><head><style id="antiClickjack">html{display:none!important}</style><script>if(self===top){var s=document.getElementById("antiClickjack");s.parentNode.removeChild(s);}else{try{top.location=self.location;}catch(e){}}</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101223"><title>Admin Dashboard — DIGIVEX STORE</title><link rel="stylesheet" href="style.css?v=20"><style>
+<!doctype html><html lang="id"><head><style id="antiClickjack">html{display:none!important}</style><script>if(self===top){var s=document.getElementById("antiClickjack");s.parentNode.removeChild(s);}else{try{top.location=self.location;}catch(e){}}</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101223"><title>Admin Dashboard — DIGIVEX STORE</title><link rel="stylesheet" href="style.css?v=21"><style>
 *{box-sizing:border-box}.adm-shell{max-width:1100px;margin:auto;padding:22px 16px 50px}.adm-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}.adm-brand{display:flex;align-items:center;gap:12px}.adm-logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#a78bfa,#6545c7);display:grid;place-items:center;font-size:20px}.adm-brand small{display:block;color:#a5a1bd;font-size:10px;letter-spacing:1.5px}.adm-brand b{font-size:16px}.adm-btn{border:1px solid var(--border);border-radius:11px;padding:11px 14px;background:#24213d;color:white;font-weight:700}.adm-hero{padding:24px;border-radius:22px;background:linear-gradient(120deg,#30245f,#19182e);border:1px solid var(--border);margin-bottom:18px}.adm-hero small{color:#c4b5fd;letter-spacing:1.5px;font-weight:800}.adm-hero h1{margin:8px 0;font-size:27px}.adm-hero p{margin:0;color:#c3bfd7;font-size:13px}.adm-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 22px}.adm-stat,.adm-panel{padding:17px;border:1px solid var(--border);border-radius:17px;background:#17172a}.adm-stat span{display:block;color:var(--text-muted);font-size:11px;margin:8px 0}.adm-stat strong{font-size:21px}.adm-tabs{display:flex;gap:8px;overflow:auto;margin:18px 0}.adm-tabs button{white-space:nowrap}.adm-tab{padding:11px 16px;border:1px solid var(--border);border-radius:11px;background:#19192e;color:#aaa4c3;font-weight:800}.adm-tab.active{background:#7657d5;color:#fff}.adm-view{display:none}.adm-view.active{display:block}.adm-table-wrap{overflow:auto}.adm-table{width:100%;border-collapse:collapse;min-width:650px;font-size:12px}.adm-table th,.adm-table td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--border)}.adm-table th{color:#aaa4c3;font-size:10px;letter-spacing:.8px}.adm-input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--border);background:#101020;color:white;margin:6px 0 12px}.adm-primary{padding:12px 16px;border:0;border-radius:10px;background:linear-gradient(135deg,#9874f0,#6746c7);color:white;font-weight:800}.adm-muted{color:var(--text-muted);font-size:12px}.adm-status{padding:5px 8px;border-radius:8px;background:#3a2d12;color:#f7bd58;font-weight:800}.adm-actions{display:flex;gap:6px;flex-wrap:wrap}.adm-actions button{padding:7px 9px;border:1px solid var(--border);border-radius:8px;background:#24213d;color:white}.adm-login{max-width:420px;margin:12vh auto;padding:26px;border:1px solid var(--border);border-radius:22px;background:#17172a}.adm-login h1{text-align:center}.adm-login input{width:100%;padding:14px;margin:8px 0;border:1px solid var(--border);border-radius:10px;background:#101020;color:white}@media(max-width:700px){.adm-stats{grid-template-columns:repeat(2,1fr)}.adm-hero h1{font-size:23px}}
 
 /* DIGIVEX ADMIN V5 — compact neon dashboard */
@@ -215,6 +215,38 @@ body{background:radial-gradient(ellipse at 90% 0%,rgba(197,163,109,.13),transpar
 .admin-avatar{color:#e0c596!important}
 button:focus-visible,a:focus-visible,input:focus,select:focus,textarea:focus{outline-color:#c5a36d!important}
 
+</style>
+
+<style id="digivex-v4-admin-final-fixes">
+[hidden],#loginPanel[hidden],#mfaPanel[hidden],#dashboard[hidden],#mfaEnroll[hidden],#mfaVerify[hidden]{display:none!important}
+:root{
+ --adm-bg:#171916!important;--adm-card:#222520!important;--adm-card2:#2b2e28!important;
+ --adm-line:rgba(202,172,119,.24)!important;--adm-purple:#c5a36d!important;
+ --adm-purple2:#a9854e!important;--adm-muted:#b7b1a4!important;
+ --primary:#c5a36d!important;--primary-hover:#a9854e!important;--accent:#e0c596!important;
+ --bg-color:#171916!important;--card-bg:#222520!important;--surface:#2b2e28!important;
+ --text-main:#f5f0e6!important;--text-muted:#b7b1a4!important;--border:rgba(202,172,119,.24)!important;
+}
+html,body{background:#171916!important;color:#f5f0e6!important}
+.adm-login,.adm-panel,.adm-kpi,.adm-stat,.adm-tabs,.adm-table-wrap,.adm-chart,.ac-listbox,.ac-threadbox{
+ background:#222520!important;border-color:rgba(202,172,119,.24)!important;color:#f5f0e6!important;
+}
+.adm-logo{background:linear-gradient(135deg,#e0c596,#a9854e)!important;color:#241b12!important}
+.adm-hero{background:linear-gradient(115deg,#3a352b,#242720)!important;border-color:rgba(202,172,119,.32)!important}
+.adm-hero:after{color:rgba(224,197,150,.13)!important;text-shadow:0 0 35px rgba(197,163,109,.35)!important}
+.adm-hero small,.adm-muted,.adm-brand small,.adm-note,.ac-meta{color:#c2b9a8!important}
+.adm-btn,.adm-tab,.ac-back{background:#30332d!important;border-color:rgba(202,172,119,.25)!important;color:#f5f0e6!important}
+.adm-primary,.adm-tab.active{
+ background:linear-gradient(135deg,#dfc18d,#aa8148)!important;border-color:#e0c596!important;color:#241b12!important;
+ box-shadow:0 7px 20px rgba(169,129,72,.18)!important
+}
+.adm-input,.adm-select,.ac-input{background:#171916!important;border-color:rgba(202,172,119,.25)!important;color:#f5f0e6!important}
+.adm-input:focus,.adm-select:focus,.ac-input:focus{border-color:#c5a36d!important;box-shadow:0 0 0 3px rgba(197,163,109,.14)!important}
+.adm-table th{color:#e0c596!important;background:#30332d!important}
+.adm-table td{border-color:rgba(202,172,119,.15)!important;color:#eee8dc!important}
+.ac-av{background:linear-gradient(135deg,#dfc18d,#aa8148)!important;color:#241b12!important}
+.ac-conv:hover,.ac-conv.on{background:rgba(197,163,109,.14)!important}
+.ac-thead{border-bottom-color:rgba(202,172,119,.2)!important}
 </style>
 </head><body style="padding-bottom:20px"><div id="toastContainer"><i class="fa-solid fa-circle-info" id="toastIcon"></i><span id="toastMessage"></span></div>
 <section id="loginPanel" class="adm-login"><div class="adm-logo" style="margin:auto"><i class="fa-solid fa-shield-halved"></i></div><h1>Admin DIGIVEX</h1><p class="adm-muted" style="text-align:center">Masuk menggunakan akun admin terdaftar.</p><form id="loginForm"><input id="email" type="email" placeholder="Email admin" required><input id="password" type="password" placeholder="Password" required><button class="adm-primary" style="width:100%">Masuk Dashboard</button></form><p class="adm-muted" style="text-align:center"><a href="index.html">Kembali ke toko</a></p></section>

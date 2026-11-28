@@ -1038,3 +1038,22 @@ input:focus,select:focus,textarea:focus,.login-input:focus{border-color:#c5a36d!
 .admin-login-box i,.admin-card-icon{color:#dfc18d!important}
 .admin-card-icon{background:rgba(197,163,109,.15)!important}
 .invoice-total{border-top-color:#c5a36d!important}
+
+/* DIGIVEX V4 — FINAL GOLD OVERRIDES */
+:root{
+ --primary:#c5a36d!important;--primary-hover:#a9854e!important;--accent:#e0c596!important;
+ --bg-color:#171916!important;--card-bg:#222520!important;--surface:#2b2e28!important;
+ --text-main:#f5f0e6!important;--text-muted:#b7b1a4!important;
+ --border:rgba(202,172,119,.24)!important;
+}
+html,body{background:#171916!important;color:#f5f0e6!important}
+.app-header,.bottom-nav,.store-drawer{background-color:#20231f!important}
+.search-box,.search-box input,.search-box:focus-within{border-color:rgba(202,172,119,.38)!important}
+.search-box i,.section-title i,.popular-title i,.category-item i,
+.quick-category i,.bottom-nav a.active,.bottom-nav a.active i,
+.store-drawer a i,.store-drawer button i{color:#dfc18d!important}
+.banner-dots i.on,.category-item.active-cat,.chip.active,
+.admin-tab-btn.active{background:#c5a36d!important;color:#241b12!important}
+.header-icon:focus-visible,.header-icon:hover,.currency-chip:hover,
+.search-box:focus-within,.product-card:focus-within{border-color:#c5a36d!important}
+button:focus-visible,a:focus-visible,input:focus,select:focus,textarea:focus{outline-color:#c5a36d!important}
